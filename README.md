@@ -1,3 +1,213 @@
+smartscope-php
+
+Laravel Starter für Smartscope Catalog — lokales Development & VPS‑Deployment Anleitungen.
+Inhalt
+
+    Kurze Anleitung für lokales Entwickeln (Dev‑Server)
+    Schritte zum Deployen auf einem Ubuntu VPS (Nginx, PHP‑FPM, MySQL)
+    Demo‑Account
+
+Schnellstart (lokal)
+
+Voraussetzungen
+
+    PHP 8.1+ (CLI)
+    Composer
+    MySQL / MariaDB
+    Node.js & npm
+
+Schritte im Projekt‑Root:
+
+    PHP‑Abhängigkeiten installieren
+
+text
+
+composer install
+
+    Environment Datei kopieren und anpassen
+
+text
+
+cp .env.example .env
+# .env öffnen und DB_*, APP_URL, MAIL etc. setzen
+
+    App‑Key erzeugen
+
+text
+
+php artisan key:generate
+
+    Frontend (optional)
+
+text
+
+npm install
+npm run dev
+
+    Datenbank erstellen (MySQL) — dann Migrationen & Seeder ausführen
+
+text
+
+php artisan migrate --seed
+
+    Storage Link für öffentliche Uploads
+
+text
+
+php artisan storage:link
+
+    Dev‑Server starten
+
+text
+
+php artisan serve --host=127.0.0.1 --port=8000
+# Seite öffnen: http://localhost:8000
+
+Nützliche Befehle:
+
+    DB neu aufsetzen (Entw.): php artisan migrate:fresh --seed
+    Storage Link erneuern: php artisan storage:link
+    Assets bauen (Prod): npm run build
+
+Demo‑Account:
+
+    E‑Mail: demo@example.com
+    Passwort: password
+
+VPS Deployment (Ubuntu Beispiel)
+
+Kurzanleitung für einen frischen Ubuntu‑Server (angepasst auf deine Bedürfnisse).
+
+    System aktualisieren
+
+bash
+
+sudo apt update && sudo apt upgrade -y
+
+    Benötigte Pakete installieren (PHP, MySQL, Nginx, Composer)
+
+bash
+
+# PHP + Extensions (Beispiel für PHP 8.1)
+sudo apt install -y php8.1 php8.1-fpm php8.1-mbstring php8.1-xml php8.1-bcmath php8.1-json php8.1-zip php8.1-gd php8.1-curl php8.1-mysql php8.1-cli php8.1-intl php8.1-opcache unzip git curl
+
+# Composer (global)
+php -r "copy('https://getcomposer.org/installer','composer-setup.php');"
+php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+php -r "unlink('composer-setup.php')"
+
+# MySQL Server
+sudo apt install -y mysql-server
+sudo mysql_secure_installation
+
+    Datenbank & Benutzer anlegen
+
+sql
+
+# in mysql shell:
+CREATE DATABASE smartscope_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'smartuser'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON smartscope_db.* TO 'smartuser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+    Projekt deployen
+
+bash
+
+cd /var/www
+sudo git clone https://github.com/ruokxx/smartscope-php.git
+cd smartscope-php
+# set owner für deploy user / www-data
+sudo chown -R $USER:www-data .
+composer install --no-dev --optimize-autoloader
+cp .env.example .env
+# .env anpassen: APP_URL, DB_* etc.
+php artisan key:generate
+php artisan migrate --seed
+php artisan storage:link
+npm install
+npm run build   # optional für Prod assets
+
+    Berechtigungen
+
+bash
+
+sudo chown -R www-data:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+
+    Nginx Konfiguration (Beispiel /etc/nginx/sites-available/smartscope)
+
+text
+
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+
+    root /var/www/smartscope-php/public;
+    index index.php;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+
+Enable & reload:
+bash
+
+sudo ln -s /etc/nginx/sites-available/smartscope /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+
+    HTTPS (Let's Encrypt / Certbot)
+
+bash
+
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+
+    Supervisor (optional) — Queue Workers
+
+bash
+
+sudo apt install -y supervisor
+# lege Supervisor conf an für Laravel Queue falls benötigt
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start laravel-worker:*
+
+    Logs prüfen
+
+bash
+
+tail -f /var/www/smartscope-php/storage/logs/laravel.log
+
+Hinweise / Tipps
+
+    .env niemals in Git committen.
+    Backups: Sichern der MySQL‑Datenbank und des storage/app/public/uploads Ordners.
+    Für große Zahlen an Uploads empfiehlt sich ein S3‑Storage (externe Files).
+    Für automatischen Deploys nutze GitHub Actions, Forge oder ein simples Pull‑Script.
+
+
+
+
+
+
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
