@@ -1,17 +1,21 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
+@section('content')
+  <h2>Dashboard</h2>
+  <p>Willkommen, {{ auth()->user()->name }}!</p>
+
+  <div style="margin-top:12px">
+    <a href="{{ route('board') }}" style="margin-right:10px">Zur Sammlung (Board)</a>
+    <a href="{{ route('images.create') }}" style="margin-right:10px">Bild hochladen</a>
+    <a href="{{ route('profile.edit') }}">Profil bearbeiten</a>
+  </div>
+
+  <div style="margin-top:20px">
+    <h3>Kurzübersicht</h3>
+    <ul>
+      <li>E-Mail: {{ auth()->user()->email }}</li>
+      <li>Display name: {{ auth()->user()->display_name ?? '—' }}</li>
+      <li>Vollständiger Name: {{ auth()->user()->full_name ?? '—' }}</li>
+    </ul>
+  </div>
+@endsection
