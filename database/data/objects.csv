@@ -1,0 +1,111 @@
+name,catalog,ra,dec,type,description
+M1,Messier 1,05h34m31.94s,+22°00′52.2″,Supernova remnant,Crab Nebula
+M2,Messier 2,21h33m27.02s,-00°49′23.7″,Globular cluster,Large bright globular
+M3,Messier 3,13h42m11.62s,+28°22′38.2″,Globular cluster,Rich globular
+M4,Messier 4,16h23m35.22s,-26°31′32.7″,Globular cluster,Near bright globular
+M5,Messier 5,15h18m33.22s,+02°04′51.7″,Globular cluster,Large globular cluster
+M6,Messier 6,17h40m20.00s,-32°15′12.0″,Open cluster,Butterfly Cluster
+M7,Messier 7,17h53m51.00s,-34°49′00.0″,Open cluster,Ptolemy Cluster
+M8,Messier 8,18h03m37.00s,-24°23′12.0″,Nebula,Lagoon Nebula
+M9,Messier 9,17h19m11.38s,-18°30′57.2″,Globular cluster,Compact globular
+M10,Messier 10,16h57m09.05s,-04°06′01.5″,Globular cluster,Moderate globular
+M11,Messier 11,18h51m05.00s,-06°16′12.0″,Open cluster,Wild Duck Cluster
+M12,Messier 12,16h47m14.18s,-01°56′54.2″,Globular cluster,Loose globular
+M13,Messier 13,16h41m41.24s,+36°27′35.5″,Globular cluster,Great Hercules Cluster
+M14,Messier 14,17h37m36.11s,-03°14′45.5″,Globular cluster,Faint globular
+M15,Messier 15,21h29m58.33s,+12°10′01.2″,Globular cluster,Condensed globular
+M16,Messier 16,18h18m48.00s,-13°47′00.0″,Nebula,Eagle Nebula (Pillars)
+M17,Messier 17,18h20m24.00s,-16°10′36.0″,Nebula,Owl/Nebula (Swan / Omega)
+M18,Messier 18,18h20m40.00s,-16°10′00.0″,Open cluster,Small open cluster
+M19,Messier 19,17h02m37.69s,-26°16′04.7″,Globular cluster,Oblate globular
+M20,Messier 20,18h02m23.00s,-23°01′48.0″,Nebula,Trifid Nebula
+M21,Messier 21,18h04m13.00s,-22°29′12.0″,Open cluster,Compact open cluster
+M22,Messier 22,18h36m23.94s,-23°54′17.1″,Globular cluster,Prominent in Sagittarius
+M23,Messier 23,17h56m54.00s,-18°53′12.0″,Open cluster,Loose open cluster
+M24,Messier 24,18h16m00.00s,-18°53′00.0″,Star cloud,Small Sagittarius Star Cloud
+M25,Messier 25,18h31m46.00s,-19°06′00.0″,Open cluster,Scattered open cluster
+M26,Messier 26,18h45m18.00s,-09°24′00.0″,Open cluster,Small open cluster
+M27,Messier 27,19h59m36.34s,+22°43′16.1″,Planetary nebula,Dumbbell Nebula
+M28,Messier 28,18h24m32.89s,-24°52′10.5″,Globular cluster,Moderately bright
+M29,Messier 29,20h23m56.00s,+38°30′00.0″,Open cluster,Small cluster in Cygnus
+M30,Messier 30,21h40m22.12s,-23°10′48.5″,Globular cluster,Condensed core
+M31,Messier 31,00h42m44.3s,+41°16′9″,Galaxy,Andromeda Galaxy
+M32,Messier 32,00h42m41.8s,+40°51′55″,Galaxy,Dwarf elliptical companion to M31
+M33,Messier 33,01h33m50.9s,+30°39′37″,Galaxy,Triangulum Galaxy
+M34,Messier 34,02h42m05.90s,+42°45′42.0″,Open cluster,Open cluster in Perseus
+M35,Messier 35,06h09m06.00s,+24°20′00.0″,Open cluster,Large open cluster
+M36,Messier 36,05h36m18.00s,+34°08′24.0″,Open cluster,Pinwheel cluster
+M37,Messier 37,05h52m18.00s,+32°33′12.0″,Open cluster,Rich open cluster
+M38,Messier 38,05h28m40.00s,+35°50′00.0″,Open cluster,Starfish cluster
+M39,Messier 39,21h31m48.00s,+48°26′00.0″,Open cluster,Loose bright cluster
+M40,Messier 40,18h57m01.00s,+62°57′12.0″,Double star,Winnecke 4
+M41,Messier 41,06h46m00.00s,-20°45′00.0″,Open cluster,Bright open cluster
+M42,Messier 42,05h35m17.3s,-05°23′28″,Nebula,Orion Nebula
+M43,Messier 43,05h35m31.0s,-05°16′00.0″,Nebula,Part of Orion complex
+M44,Messier 44,08h40m24.00s,+19°59′00.0″,Open cluster,Beehive Cluster (Praesepe)
+M45,Messier 45,03h47m00.00s,+24°07′00.0″,Open cluster,Pleiades
+M46,Messier 46,07h41m46.00s,-14°48′36.0″,Open cluster,Cluster with planetary nebula
+M47,Messier 47,07h36m36.00s,-14°29′36.0″,Open cluster,Bright open cluster
+M48,Messier 48,08h13m34.00s,-05°45′00.0″,Open cluster,Scattered open cluster
+M49,Messier 49,12h29m46.80s,+08°00′01.0″,Galaxy,Elliptical in Virgo
+M50,Messier 50,07h02m36.00s,-08°20′00.0″,Open cluster,Open cluster in Monoceros
+M51,Messier 51,13h29m52.70s,+47°11′43.0″,Galaxy,Whirlpool Galaxy (interacting)
+M52,Messier 52,23h24m48.00s,+61°35′36.0″,Open cluster,Moderately rich cluster
+M53,Messier 53,13h12m55.25s,+18°10′05.0″,Globular cluster,Outer halo globular
+M54,Messier 54,18h55m03.33s,-30°28′47.5″,Globular cluster,In Sagittarius (at NGC 6715)
+M55,Messier 55,19h39m59.30s,-30°57′54.6″,Globular cluster,Sparse globular cluster
+M56,Messier 56,19h16m35.53s,+30°11′05.9″,Globular cluster,Small globular
+M57,Messier 57,18h53m35.08s,+33°01′45.0″,Planetary nebula,Ring Nebula
+M58,Messier 58,12h37m43.53s,+11°49′05.0″,Galaxy,Spiral in Virgo
+M59,Messier 59,12h42m02.33s,+11°38′48.3″,Galaxy,Elliptical galaxy
+M60,Messier 60,12h43m39.66s,+11°33′09.3″,Galaxy,Large elliptical in Virgo
+M61,Messier 61,12h21m54.95s,+04°28′25.9″,Galaxy,Spiral galaxy
+M62,Messier 62,17h01m12.51s,-30°06′49.4″,Globular cluster,Dense globular
+M63,Messier 63,13h15m49.26s,+42°01′45.5″,Galaxy,Sunflower Galaxy
+M64,Messier 64,12h56m43.66s,+21°40′58.6″,Galaxy,Black Eye Galaxy
+M65,Messier 65,11h18m55.62s,+13°05′31.1″,Galaxy,Leo Triplet member
+M66,Messier 66,11h20m15.02s,+12°59′29.5″,Galaxy,Leo Triplet member
+M67,Messier 67,08h50m23.00s,+11°49′56.0″,Open cluster,Old open cluster
+M68,Messier 68,13h39m48.27s,-26°44′36.2″,Globular cluster,Outer halo cluster
+M69,Messier 69,18h31m22.36s,-32°20′53.6″,Globular cluster,Near Galactic center
+M70,Messier 70,18h43m12.71s,-32°17′30.3″,Globular cluster,Close to Galactic center
+M71,Messier 71,19h53m46.49s,+18°46′45.6″,Globular cluster,Loose globular/cluster
+M72,Messier 72,20h53m55.00s,-12°38′30.0″,Globular cluster,Faint globular
+M73,Messier 73,20h58m55.00s,-12°38′00.0″,Asterism,Small grouping of stars
+M74,Messier 74,01h36m41.77s,+15°47′00.2″,Galaxy,Face-on spiral
+M75,Messier 75,20h06m04.85s,-21°55′16.6″,Globular cluster,Dense globular
+M76,Messier 76,01h42m19.60s,+51°34′31.0″,Planetary nebula,Cork screw nebula (Little Dumbbell)
+M77,Messier 77,02h42m40.71s,-00°00′47.8″,Galaxy,Barred spiral
+M78,Messier 78,05h46m46.00s,+00°00′00.0″,Reflection nebula,Reflection nebula in Orion
+M79,Messier 79,05h24m10.60s,-24°31′27.0″,Globular cluster,Outer halo globular
+M80,Messier 80,16h17m02.29s,-22°58′33.6″,Globular cluster,Bright dense globular
+M81,Messier 81,09h55m33.17s,+69°03′55.1″,Galaxy,Bode's Galaxy
+M82,Messier 82,09h55m52.72s,+69°40′46.1″,Galaxy,Cigar Galaxy (starburst)
+M83,Messier 83,13h37m00.90s,-29°51′56.7″,Galaxy,Southern Pinwheel
+M84,Messier 84,12h25m03.68s,+12°53′13.2″,Galaxy,Elliptical in Virgo
+M85,Messier 85,12h25m24.10s,+18°11′27.0″,Galaxy,Lenticular galaxy
+M86,Messier 86,12h26m11.73s,+12°56′46.2″,Galaxy,Elliptical in Virgo
+M87,Messier 87,12h30m49.42s,+12°23′28.0″,Galaxy,Supergiant elliptical with jet
+M88,Messier 88,12h31m59.11s,+14°25′13.6″,Galaxy,Spiral in Virgo
+M89,Messier 89,12h35m39.93s,+12°33′22.6″,Galaxy,Elliptical galaxy
+M90,Messier 90,12h36m49.83s,+13°09′46.1″,Galaxy,Bright spiral
+M91,Messier 91,12h35m37.00s,+14°29′00.0″,Galaxy,Faint spiral
+M92,Messier 92,17h17m07.39s,+43°08′11.5″,Globular cluster,Bright globular
+M93,Messier 93,07h44m40.00s,-23°52′00.0″,Open cluster,Open cluster in Puppis
+M94,Messier 94,12h50m53.06s,+41°07′12.4″,Galaxy,Inner ring galaxy
+M95,Messier 95,10h43m57.69s,+11°42′13.5″,Galaxy,Barred spiral
+M96,Messier 96,10h46m45.71s,+11°49′11.6″,Galaxy,Spiral galaxy
+M97,Messier 97,11h14m47.69s,+55°01′08.5″,Planetary nebula,Owl Nebula
+M98,Messier 98,12h13m48.10s,+14°54′01.0″,Galaxy,Spiral in Coma Berenices
+M99,Messier 99,12h18m49.60s,+14°24′59.0″,Galaxy,Spiral galaxy
+M100,Messier 100,12h22m54.89s,+15°49′20.8″,Galaxy,Grand design spiral
+M101,Messier 101,14h03m12.60s,+54°20′57.0″,Galaxy,Pinwheel Galaxy
+M102,Messier 102,15h06m29.00s,+55°45′00.0″,Galaxy,Possible duplicate/NGC 5866
+M103,Messier 103,01h33m23.00s,+60°41′00.0″,Open cluster,Small open cluster
+M104,Messier 104,12h39m59.40s,-11°37′23.0″,Galaxy,Sombrero Galaxy
+M105,Messier 105,10h46m45.70s,+12°34′53.0″,Galaxy,Elliptical galaxy
+M106,Messier 106,12h18m57.52s,+47°18′14.4″,Galaxy,Whirlpool-like galaxy
+M107,Messier 107,16h32m31.15s,-13°05′10.8″,Globular cluster,Loose globular
+M108,Messier 108,11h11m31.80s,+55°40′26.0″,Galaxy,Spiral galaxy
+M109,Messier 109,11h57m36.46s,+53°22′29.0″,Galaxy,Barred spiral
+M110,Messier 110,00h40m22.10s,+41°41′07.0″,Galaxy,Elliptical companion to M31

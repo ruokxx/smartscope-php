@@ -22,21 +22,40 @@ class ObjectController extends Controller
         return view('home', compact('images'));
     }
 
-    public function board()
+    public function board(Request $req)
     {
         $user = Auth::user();
-        $objects = Obj::orderBy('name')->get();
+        $q = trim($req->get('q', ''));
 
-        // For each object, find user's latest image if exists
+        // base query for objects with optional search
+        $query = Obj::query();
+        if ($q !== '') {
+            $query->where(function($b) use ($q) {
+                $b->where('name', 'like', "%{$q}%")
+                  ->orWhere('catalog', 'like', "%{$q}%")
+                  ->orWhere('type', 'like', "%{$q}%")
+                  ->orWhere('description', 'like', "%{$q}%");
+            });
+        }
+
+        // paginate results
+        $objects = $query->orderBy('name')->paginate(25)->withQueryString();
+
+        // preload user's latest images for visible objects
+        $objectIds = $objects->pluck('id')->toArray();
         $owned = [];
-        if ($user) {
-            $imgs = Image::where('user_id', $user->id)->get()->groupBy('object_id');
+        if ($user && count($objectIds)) {
+            $imgs = Image::whereIn('object_id', $objectIds)
+                ->where('user_id', $user->id)
+                ->get()
+                ->groupBy('object_id');
+
             foreach ($imgs as $objId => $group) {
                 $owned[$objId] = $group->sortByDesc('upload_time')->first();
             }
         }
 
-        return view('board', compact('objects','owned'));
+        return view('board', compact('objects','owned','q'));
     }
 
     // API: board with ownership info
@@ -60,8 +79,31 @@ class ObjectController extends Controller
     public function show($id)
     {
         $obj = Obj::findOrFail($id);
-        $images = $obj->images()->with('user','scopeModel')->orderBy('upload_time','desc')->get();
-        return view('objects.show', compact('obj','images'));
+
+        // all images for this object, eager loaded
+        $allImages = Image::with('user','scopeModel')
+            ->where('object_id', $obj->id)
+            ->orderBy('upload_time','desc')
+            ->get();
+
+        // list distinct uploaders (users)
+        $uploaders = $allImages->pluck('user')->unique('id')->values();
+
+        // images grouped by user id
+        $imagesByUser = $allImages->groupBy(function($img){ return $img->user ? $img->user->id : 0; });
+
+        // current user's own images for this object
+        $myImages = collect();
+        if (auth()->check()) {
+            $myImages = $imagesByUser->get(auth()->id(), collect());
+        }
+
+        return view('objects.show', [
+            'obj' => $obj,
+            'uploaders' => $uploaders,
+            'imagesByUser' => $imagesByUser,
+            'myImages' => $myImages,
+        ]);
     }
 
     public function showApi($id)

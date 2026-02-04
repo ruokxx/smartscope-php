@@ -60,9 +60,8 @@
       </tbody>
     </table>
 
-  <div style="margin-top:12px">
-  {!! $objects->links('pagination::bootstrap-4') !!}
-</div>
-
+    <div style="margin-top:12px">
+      {{ $objects->links() }}
+    </div>
   </div>
 @endsection

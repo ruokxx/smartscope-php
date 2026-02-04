@@ -37,3 +37,23 @@ Route::middleware(['auth'])->group(function () {
 if (file_exists(__DIR__ . '/auth.php')) {
     require __DIR__ . '/auth.php';
 }
+
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\ImageController as AdminImageController;
+
+Route::prefix('admin')->middleware(['auth','is_admin'])->group(function () {
+    Route::get('/', function(){ return redirect()->route('admin.users.index'); });
+
+    // users
+    Route::get('/users', [AdminUserController::class,'index'])->name('admin.users.index');
+    Route::get('/users/{user}/edit', [AdminUserController::class,'edit'])->name('admin.users.edit');
+    Route::put('/users/{user}', [AdminUserController::class,'update'])->name('admin.users.update');
+    Route::delete('/users/{user}', [AdminUserController::class,'destroy'])->name('admin.users.destroy');
+
+    // images
+    Route::get('/images', [AdminImageController::class,'index'])->name('admin.images.index');
+    Route::get('/images/{image}/edit', [AdminImageController::class,'edit'])->name('admin.images.edit');
+    Route::put('/images/{image}', [AdminImageController::class,'update'])->name('admin.images.update');
+    Route::delete('/images/{image}', [AdminImageController::class,'destroy'])->name('admin.images.destroy');
+    Route::post('/images/{image}/approve', [AdminImageController::class,'approve'])->name('admin.images.approve');
+});
