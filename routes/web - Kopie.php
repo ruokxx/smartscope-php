@@ -16,7 +16,6 @@ use App\Http\Controllers\CompareController;
 Route::get('/', [ObjectController::class, 'home'])->name('home');
 Route::get('/board', [ObjectController::class, 'board'])->name('board');
 Route::get('/objects/{id}', [ObjectController::class, 'show'])->name('objects.show');
-Route::get('/api/user/{id}/images', [ObjectController::class, 'userImages']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

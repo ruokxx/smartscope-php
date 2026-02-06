@@ -17,11 +17,10 @@
       <input name="email" value="{{ old('email', $user->email) }}">
     </div>
 
-<div class="form-row">
-  <input type="hidden" name="is_admin" value="0">
-  <label><input type="checkbox" name="is_admin" value="1" {{ $user->is_admin ? 'checked' : '' }}> Is admin</label>
-</div>
-
+    <div class="form-row">
+      <input type="hidden" name="is_admin" value="0">
+      <label><input type="checkbox" name="is_admin" value="1" {{ $user->is_admin ? 'checked' : '' }}> Is admin</label>
+    </div>
 
     <div style="margin-top:12px">
       <button class="btn" type="submit">Save</button>

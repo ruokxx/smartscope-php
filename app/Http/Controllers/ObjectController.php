@@ -9,18 +9,52 @@ use Illuminate\Support\Facades\Auth;
 
 class ObjectController extends Controller
 {
-    public function home()
-    {
-        // latest 5 uploads (last 2 hours) with user relation
-        $since = now()->subHours(2);
-        $images = Image::with('user')
-            ->where('upload_time', '>=', $since)
-            ->orderBy('upload_time','desc')
-            ->limit(5)
-            ->get();
+public function home()
+{
+    $since = now()->subHours(24);
+    $images = Image::with('user')
+        ->where('upload_time','>=',$since)
+        ->orderBy('upload_time','desc')
+        ->limit(3)
+        ->get();
 
-        return view('home', compact('images'));
-    }
+    $news = \App\Models\News::where('published',1)
+        ->orderBy('created_at','desc')
+        ->limit(5)
+        ->get();
+
+    // all registered users (only id & name)
+    $users = \App\Models\User::select('id','name')->orderBy('name')->get();
+
+    return view('home', compact('images','news','users'));
+}
+
+
+
+
+
+
+public function userImages(Request $req, $id)
+{
+    $perPage = (int) $req->get('per_page', 3);
+    $page = (int) $req->get('page', 1);
+
+    $query = Image::where('user_id', $id)->orderBy('upload_time','desc');
+    $paginator = $query->paginate($perPage, ['id','filename','path','upload_time'], 'page', $page);
+
+    // einfache JSON-Antwort mit Meta
+    return response()->json([
+        'data' => $paginator->items(),
+        'meta' => [
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'per_page' => $paginator->perPage(),
+            'total' => $paginator->total(),
+        ]
+    ]);
+}
+
+
 
     public function board(Request $req)
     {

@@ -1,83 +1,81 @@
 @extends('layouts.app')
 
 @section('content')
-  <h2 style="text-align:center; margin-bottom:18px;">Latest uploads (last 24 hours)</h2>
+  <h2 style="text-align:left">Latest uploads (last 24 hours)</h2>
 
-  <!-- centered container -->
-  <div style="max-width:1100px; margin:0 auto 20px; padding:0 16px;">
-
-    <!-- horizontal scroll area: shows up to 5 visible cards, left-aligned within the centered container -->
-    <div style="overflow-x:auto; white-space:nowrap; padding-bottom:8px; margin-bottom:18px;">
-      <div style="display:inline-flex; gap:16px; align-items:flex-start;">
+  <!-- top: images grid -->
+  <div style="display:flex; justify-content:center; margin-bottom:20px;">
+    <div style="max-width:1100px; width:100%;">
+      <div class="grid" style="justify-content:flex-start;">
         @forelse($images as $img)
-          <div class="card thumb-small" style="display:inline-block; vertical-align:top; width:180px; padding:8px; text-align:left;">
+          <div class="card thumb-small" style="width:180px; padding:8px; text-align:center;">
             <div style="height:110px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
               <img class="thumb" src="{{ Storage::url($img->path) }}" alt="{{ $img->filename }}" style="max-height:100%; max-width:100%; object-fit:cover;">
             </div>
             <div style="margin-top:8px; font-size:13px;">
-              <div style="font-weight:600;">{{ \Illuminate\Support\Str::limit($img->filename, 24) }}</div>
+              <div style="font-weight:600;">{{ \Illuminate\Support\Str::limit($img->filename, 18) }}</div>
               <div class="muted" style="font-size:12px;">{{ $img->user->name ?? '—' }}</div>
               <div class="muted" style="font-size:11px;">{{ optional($img->upload_time)->format('d.m.Y H:i') ?? '' }}</div>
             </div>
           </div>
         @empty
-          <div class="muted">No recent uploads.</div>
+          <p>No recent uploads.</p>
         @endforelse
       </div>
     </div>
+  </div>
 
-    <!-- centered news box (max 3) -->
-    <div style="display:flex; justify-content:center; margin-bottom:20px;">
-      <aside style="width:760px;">
-        <div class="card" id="newsPanel" style="padding:16px;">
-          <h3 style="margin-top:0; text-align:left">News</h3>
-          <div id="newsList">
-            @forelse($news->take(3) as $n)
-              <div style="margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.03);">
-                <div style="font-weight:700">{{ $n->title }}</div>
-                <div class="muted" style="font-size:12px">{{ $n->created_at->format('Y-m-d') }}</div>
-                <div style="margin-top:6px;font-size:14px;">{!! nl2br(e(\Illuminate\Support\Str::limit($n->body, 400))) !!}</div>
-              </div>
-            @empty
-              <p class="muted">No news yet.</p>
-            @endforelse
-          </div>
-        </div>
-      </aside>
-    </div>
-
-    <!-- users + uploads side-by-side (equal width) -->
-    <div style="display:flex; gap:18px; align-items:flex-start; justify-content:center;">
-      <aside style="width:440px;">
-        <div class="card" style="padding:16px;">
-          <h3 style="margin-top:0">Users</h3>
-          <div id="usersList" style="max-height:240px; overflow:auto; padding-right:6px;">
-            @foreach($users->take(5) as $u)
-              <div style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.02);">
-                <a href="#" class="user-link" data-user-id="{{ $u->id }}" style="color:var(--accent); text-decoration:none;">{{ $u->name ?? 'Unnamed' }}</a>
-              </div>
-            @endforeach
-          </div>
-          @if($users->count() > 5)
-            <div style="margin-top:8px;text-align:center">
-              <a href="{{ route('board') }}" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">View all users</a>
+  <!-- centered news box (max 3 items) -->
+  <div style="display:flex; justify-content:center; margin-bottom:20px;">
+    <aside style="width:760px;">
+      <div class="card" id="newsPanel" style="padding:16px;">
+        <h3 style="margin-top:0">News</h3>
+        <div id="newsList">
+          @forelse($news as $n)
+            <div style="margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.03);">
+              <div style="font-weight:700">{{ $n->title }}</div>
+              <div class="muted" style="font-size:12px">{{ $n->created_at->format('Y-m-d') }}</div>
+              <div style="margin-top:6px;font-size:14px;">{!! nl2br(e(\Illuminate\Support\Str::limit($n->body, 400))) !!}</div>
             </div>
-          @endif
+          @empty
+            <p class="muted">No news yet.</p>
+          @endforelse
         </div>
-      </aside>
+      </div>
+    </aside>
+  </div>
 
-      <aside style="width:440px;">
-        <div id="userImagesPanel" class="card" style="padding:16px; display:none;">
-          <h3 id="userImagesTitle" style="margin-top:0">Uploads</h3>
-          <div id="userImagesList" style="max-height:300px; overflow:auto;"></div>
-          <div id="userImagesPager" style="margin-top:8px; display:flex; gap:8px; justify-content:center; align-items:center;">
-            <button id="userPrev" class="btn" disabled>Prev</button>
-            <span id="userPageInfo" class="muted" style="margin:0 8px"></span>
-            <button id="userNext" class="btn" disabled>Next</button>
-          </div>
+  <!-- users and uploads side-by-side, equal width -->
+  <div style="display:flex; justify-content:center; gap:18px; align-items:flex-start;">
+    <aside style="width:440px;">
+      <div class="card" style="padding:16px;">
+        <h3 style="margin-top:0">Users</h3>
+        <div id="usersList" style="max-height:240px; overflow:auto; padding-right:6px;">
+          @foreach($users->take(5) as $u)
+            <div style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.02);">
+              <a href="#" class="user-link" data-user-id="{{ $u->id }}" style="color:var(--accent); text-decoration:none;">{{ $u->name ?? 'Unnamed' }}</a>
+            </div>
+          @endforeach
         </div>
-      </aside>
-    </div>
+        @if($users->count() > 5)
+          <div style="margin-top:8px;text-align:center">
+            <a href="{{ route('board') }}" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">View all users</a>
+          </div>
+        @endif
+      </div>
+    </aside>
+
+    <aside style="width:440px;">
+      <div id="userImagesPanel" class="card" style="padding:16px; display:none;">
+        <h3 id="userImagesTitle" style="margin-top:0">Uploads</h3>
+        <div id="userImagesList" style="max-height:300px; overflow:auto;"></div>
+        <div id="userImagesPager" style="margin-top:8px; display:flex; gap:8px; justify-content:center; align-items:center;">
+          <button id="userPrev" class="btn" disabled>Prev</button>
+          <span id="userPageInfo" class="muted" style="margin:0 8px"></span>
+          <button id="userNext" class="btn" disabled>Next</button>
+        </div>
+      </div>
+    </aside>
   </div>
 
   <script>

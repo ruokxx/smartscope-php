@@ -6,8 +6,6 @@
   <title>Admin • Smartscope</title>
   <link rel="stylesheet" href="{{ asset('css/app.css') }}">
   <style>
-
-
     :root{--bg1:#07121b;--bg2:#071827;--panel:rgba(18,25,33,0.92);--muted:#9aa6b2;--accent:#6fb8ff;--accent2:#b27bff;--border:rgba(255,255,255,0.06);--glow:rgba(111,184,255,0.06);}
     html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#e6eef6}
     header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border);backdrop-filter:blur(4px)}

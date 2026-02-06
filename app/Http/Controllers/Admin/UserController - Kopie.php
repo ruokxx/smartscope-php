@@ -20,21 +20,16 @@ class UserController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
-public function update(Request $req, User $user)
-{
-    $data = $req->validate([
-        'name'=>'nullable|string|max:255',
-        'email'=>'required|email|unique:users,email,'.$user->id,
-        'is_admin'=>'nullable|in:0,1',
-    ]);
-
-    // ensure boolean stored as 0/1
-    $data['is_admin'] = isset($data['is_admin']) && $data['is_admin'] == '1' ? 1 : 0;
-
-    $user->update($data);
-    return redirect()->route('admin.users.index')->with('success','User updated');
-}
-
+    public function update(Request $req, User $user)
+    {
+        $data = $req->validate([
+            'name'=>'nullable|string|max:255',
+            'email'=>'required|email|unique:users,email,'.$user->id,
+            'is_admin'=>'sometimes|boolean'
+        ]);
+        $user->update($data);
+        return redirect()->route('admin.users.index')->with('success','User updated');
+    }
 
     public function destroy(User $user)
     {
