@@ -1,12 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-  <h2 class="page-title">Latest uploads (last 24 hours)</h2>
+  <h2 style="text-align:center; margin-bottom:18px;">Latest uploads (last 24 hours)</h2>
 
-  <div class="home-centered-container">
+  <!-- centered container -->
+  <div style="max-width:1100px; margin:0 auto 20px; padding:0 16px;">
 
     <!-- horizontal scroll area: shows up to 5 visible cards, left-aligned within the centered container -->
-    <div class="home-thumbs-row">
+    <div style="overflow-x:auto; white-space:nowrap; padding-bottom:8px; margin-bottom:18px;">
       <div style="display:inline-flex; gap:16px; align-items:flex-start;">
         @forelse($images as $img)
           <div class="card thumb-small" style="display:inline-block; vertical-align:top; width:180px; padding:8px; text-align:left;">
@@ -25,9 +26,9 @@
       </div>
     </div>
 
-    <!-- news box aligned and full-width inside centered container -->
-    <div class="home-news-wrap">
-      <aside>
+    <!-- centered news box (max 3) -->
+    <div style="display:flex; justify-content:center; margin-bottom:20px;">
+      <aside style="width:760px;">
         <div class="card" id="newsPanel" style="padding:16px;">
           <h3 style="margin-top:0; text-align:left">News</h3>
           <div id="newsList">
@@ -45,11 +46,11 @@
       </aside>
     </div>
 
-    <!-- users + uploads side-by-side, left-aligned and symmetric spacing -->
-    <div class="home-two-col">
-      <aside>
+    <!-- users + uploads side-by-side (equal width) -->
+    <div style="display:flex; gap:18px; align-items:flex-start; justify-content:center;">
+      <aside style="width:440px;">
         <div class="card" style="padding:16px;">
-          <h3 style="margin-top:0">User Uploads</h3>
+          <h3 style="margin-top:0">Users</h3>
           <div id="usersList" style="max-height:240px; overflow:auto; padding-right:6px;">
             @foreach($users->take(5) as $u)
               <div style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.02);">
@@ -65,7 +66,7 @@
         </div>
       </aside>
 
-      <aside>
+      <aside style="width:440px;">
         <div id="userImagesPanel" class="card" style="padding:16px; display:none;">
           <h3 id="userImagesTitle" style="margin-top:0">Uploads</h3>
           <div id="userImagesList" style="max-height:300px; overflow:auto;"></div>
@@ -77,7 +78,6 @@
         </div>
       </aside>
     </div>
-
   </div>
 
   <script>
@@ -106,7 +106,7 @@
           const imgs = json.data || [];
           if (!imgs.length) {
             userImagesList.innerHTML = '<div class="muted">No uploads.</div>';
-            userPrev.disabled = true; userNext.disabled = true; userPageInfo.textContent='';
+            userPrev.disabled = true; userNext.disabled = true; userPageInfo.textContent=''; 
             return;
           }
           userImagesList.innerHTML = imgs.map(i=>{

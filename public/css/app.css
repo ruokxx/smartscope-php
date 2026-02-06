@@ -12,3 +12,53 @@ main{max-width:1100px;margin:24px auto;padding:0 16px}
 .styled-select{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#e6eef6}
 .btn{padding:8px 12px;border-radius:8px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#041229;border:0;cursor:pointer}
 .notice{padding:10px;background:rgba(111,184,255,0.04);border-radius:6px;margin-bottom:12px;color:#e6eef6}
+
+/* Ensure centered container padding is symmetric */
+.home-centered-container {
+  max-width: 1100px;
+  margin: 0 auto 20px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* Horizontal thumbnails row stays left-aligned inside the container */
+.home-thumbs-row {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+}
+
+/* News panel should span full inner width */
+.home-news-wrap {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.home-news-wrap aside {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Users + uploads: two columns that together fill container with equal right/left spacing */
+.home-two-col {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+}
+
+.home-two-col aside {
+  width: calc(50% - 9px); /* two equal columns, accounting for gap */
+  box-sizing: border-box;
+  min-width: 260px;
+}
+
+/* Keep responsive behavior */
+@media (max-width: 880px) {
+  .home-two-col { flex-direction: column; }
+  .home-two-col aside { width: 100%; }
+}
+
