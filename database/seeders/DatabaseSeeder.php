@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             ScopesSeeder::class,
             ObjectsSeeder::class,
             DemoUserSeeder::class,
+	    AdminUserSeeder::class,
         ]);
     }
 }

@@ -144,18 +144,6 @@
       width: 10px; height: 10px; border-right: 2px solid rgba(230,238,246,0.9); border-bottom: 2px solid rgba(230,238,246,0.9);
       pointer-events: none; opacity: 0.9;
     }
-
-.site-footer {
-  margin-top: 40px;
-  padding: 18px 0;
-  text-align: center;
-  color: var(--muted);
-  font-size: 13px;
-  border-top: 1px solid rgba(255,255,255,0.03);
-  background: linear-gradient(180deg, rgba(255,255,255,0.00), rgba(255,255,255,0.005));
-}
-.site-footer .container { max-width:1100px; margin:0 auto; padding:0 18px; }
-
 /* Upload form layout */
 .upload-form { max-width:760px; margin:0 auto; }
 .form-row { margin-bottom:14px; display:block; }
@@ -209,13 +197,7 @@
       <div class="notice">{{ session('success') }}</div>
     @endif
 
-  @yield('content')
-    
-    <footer class="site-footer">
-      <div class="container">
-        smarte scope vergleich beta v1 • © Sebastian Thielke 2026
-      </div>
-    </footer>
+    @yield('content')
   </main>
 </body>
 </html>

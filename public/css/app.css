@@ -1,0 +1,64 @@
+/* public/css/app.css — minimal fallback styles for app */
+:root{
+  --bg1:#07121b; --bg2:#071827; --panel:rgba(18,25,33,0.9);
+  --muted:#9aa6b2; --accent:#6fb8ff; --accent2:#b27bff;
+  --border:rgba(255,255,255,0.06); --glow:rgba(111,184,255,0.06);
+}
+html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#e6eef6}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border)}
+h1{margin:0;font-size:20px;color:var(--accent2)}
+main{max-width:1100px;margin:24px auto;padding:0 16px}
+.card{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:12px}
+.styled-select{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#e6eef6}
+.btn{padding:8px 12px;border-radius:8px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#041229;border:0;cursor:pointer}
+.notice{padding:10px;background:rgba(111,184,255,0.04);border-radius:6px;margin-bottom:12px;color:#e6eef6}
+
+/* Ensure centered container padding is symmetric */
+.home-centered-container {
+  max-width: 1100px;
+  margin: 0 auto 20px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* Horizontal thumbnails row stays left-aligned inside the container */
+.home-thumbs-row {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+}
+
+/* News panel should span full inner width */
+.home-news-wrap {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.home-news-wrap aside {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Users + uploads: two columns that together fill container with equal right/left spacing */
+.home-two-col {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+}
+
+.home-two-col aside {
+  width: calc(50% - 9px); /* two equal columns, accounting for gap */
+  box-sizing: border-box;
+  min-width: 260px;
+}
+
+/* Keep responsive behavior */
+@media (max-width: 880px) {
+  .home-two-col { flex-direction: column; }
+  .home-two-col aside { width: 100%; }
+}
+

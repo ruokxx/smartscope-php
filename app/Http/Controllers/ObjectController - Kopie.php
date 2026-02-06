@@ -15,7 +15,7 @@ public function home()
     $images = Image::with('user')
         ->where('upload_time','>=',$since)
         ->orderBy('upload_time','desc')
-        ->limit(3)
+        ->limit(8)
         ->get();
 
     $news = \App\Models\News::where('published',1)
