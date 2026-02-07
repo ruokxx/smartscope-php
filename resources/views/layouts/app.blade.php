@@ -175,6 +175,17 @@
     @media (max-width:900px){
       .grid{flex-direction:column;align-items:stretch}
       header{padding:12px}
+
+
+
+
+
+
+
+
+
+
+
     }
   </style>
 </head>

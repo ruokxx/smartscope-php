@@ -18,6 +18,14 @@
               <div class="muted" style="font-size:12px;">{{ $img->user->name ?? '—' }}</div>
               <div class="muted" style="font-size:11px;">{{ optional($img->upload_time)->format('d.m.Y H:i') ?? '' }}</div>
             </div>
+
+
+
+
+
+
+
+
           </div>
         @empty
           <div class="muted">No recent uploads.</div>
@@ -94,6 +102,20 @@
       let currentPage = 1;
       const perPage = 3;
 
+      function normalizePathToStorage(path){
+        if(!path) return '';
+        // remove leading slashes
+        path = path.replace(/^\/+/, '');
+        if (path.startsWith('public/')) {
+          return '/' + path.replace(/^public\//, 'storage/');
+        }
+        if (path.startsWith('storage/')) {
+          return '/' + path;
+        }
+        // already "uploads/..." or other relative -> prefix with /storage/
+        return '/storage/' + path;
+      }
+
       async function loadUserImages(userId, page=1) {
         currentUserId = userId;
         currentPage = page;
@@ -110,7 +132,7 @@
             return;
           }
           userImagesList.innerHTML = imgs.map(i=>{
-            const url = i.path ? i.path.replace(/^public\//,'/storage/') : '';
+            const url = normalizePathToStorage(i.path);
             return `<div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
               <div style="width:120px;height:90px;overflow:hidden;border-radius:6px;background:#0f1724">
                 ${url ? `<img src="${url}" style="width:100%;height:100%;object-fit:cover">` : ''}

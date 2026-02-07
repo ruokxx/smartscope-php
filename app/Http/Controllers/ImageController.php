@@ -18,37 +18,45 @@ class ImageController extends Controller
         return view('images.create', compact('scopes','objects'));
     }
 
-    public function store(Request $req)
+       public function store(Request $req)
     {
-        $req->validate([
-            'image' => 'required|image|max:10240',
-            'object_id' => 'nullable|exists:objects,id',
-            'scope_id' => 'nullable|exists:scopes,id',
-        ]);
+     $req->validate([
+     'image' => 'required|file|mimes:jpg,jpeg,png|mimetypes:image/jpeg,image/png|max:51200',
+     'object_id' => 'nullable|exists:objects,id',
+     'scope_id' => 'nullable|exists:scopes,id',
+     ]);
 
-        $user = Auth::user();
-        $file = $req->file('image');
-        $filename = time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
-        $path = $file->storeAs('public/uploads', $filename);
+     if (! $req->hasFile('image')) {
+     return back()->withErrors(['image' => 'No file uploaded']);
+     }
 
-        $img = Image::create([
-            'user_id' => $user->id,
-            'object_id' => $req->object_id ?: null,
-            'scope_id' => $req->scope_id ?: null,
-            'filename' => $filename,
-            'path' => $path,
-            'exposure_total_seconds' => $req->exposure_total_seconds,
-            'sub_exposure_seconds' => $req->sub_exposure_seconds,
-            'number_of_subs' => $req->number_of_subs,
-            'iso_or_gain' => $req->iso_or_gain,
-            'filter' => $req->filter,
-            'processing_software' => $req->processing_software,
-            'processing_steps' => $req->processing_steps,
-            'notes' => $req->notes,
-        ]);
+     $user = Auth::user();
+     $file = $req->file('image');
+     $filename = time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
+     $path = $file->storeAs('uploads', $filename, 'public');
 
-        return redirect()->route('objects.show', $req->object_id ?: $img->id)->with('success','Image uploaded');
-    }
+// nach dem $path setzen und vor Image::create(...)
+Image::create([
+    'user_id' => $user->id ?? null,
+    'object_id' => $req->object_id ?: null,
+    'scope_id' => $req->scope_id ?: null,
+    'filename' => $filename,
+    'path' => $path,
+    'exposure_total_seconds' => $req->exposure_total_seconds,
+    'sub_exposure_seconds' => $req->sub_exposure_seconds,
+    'number_of_subs' => $req->number_of_subs,
+    'iso_or_gain' => $req->iso_or_gain,
+    'filter' => $req->filter,
+    'processing_software' => $req->processing_software,
+    'processing_steps' => $req->processing_steps,
+    'notes' => $req->notes,
+    'approved' => 0, // wichtig: normaler Upload nicht sofort freigeben
+]);
+
+
+     return redirect()->route('objects.show', $req->object_id ?: $img->id)->with('success','Image uploaded');
+
+}
 
     // API: latest uploads
     public function latest(Request $req)
