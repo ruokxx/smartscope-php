@@ -1,7 +1,7 @@
 # 🌙 Smartscope Bilder Vergleich (Picture Compare)
 
 **Ein Ort zum Teilen, Vergleichen und Entdecken von Astrofotografie.**
-*Entwickelt für Smart-Teleskope wie Seestar S50, Dwarf II und Vespera.*
+*Entwickelt für Smart-Teleskope wie Seestar S50, Dwarf II.*
 
 ---
 
