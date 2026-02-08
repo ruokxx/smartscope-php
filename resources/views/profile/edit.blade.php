@@ -96,7 +96,7 @@
                     <div style="aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#000; position:relative;">
                          @if($isOwned && $img)
                              <a href="{{ route('objects.show', $obj->id) }}" style="width:100%; height:100%; display:block;">
-                                <img src="{{ Storage::url($img->path) }}" alt="{{ $img->filename }}" style="width:100%; height:100%; object-fit:cover;">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($img->path) }}" alt="{{ $img->filename }}" style="width:100%; height:100%; object-fit:cover;">
                              </a>
                              <!-- Green Check -->
                              <div style="position:absolute; top:4px; right:4px; background:#2ecc71; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:12px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">✓</div>
@@ -104,7 +104,7 @@
                              <!-- Placeholder text -->
                             <div style="text-align:center; padding:4px;">
                                 <div style="font-weight:700; color:var(--muted); font-size:12px;">{{ $obj->catalog }}</div>
-                                <div style="font-size:10px; color:var(--muted); word-break:break-word;">{{ Str::limit($obj->name, 20) }}</div>
+                                <div style="font-size:10px; color:var(--muted); word-break:break-word;">{{ \Illuminate\Support\Str::limit($obj->name, 20) }}</div>
                             </div>
                             <!-- Red Cross -->
                             <div style="position:absolute; top:4px; right:4px; background:#e74c3c; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:12px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">✕</div>

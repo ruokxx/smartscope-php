@@ -46,7 +46,7 @@
             <div style="aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#000; position:relative;">
                  @if($img)
                      <a href="{{ route('objects.show', $o->id) }}" style="width:100%; height:100%; display:block;">
-                        <img src="{{ Storage::url($img->path) }}" alt="{{ $img->filename }}" style="width:100%; height:100%; object-fit:cover;">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($img->path) }}" alt="{{ $img->filename }}" style="width:100%; height:100%; object-fit:cover;">
                      </a>
                      @auth
                         <!-- Green Check only for logged in users -->
@@ -57,7 +57,7 @@
                         <!-- Placeholder text -->
                         <div style="text-align:center; padding:4px;">
                             <div style="font-weight:700; color:var(--muted); font-size:12px;">{{ $o->catalog }}</div>
-                            <div style="font-size:10px; color:var(--muted); word-break:break-word;">{{ Str::limit($o->name, 20) }}</div>
+                            <div style="font-size:10px; color:var(--muted); word-break:break-word;">{{ \Illuminate\Support\Str::limit($o->name, 20) }}</div>
                         </div>
                      </a>
                      @auth
