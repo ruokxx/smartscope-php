@@ -35,17 +35,34 @@ Dieses Projekt basiert auf modernen Web-Technologien:
 
 ---
 
-## 📦 Installation (Lokal)
+## 📦 Installation
 
-Du möchtest das Projekt lokal ausführen? Folge diesen Schritten:
+### 📋 Voraussetzungen
 
-### Voraussetzungen
-*   PHP 8.1 oder höher
-*   Composer
-*   Node.js & npm
-*   MySQL Datenbank
+Für den Betrieb der Anwendung werden folgende Komponenten benötigt:
 
-### Schritte
+*   **PHP**: Version 8.1 oder höher
+*   **Datenbank**: MySQL oder MariaDB
+*   **Webserver**: Nginx oder Apache
+*   **Tools**: [Composer](https://getcomposer.org/), [Node.js](https://nodejs.org/) & npm
+
+### 💻 Installation (Lokal)
+
+#### 🪟 Windows
+Wir empfehlen die Nutzung von **Laragon** oder **XAMPP**.
+1.  Stelle sicher, dass PHP 8.1+ und MySQL laufen.
+2.  Installiere Composer und Node.js für Windows.
+3.  Öffne eine PowerShell oder Git Bash im Projektordner und folge den allgemeinen Schritten unten.
+
+#### 🐧 Linux (Ubuntu/Debian)
+Installiere die benötigten Pakete:
+```bash
+sudo apt update
+sudo apt install -y php8.1 php8.1-cli php8.1-fpm php8.1-mysql php8.1-curl php8.1-gd php8.1-mbstring php8.1-xml php8.1-zip unzip
+sudo apt install -y mysql-server nginx composer nodejs npm
+```
+
+### 🚀 Allgemeine Einrichtungsschritte
 
 1.  **Repository klonen**
     ```bash
@@ -59,36 +76,67 @@ Du möchtest das Projekt lokal ausführen? Folge diesen Schritten:
     npm install
     ```
 
-3.  **Umgebungsvariablen konfigurieren**
-    *   Kopiere `.env.example` zu `.env`:
+3.  **Konfiguration**
+    *   Kopiere die `.env.example`:
         ```bash
         cp .env.example .env
         ```
-    *   Öffne `.env` und trage deine Datenbank-Zugangsdaten ein (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
+    *   Bearbeite die `.env` Datei und trage deine Datenbank-Infos ein:
+        ```ini
+        DB_DATABASE=smartscope_db
+        DB_USERNAME=root
+        DB_PASSWORD=
+        ```
 
 4.  **App-Key generieren**
     ```bash
     php artisan key:generate
     ```
 
-5.  **Datenbank migrieren & seeden**
+5.  **Datenbank einrichten**
     ```bash
+    # Erstellt Tabellen und füllt sie mit DSO-Daten & Test-Usern
     php artisan migrate --seed
     ```
-    *Dies legt die Tabellen an und füllt sie mit Testdaten und dem DSO-Katalog.*
 
-6.  **Storage Link setzen**
+6.  **Storage verlinken**
     ```bash
     php artisan storage:link
     ```
 
-7.  **Server starten**
+7.  **Starten**
+    *   **Backend & Server**: `php artisan serve`
+    *   **Frontend Assets** (in neuem Terminal): `npm run dev`
+
+Die Seite ist nun unter [http://localhost:8000](http://localhost:8000) erreichbar.
+
+---
+
+## 🔑 Admin Account & Verwaltung
+
+Das System verfügt über ein Admin-Panel für die Verwaltung von Benutzern und News/Changelogs.
+
+### Standard Admin-Account
+Wenn du `php artisan migrate --seed` ausgeführt hast, wird automatisch ein Admin-Benutzer angelegt:
+
+*   **E-Mail**: `admin@example.com`
+*   **Passwort**: `adminpassword`
+
+### Admin manuell erstellen
+Du kannst jedem existierenden Benutzer Admin-Rechte über die Konsole (Tinker) geben:
+
+1.  Öffne die Tinker-Konsole:
     ```bash
-    npm run dev
-    php artisan serve
+    php artisan tinker
     ```
 
-Die Anwendung ist nun unter `http://localhost:8000` erreichbar.
+2.  Führe folgenden PHP-Code aus (ersetze die ID oder E-Mail entsprechend):
+    ```php
+    $user = \App\Models\User::where('email', 'deine.email@example.com')->first();
+    $user->is_admin = true;
+    $user->save();
+    exit;
+    ```
 
 ---
 
