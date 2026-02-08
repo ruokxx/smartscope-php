@@ -71,8 +71,8 @@ const uploaderSelect = document.getElementById('uploaderSelect');
       const compareRight = document.getElementById('compareRight');
 
 // robustes Setup: finde alle cards die ein data-image-id besitzen
-const images = Array.from(document.querySelectorAll('.image-card[data-image-id]'));
-const uploaderSelect = document.getElementById('uploaderSelect');
+// const images = Array.from(document.querySelectorAll('.image-card[data-image-id]'));
+//const uploaderSelect = document.getElementById('uploaderSelect');
 
 function filterByUser(userId){
   images.forEach(card => {
