@@ -35,24 +35,21 @@ class ImageController extends Controller
      $filename = time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
      $path = $file->storeAs('uploads', $filename, 'public');
 
-// nach dem $path setzen und vor Image::create(...)
-Image::create([
-    'user_id' => $user->id ?? null,
-    'object_id' => $req->object_id ?: null,
-    'scope_id' => $req->scope_id ?: null,
-    'filename' => $filename,
-    'path' => $path,
-    'exposure_total_seconds' => $req->exposure_total_seconds,
-    'sub_exposure_seconds' => $req->sub_exposure_seconds,
-    'number_of_subs' => $req->number_of_subs,
-    'iso_or_gain' => $req->iso_or_gain,
-    'filter' => $req->filter,
-    'processing_software' => $req->processing_software,
-    'processing_steps' => $req->processing_steps,
-    'notes' => $req->notes,
-    'approved' => 0, // wichtig: normaler Upload nicht sofort freigeben
-]);
-
+     $img = Image::create([
+     'user_id' => $user ? $user->id : null,
+     'object_id' => $req->object_id ?: null,
+     'scope_id' => $req->scope_id ?: null,
+     'filename' => $filename,
+     'path' => $path,
+     'exposure_total_seconds' => $req->exposure_total_seconds,
+     'sub_exposure_seconds' => $req->sub_exposure_seconds,
+     'number_of_subs' => $req->number_of_subs,
+     'iso_or_gain' => $req->iso_or_gain,
+     'filter' => $req->filter,
+     'processing_software' => $req->processing_software,
+     'processing_steps' => $req->processing_steps,
+     'notes' => $req->notes,
+     ]);
 
      return redirect()->route('objects.show', $req->object_id ?: $img->id)->with('success','Image uploaded');
 
@@ -68,3 +65,4 @@ Image::create([
         return response()->json($images);
     }
 }
+
