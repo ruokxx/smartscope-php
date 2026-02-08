@@ -15,45 +15,53 @@ class ImageController extends Controller
     {
         $scopes = Scope::all();
         $objects = Obj::orderBy('name')->get();
-        return view('images.create', compact('scopes','objects'));
+        return view('images.create', compact('scopes', 'objects'));
     }
 
-       public function store(Request $req)
+    public function store(Request $req)
     {
-     $req->validate([
-     'image' => 'required|file|mimes:jpg,jpeg,png|mimetypes:image/jpeg,image/png|max:51200',
-     'object_id' => 'nullable|exists:objects,id',
-     'scope_id' => 'nullable|exists:scopes,id',
-     ]);
+        $req->validate([
+            'image' => 'required|file|mimes:jpg,jpeg,png|mimetypes:image/jpeg,image/png|max:51200',
+            'object_id' => 'nullable|exists:objects,id',
+            'bortle' => 'nullable|integer|min:1|max:9',
+            'seeing' => 'nullable|string|max:255',
+            'session_date' => 'nullable|date',
+            'sub_exposure_time' => 'nullable|numeric',
+            'gain' => 'nullable|integer',
+        ]);
 
-     if (! $req->hasFile('image')) {
-     return back()->withErrors(['image' => 'No file uploaded']);
-     }
+        if (!$req->hasFile('image')) {
+            return back()->withErrors(['image' => 'No file uploaded']);
+        }
 
-     $user = Auth::user();
-     $file = $req->file('image');
-     $filename = time().'_'.Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.'.$file->getClientOriginalExtension();
-     $path = $file->storeAs('uploads', $filename, 'public');
+        $user = Auth::user();
+        $file = $req->file('image');
+        $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+        $path = $file->storeAs('uploads', $filename, 'public');
 
-     $img = Image::create([
-     'user_id' => $user ? $user->id : null,
-     'object_id' => $req->object_id ?: null,
-     'scope_id' => $req->scope_id ?: null,
-     'filename' => $filename,
-     'path' => $path,
-     'exposure_total_seconds' => $req->exposure_total_seconds,
-     'sub_exposure_seconds' => $req->sub_exposure_seconds,
-     'number_of_subs' => $req->number_of_subs,
-     'iso_or_gain' => $req->iso_or_gain,
-     'filter' => $req->filter,
-     'processing_software' => $req->processing_software,
-     'processing_steps' => $req->processing_steps,
-     'notes' => $req->notes,
-     ]);
+        $img = Image::create([
+            'user_id' => $user ? $user->id : null,
+            'object_id' => $req->object_id ?: null,
+            'scope_id' => $req->scope_id ?: null,
+            'filename' => $filename,
+            'path' => $path,
+            'exposure_total_seconds' => $req->exposure_total_seconds,
+            'sub_exposure_seconds' => $req->sub_exposure_seconds,
+            'sub_exposure_time' => $req->sub_exposure_time,
+            'number_of_subs' => $req->number_of_subs,
+            'iso_or_gain' => $req->iso_or_gain,
+            'gain' => $req->gain,
+            'filter' => $req->filter,
+            'bortle' => $req->bortle,
+            'seeing' => $req->seeing,
+            'session_date' => $req->session_date,
+            'processing_software' => $req->processing_software,
+            'processing_steps' => $req->processing_steps,
+            'notes' => $req->notes,
+        ]);
 
-     return redirect()->route('objects.show', $req->object_id ?: $img->id)->with('success','Image uploaded');
-
-}
+        return redirect()->route('objects.show', $req->object_id ?: $img->id)->with('success', 'Image uploaded');
+    }
 
     // API: latest uploads
     public function latest(Request $req)
@@ -61,8 +69,24 @@ class ImageController extends Controller
         $hours = intval($req->get('hours', 2));
         $limit = intval($req->get('limit', 5));
         $since = now()->subHours($hours);
-        $images = Image::where('upload_time','>=',$since)->orderBy('upload_time','desc')->limit($limit)->get();
+        $images = Image::where('upload_time', '>=', $since)->orderBy('upload_time', 'desc')->limit($limit)->get();
         return response()->json($images);
     }
-}
+    public function destroy($id)
+    {
+        $img = Image::findOrFail($id);
 
+        if ($img->user_id !== Auth::id()) {
+            return back()->with('error', 'Unauthorized');
+        }
+
+        // Delete file
+        if ($img->path) {
+            Storage::disk('public')->delete($img->path);
+        }
+
+        $img->delete();
+
+        return back()->with('success', 'Image deleted');
+    }
+}

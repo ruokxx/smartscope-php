@@ -16,10 +16,8 @@ class User extends Authenticatable
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
-     */
-protected $fillable = [
-  'name','email','password','display_name','full_name','twitter','instagram','homepage','is_admin'
-];
+     */    protected $fillable = [
+        'name', 'email', 'password', 'display_name', 'full_name', 'twitter', 'instagram', 'homepage', 'is_admin'    ];
 
 
     /**
@@ -41,4 +39,8 @@ protected $fillable = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function scopes()
+    {
+        return $this->belongsToMany(\App\Models\Scope::class , 'scope_user');
+    }
 }

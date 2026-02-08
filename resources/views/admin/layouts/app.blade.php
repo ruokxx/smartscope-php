@@ -32,6 +32,7 @@
       <a href="{{ route('admin.users.index') }}">Users</a>
       <a href="{{ route('admin.images.index') }}">Images</a>
       <a href="{{ route('admin.news.index') }}">News</a>
+      <a href="{{ route('admin.changelogs.index') }}">Changelogs</a>
       <a href="{{ route('home') }}">Site</a>
     </nav>
   </header>

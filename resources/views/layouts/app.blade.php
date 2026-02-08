@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Smartscope Catalog</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
+  <title>{{ __('messages.site_title') }}</title>
   <link rel="stylesheet" href="{{ asset('css/app.css') }}">
   <style>
     :root{
@@ -18,10 +19,11 @@
     }
 
     html,body{
-      height:100%;
+      min-height:100vh;
       margin:0;
       font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,Helvetica;
       background: linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 100%);
+      background-attachment: fixed;
       color:#e6eef6;
       -webkit-font-smoothing:antialiased;
     }
@@ -51,8 +53,13 @@
       backdrop-filter: blur(4px);
     }
 
-    h1{margin:0;font-size:20px;color:var(--accent2);font-weight:700}
-    h1 a{color:var(--accent2);text-decoration:none}
+    h1{margin:0;font-size:20px;font-weight:700}
+    h1 a{
+      background: linear-gradient(90deg, #e6eef6, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-decoration:none;
+    }
 
     nav{display:flex;gap:10px;align-items:center;z-index:2}
     nav a, nav button{
@@ -191,26 +198,34 @@
 </head>
 <body>
   <header>
-    <div><h1><a href="{{ route('home') }}">Smartscope Catalog</a></h1></div>
+    <div><h1><a href="{{ route('home') }}">{{ __('messages.site_title') }}</a></h1></div>
     <nav>
-      <a href="{{ route('home') }}">Home</a>
-      <a href="{{ route('board') }}">Collection</a>
+      {{-- Language Switcher --}}
+      <div style="display:flex; gap:4px; margin-right:8px;">
+          <a href="{{ route('lang.switch', 'en') }}" style="padding:4px 8px; font-size:12px; {{ app()->getLocale() == 'en' ? 'background:rgba(111,184,255,0.2);color:#fff;' : '' }}">EN</a>
+          <a href="{{ route('lang.switch', 'de') }}" style="padding:4px 8px; font-size:12px; {{ app()->getLocale() == 'de' ? 'background:rgba(111,184,255,0.2);color:#fff;' : '' }}">DE</a>
+      </div>
+
+      <a href="{{ route('home') }}">{{ __('messages.home') }}</a>
+      <a href="{{ route('board') }}">{{ __('messages.collection') }}</a>
+
+
 
       @auth
         @if(auth()->user()->is_admin ?? false)
-          <a href="{{ route('admin.users.index') }}" class="admin-btn">Admin</a>
+          <a href="{{ route('admin.users.index') }}" class="admin-btn">{{ __('messages.admin') }}</a>
         @endif
 
-        <a href="{{ route('images.create') }}">Upload</a>
+        <a href="{{ route('images.create') }}">{{ __('messages.upload') }}</a>
         <a href="{{ route('profile.edit') }}">Profile</a>
 
         <form method="POST" action="{{ route('logout') }}" style="display:inline;margin:0">
           @csrf
-          <button type="submit">Logout</button>
+          <button type="submit">{{ __('messages.logout') }}</button>
         </form>
       @else
-        <a href="{{ route('login') }}">Log in</a>
-        <a href="{{ route('register') }}">Register</a>
+        <a href="{{ route('login') }}">{{ __('messages.login') }}</a>
+        <a href="{{ route('register') }}">{{ __('messages.register') }}</a>
       @endauth
     </nav>
   </header>
@@ -225,6 +240,11 @@
     <footer class="site-footer">
       <div class="container">
         smarte scope vergleich beta v1 • © Sebastian Thielke 2026
+        <a href="https://www.facebook.com/T4hund3R/" target="_blank" style="color:#9aa6b2; text-decoration:none; vertical-align:middle; margin-left:10px; display:inline-flex; align-items:center;" title="Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+          </svg>
+        </a>
       </div>
     </footer>
   </main>
