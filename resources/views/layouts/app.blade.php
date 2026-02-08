@@ -152,6 +152,20 @@
       pointer-events: none; opacity: 0.9;
     }
 
+    /* Mobile Menu Styles */
+    .mobile-menu-btn { display: none; background: transparent; border: none; color: #fff; font-size: 24px; cursor: pointer; z-index: 20; padding: 8px; }
+    .mobile-menu {
+        position: fixed; inset: 0; background: rgba(7, 18, 27, 0.95); backdrop-filter: blur(10px); z-index: 15;
+        display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .mobile-menu.active { display: flex; opacity: 1; }
+    .mobile-menu a, .mobile-menu button {
+        background: transparent; border: none; color: #fff; font-size: 18px; margin: 12px 0; text-decoration: none; padding: 10px 20px; border-radius: 8px;
+        transition: background 0.2s; text-align: center; width: 100%; max-width: 250px;
+    }
+    .mobile-menu a.logout-btn { color: #ff6b6b; }
+    .mobile-menu a:hover, .mobile-menu button:hover { background: rgba(255,255,255,0.1); }
+
 .site-footer {
   margin-top: 40px;
   padding: 18px 0;
@@ -181,25 +195,21 @@
 
     @media (max-width:900px){
       .grid{flex-direction:column;align-items:stretch}
-      header{padding:12px}
+      header{padding:12px 18px;}
+      nav.desktop-nav { display: none; }
+      .mobile-menu-btn { display: block; }
 
-
-
-
-
-
-
-
-
-
-
+      /* Mobile nav layout */
+      .mobile-menu a, .mobile-menu button { font-size: 18px; padding: 12px; }
     }
   </style>
 </head>
-<body>
+<body style="background-color: var(--bg1);"> <!-- Ensure background color is set to avoid white footer -->
   <header>
-    <div><h1><a href="{{ route('home') }}">{{ __('messages.site_title') }}</a></h1></div>
-    <nav>
+    <div style="z-index: 21;"><h1><a href="{{ route('home') }}">{{ __('messages.site_title') }}</a></h1></div>
+    
+    <!-- Desktop Nav -->
+    <nav class="desktop-nav">
       {{-- Language Switcher --}}
       <div style="display:flex; gap:4px; margin-right:8px;">
           <a href="{{ route('lang.switch', 'en') }}" style="padding:4px 8px; font-size:12px; {{ app()->getLocale() == 'en' ? 'background:rgba(111,184,255,0.2);color:#fff;' : '' }}">EN</a>
@@ -224,11 +234,43 @@
           <button type="submit">{{ __('messages.logout') }}</button>
         </form>
       @else
-        <a href="{{ route('login') }}">{{ __('messages.login') }}</a>
-        <a href="{{ route('register') }}">{{ __('messages.register') }}</a>
+        <a href="#" onclick="event.preventDefault(); openAuthModal('login')">{{ __('messages.login') }}</a>
+        <a href="#" onclick="event.preventDefault(); openAuthModal('register')">{{ __('messages.register') }}</a>
       @endauth
     </nav>
+
+    <!-- Hamburger Button -->
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
   </header>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu" class="mobile-menu">
+      <h2 style="color:var(--muted); font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:24px;">Menu</h2>
+      
+      <a href="{{ route('home') }}" onclick="toggleMobileMenu()">{{ __('messages.home') }}</a>
+      <a href="{{ route('board') }}" onclick="toggleMobileMenu()">{{ __('messages.collection') }}</a>
+
+      @auth
+        @if(auth()->user()->is_admin ?? false)
+          <a href="{{ route('admin.users.index') }}" class="admin-btn" onclick="toggleMobileMenu()">{{ __('messages.admin') }}</a>
+        @endif
+        <a href="{{ route('images.create') }}" onclick="toggleMobileMenu()">{{ __('messages.upload') }}</a>
+        <a href="{{ route('profile.edit') }}" onclick="toggleMobileMenu()">Profile</a>
+        <form method="POST" action="{{ route('logout') }}" style="width:100%; display:flex; justify-content:center;">
+          @csrf
+          <button type="submit" class="logout-btn">{{ __('messages.logout') }}</button>
+        </form>
+      @else
+        <a href="#" onclick="event.preventDefault(); toggleMobileMenu(); openAuthModal('login')">{{ __('messages.login') }}</a>
+        <a href="#" onclick="event.preventDefault(); toggleMobileMenu(); openAuthModal('register')">{{ __('messages.register') }}</a>
+      @endauth
+
+      <!-- Mobile Language Switcher -->
+      <div style="margin-top:24px; display:flex; gap:12px;">
+          <a href="{{ route('lang.switch', 'en') }}" style="width:auto; {{ app()->getLocale() == 'en' ? 'color:var(--accent);border-bottom:1px solid var(--accent);' : 'color:var(--muted);' }}">English</a>
+          <a href="{{ route('lang.switch', 'de') }}" style="width:auto; {{ app()->getLocale() == 'de' ? 'color:var(--accent);border-bottom:1px solid var(--accent);' : 'color:var(--muted);' }}">Deutsch</a>
+      </div>
+  </div>
 
   <main>
     @if(session('success'))
@@ -248,5 +290,22 @@
       </div>
     </footer>
   </main>
+  @include('partials.auth-modal')
+
+  <script>
+      function toggleMobileMenu() {
+          const menu = document.getElementById('mobile-menu');
+          const btn = document.querySelector('.mobile-menu-btn');
+          if (menu.classList.contains('active')) {
+              menu.classList.remove('active');
+              btn.innerHTML = '☰';
+              document.body.style.overflow = '';
+          } else {
+              menu.classList.add('active');
+              btn.innerHTML = '✕';
+              document.body.style.overflow = 'hidden';
+          }
+      }
+  </script>
 </body>
 </html>
