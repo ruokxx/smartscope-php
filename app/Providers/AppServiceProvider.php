@@ -30,6 +30,11 @@ class AppServiceProvider extends ServiceProvider
         // Load settings from DB
         $settings = \App\Models\Setting::all()->pluck('value', 'key');
 
+        // Force HTTPS if enabled
+        if (isset($settings['ssl_enabled']) && $settings['ssl_enabled']) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Override Mail Config
         if (isset($settings['smtp_enabled']) && $settings['smtp_enabled']) {
             config([

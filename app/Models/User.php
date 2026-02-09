@@ -17,7 +17,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */protected $fillable = [
-        'name', 'email', 'password', 'display_name', 'full_name', 'twitter', 'instagram', 'homepage', 'is_admin', 'is_moderator', 'banned_at'];
+        'name', 'email', 'password', 'display_name', 'full_name', 'twitter', 'instagram', 'homepage', 'is_admin', 'is_moderator', 'banned_at', 'banned_until'];
 
 
     /**
@@ -40,6 +40,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
         'is_moderator' => 'boolean',
         'banned_at' => 'datetime',
+        'banned_until' => 'datetime',
     ];
 
     public function isModerator()
@@ -49,7 +50,14 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isBanned()
     {
-        return $this->banned_at !== null;
+        if ($this->banned_at) {
+            // Permanent ban if banned_until is null, or temporary ban if banned_until is in future
+            if ($this->banned_until === null) {
+                return true;
+            }
+            return $this->banned_until->isFuture();
+        }
+        return false;
     }
 
     public function getRoleColorAttribute()

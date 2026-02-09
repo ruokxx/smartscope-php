@@ -112,6 +112,7 @@ Route::prefix('admin/moderation')->name('admin.moderation.')->middleware(['auth'
 // Moderator/Admin actions on users
 Route::middleware(['auth', 'is_admin'])->prefix('admin/users')->name('admin.users.')->group(function () {
     Route::post('/{user}/toggle-moderator', [AdminUserController::class , 'toggleModerator'])->name('toggle-moderator');
+    Route::post('/{user}/verify', [AdminUserController::class , 'verifyEmail'])->name('verify');
     Route::post('/{user}/ban', [AdminUserController::class , 'ban'])->name('ban');
     Route::post('/{user}/unban', [AdminUserController::class , 'unban'])->name('unban');
 });

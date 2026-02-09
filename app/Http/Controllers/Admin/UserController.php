@@ -43,16 +43,59 @@ class UserController extends Controller
         return back()->with('success', 'User moderator status updated.');
     }
 
-    public function ban(User $user)
+    public function verifyEmail(User $user)
     {
-        $user->banned_at = now();
+        if ($user->hasVerifiedEmail()) {
+            $user->email_verified_at = null;
+            $msg = 'User email marked as unverified.';
+        }
+        else {
+            $user->markEmailAsVerified();
+            $msg = 'User email manually verified.';
+        }
         $user->save();
-        return back()->with('success', 'User has been banned.');
+        return back()->with('success', $msg);
+    }
+
+    public function ban(Request $req, User $user)
+    {
+        $duration = $req->input('duration', 'permanent'); // permanent, 24h, 3d, 1w, 1m
+
+        $user->banned_at = now();
+
+        if ($duration === 'permanent') {
+            $user->banned_until = null;
+            $msg = 'User has been banned permanently.';
+        }
+        else {
+            switch ($duration) {
+                case '24h':
+                    $until = now()->addDay();
+                    break;
+                case '3d':
+                    $until = now()->addDays(3);
+                    break;
+                case '1w':
+                    $until = now()->addWeek();
+                    break;
+                case '1m':
+                    $until = now()->addMonth();
+                    break;
+                default:
+                    $until = null; // fallback to permanent
+            }
+            $user->banned_until = $until;
+            $msg = 'User has been banned until ' . $until->format('Y-m-d H:i');
+        }
+
+        $user->save();
+        return back()->with('success', $msg);
     }
 
     public function unban(User $user)
     {
         $user->banned_at = null;
+        $user->banned_until = null;
         $user->save();
         return back()->with('success', 'User has been unbanned.');
     }

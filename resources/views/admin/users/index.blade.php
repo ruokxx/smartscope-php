@@ -7,7 +7,6 @@
     <form method="GET" style="display:flex;gap:8px;align-items:center">
       <input type="search" name="q" value="{{ $q ?? '' }}" placeholder="search email or name" style="padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#e6eef6">
       <button class="btn" type="submit">Search</button>
-      <a href="{{ route('admin.users.create') }}" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);margin-left:8px">Create</a>
     </form>
   </div>
 

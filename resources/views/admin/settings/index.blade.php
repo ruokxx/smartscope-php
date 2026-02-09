@@ -10,6 +10,65 @@
 
     <form method="POST" action="{{ route('admin.settings.update') }}" class="upload-form">
         @csrf
+
+        <!-- Domain & SSL Settings -->
+        <h3>Domain & SSL</h3>
+        <div class="card" style="background:rgba(255,255,255,0.02); padding:16px; margin-bottom:24px; border:1px solid rgba(255,255,255,0.05);">
+            <div class="form-row">
+                <label style="display:flex; align-items:center; cursor:pointer; color:var(--accent);">
+                    <input type="checkbox" name="ssl_enabled" value="1" {{ isset($settings['ssl_enabled']) && $settings['ssl_enabled'] ? 'checked' : '' }} style="width:auto; margin-right:8px;">
+                    <strong>Force HTTPS (SSL)</strong>
+                </label>
+                <div style="font-size:12px; color:var(--muted); margin-top:4px;">
+                    Enabling this will force all application links to use <code>https://</code>. 
+                    <strong>Important:</strong> You must ensure your web server is configured to serve HTTPS on port 443 with valid certificates. This setting does not configure the web server itself.
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label>System Domain</label>
+                <input type="text" name="system_domain" value="{{ $settings['system_domain'] ?? request()->getHost() }}" placeholder="example.com">
+                <div style="font-size:11px; color:var(--muted); margin-top:2px;">The primary domain used for generating links.</div>
+            </div>
+
+            <div class="row-2">
+                <div class="form-row">
+                    <label>SSL Certificate (Public)</label>
+                    <textarea name="ssl_certificate" rows="4" placeholder="-----BEGIN CERTIFICATE----- ... (Optional storage for reference)" style="font-family:monospace; font-size:11px;">{{ $settings['ssl_certificate'] ?? '' }}</textarea>
+                </div>
+                <div class="form-row">
+                    <label>SSL Private Key</label>
+                    <textarea name="ssl_private_key" rows="4" placeholder="-----BEGIN PRIVATE KEY----- ... (Optional storage for reference)" style="font-family:monospace; font-size:11px;">{{ $settings['ssl_private_key'] ?? '' }}</textarea>
+                </div>
+            </div>
+
+            <div style="margin-top:16px; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;">
+                <details style="background:rgba(255,255,255,0.01); border-radius:4px; overflow:hidden;">
+                    <summary style="padding:12px; cursor:pointer; color:var(--accent); font-weight:600; user-select:none;">How to setup SSL / HTTPS?</summary>
+                    <div style="padding:16px; font-size:13px; line-height:1.6; color:var(--muted);">
+                        <strong style="color:#fff;">Linux (Nginx / Apache)</strong>
+                        <ul style="margin:4px 0 16px 20px;">
+                            <li><strong>Certbot (Recommended):</strong> The easiest way is using Let's Encrypt.
+                                <br><code>sudo apt install certbot python3-certbot-nginx</code>
+                                <br><code>sudo certbot --nginx -d example.com</code>
+                            </li>
+                            <li><strong>Manual:</strong> Place your `.crt` and `.key` files in `/etc/ssl/` and update your Nginx/Apache config to point to them (listen 443 ssl).</li>
+                        </ul>
+
+                        <strong style="color:#fff;">Windows</strong>
+                        <ul style="margin:4px 0 0 20px;">
+                            <li><strong>IIS:</strong> Use "Win-ACME", a simple tool to automatically generate and obtain free certificates for IIS.</li>
+                            <li><strong>XAMPP / Apache:</strong> Enable the `ssl_module` in `httpd.conf`. Configure `httpd-ssl.conf` to point to your certificate files.</li>
+                            <li><strong>Local Development:</strong> Use a tool like <code>mkcert</code> to generate locally trusted certificates.</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="accent-line"></div>
+
+        <h3>SMTP Configuration</h3>
         
         <div class="form-row">
             <label style="display:flex; align-items:center; cursor:pointer;">
