@@ -89,4 +89,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
             'destroy' => 'changelogs.destroy',
             'show' => 'changelogs.show',
         ]);
+
+        // settings (admin)
+        Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'index'])->name('settings.index');
+        Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'update'])->name('settings.update');
     });

@@ -227,6 +227,7 @@
       @auth
         @if(auth()->user()->is_admin ?? false)
           <a href="{{ route('admin.users.index') }}" class="admin-btn">{{ __('messages.admin') }}</a>
+          <a href="{{ route('admin.settings.index') }}" class="admin-btn" style="background:#2c3e50; color:#fff;">Settings</a>
         @endif
 
         <a href="{{ route('images.create') }}">{{ __('messages.upload') }}</a>
@@ -256,6 +257,7 @@
       @auth
         @if(auth()->user()->is_admin ?? false)
           <a href="{{ route('admin.users.index') }}" class="admin-btn" onclick="toggleMobileMenu()">{{ __('messages.admin') }}</a>
+          <a href="{{ route('admin.settings.index') }}" class="admin-btn" style="background:#2c3e50; color:#fff;" onclick="toggleMobileMenu()">Settings</a>
         @endif
         <a href="{{ route('images.create') }}" onclick="toggleMobileMenu()">{{ __('messages.upload') }}</a>
         <a href="{{ route('profile.edit') }}" onclick="toggleMobileMenu()">Profile</a>
