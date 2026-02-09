@@ -15,7 +15,7 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th><th>Name</th><th>Email</th><th>Verified</th><th>Admin</th><th>Actions</th>
+          <th>ID</th><th>Name</th><th>Email</th><th>Verified</th><th>Role</th><th>Status</th><th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -31,10 +31,33 @@
                     <span style="color:#e74c3c">No</span>
                 @endif
             </td>
-            <td>{{ $u->is_admin ? 'yes' : 'no' }}</td>
-            <td class="actions">
-              <a href="{{ route('admin.users.edit', $u->id) }}">Edit</a>
-              <form action="{{ route('admin.users.destroy', $u->id) }}" method="POST" style="display:inline">@csrf @method('DELETE')<button onclick="return confirm('Delete?')">Delete</button></form>
+            <td>
+                @if($u->is_admin) <span style="color:var(--accent); font-weight:bold;">Admin</span>
+                @elseif($u->is_moderator) <span style="color:var(--accent2); font-weight:bold;">Mod</span>
+                @else User @endif
+            </td>
+            <td>
+                @if($u->banned_at) <span style="color:var(--danger); font-weight:bold;">Banned</span>
+                @else <span style="color:#2ecc71">Active</span> @endif
+            </td>
+            <td class="actions" style="display:flex; gap:4px; flex-wrap:wrap;">
+              <a href="{{ route('admin.users.edit', $u->id) }}" class="btn" style="padding:4px 8px; font-size:12px;">Edit</a>
+              
+              <form action="{{ route('admin.users.toggle-moderator', $u->id) }}" method="POST">
+                  @csrf <button style="padding:4px 8px; font-size:12px; background:rgba(255,255,255,0.1); color:#fff;" title="Toggle Moderator">{{ $u->is_moderator ? 'Demote' : 'Promote' }}</button>
+              </form>
+
+              @if($u->banned_at)
+                 <form action="{{ route('admin.users.unban', $u->id) }}" method="POST">
+                    @csrf <button style="padding:4px 8px; font-size:12px; background:var(--success); color:#000;">Unban</button>
+                 </form>
+              @else
+                 <form action="{{ route('admin.users.ban', $u->id) }}" method="POST">
+                    @csrf <button style="padding:4px 8px; font-size:12px; background:var(--danger); color:#fff;" onclick="return confirm('Ban this user?')">Ban</button>
+                 </form>
+              @endif
+
+              <form action="{{ route('admin.users.destroy', $u->id) }}" method="POST">@csrf @method('DELETE')<button style="padding:4px 8px; font-size:12px; background:red; color:#fff;" onclick="return confirm('Delete?')">Del</button></form>
             </td>
           </tr>
         @endforeach

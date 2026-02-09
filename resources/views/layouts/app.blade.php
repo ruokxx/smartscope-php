@@ -225,6 +225,9 @@
 
 
       @auth
+        @if((auth()->user()->is_admin ?? false) || (auth()->user()->is_moderator ?? false))
+          <a href="{{ route('admin.moderation.index') }}" class="admin-btn" style="background:var(--accent2); color:#fff;">Mod</a>
+        @endif
         @if(auth()->user()->is_admin ?? false)
           <a href="{{ route('admin.users.index') }}" class="admin-btn">{{ __('messages.admin') }}</a>
           <a href="{{ route('admin.settings.index') }}" class="admin-btn" style="background:#2c3e50; color:#fff;">Settings</a>
@@ -255,6 +258,9 @@
       <a href="{{ route('board') }}" onclick="toggleMobileMenu()">{{ __('messages.collection') }}</a>
 
       @auth
+        @if((auth()->user()->is_admin ?? false) || (auth()->user()->is_moderator ?? false))
+          <a href="{{ route('admin.moderation.index') }}" class="admin-btn" style="background:var(--accent2); color:#fff;" onclick="toggleMobileMenu()">Mod Queue</a>
+        @endif
         @if(auth()->user()->is_admin ?? false)
           <a href="{{ route('admin.users.index') }}" class="admin-btn" onclick="toggleMobileMenu()">{{ __('messages.admin') }}</a>
           <a href="{{ route('admin.settings.index') }}" class="admin-btn" style="background:#2c3e50; color:#fff;" onclick="toggleMobileMenu()">Settings</a>

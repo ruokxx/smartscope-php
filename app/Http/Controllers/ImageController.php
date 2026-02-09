@@ -58,9 +58,11 @@ class ImageController extends Controller
             'processing_software' => $req->processing_software,
             'processing_steps' => $req->processing_steps,
             'notes' => $req->notes,
+            'approved' => ($user && ($user->is_admin || $user->is_moderator)) ? true : false,
         ]);
 
-        return redirect()->route('objects.show', $req->object_id ?: $img->id)->with('success', 'Image uploaded');
+        $message = $img->approved ? 'Image uploaded' : 'Image uploaded and pending approval.';
+        return redirect()->route('objects.show', $req->object_id ?: $img->id)->with('success', $message);
     }
 
     // API: latest uploads

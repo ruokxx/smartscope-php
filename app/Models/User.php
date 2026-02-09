@@ -17,7 +17,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */protected $fillable = [
-        'name', 'email', 'password', 'display_name', 'full_name', 'twitter', 'instagram', 'homepage', 'is_admin'];
+        'name', 'email', 'password', 'display_name', 'full_name', 'twitter', 'instagram', 'homepage', 'is_admin', 'is_moderator', 'banned_at'];
 
 
     /**
@@ -38,7 +38,19 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_moderator' => 'boolean',
+        'banned_at' => 'datetime',
     ];
+
+    public function isModerator()
+    {
+        return $this->is_admin || $this->is_moderator;
+    }
+
+    public function isBanned()
+    {
+        return $this->banned_at !== null;
+    }
     public function scopes()
     {
         return $this->belongsToMany(\App\Models\Scope::class , 'scope_user');
