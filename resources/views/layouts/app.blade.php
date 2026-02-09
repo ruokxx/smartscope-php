@@ -225,16 +225,15 @@
 
 
       @auth
+        <a href="{{ route('images.create') }}">{{ __('messages.upload') }}</a>
+        <a href="{{ route('profile.edit') }}">Profile</a>
+
         @if((auth()->user()->is_admin ?? false) || (auth()->user()->is_moderator ?? false))
           <a href="{{ route('admin.moderation.index') }}" class="admin-btn" style="background:var(--accent2); color:#fff;">Mod</a>
         @endif
         @if(auth()->user()->is_admin ?? false)
           <a href="{{ route('admin.users.index') }}" class="admin-btn">{{ __('messages.admin') }}</a>
-          <a href="{{ route('admin.settings.index') }}" class="admin-btn" style="background:#2c3e50; color:#fff;">Settings</a>
         @endif
-
-        <a href="{{ route('images.create') }}">{{ __('messages.upload') }}</a>
-        <a href="{{ route('profile.edit') }}">Profile</a>
 
         <form method="POST" action="{{ route('logout') }}" style="display:inline;margin:0">
           @csrf
@@ -258,15 +257,16 @@
       <a href="{{ route('board') }}" onclick="toggleMobileMenu()">{{ __('messages.collection') }}</a>
 
       @auth
+        <a href="{{ route('images.create') }}" onclick="toggleMobileMenu()">{{ __('messages.upload') }}</a>
+        <a href="{{ route('profile.edit') }}" onclick="toggleMobileMenu()">Profile</a>
+
         @if((auth()->user()->is_admin ?? false) || (auth()->user()->is_moderator ?? false))
           <a href="{{ route('admin.moderation.index') }}" class="admin-btn" style="background:var(--accent2); color:#fff;" onclick="toggleMobileMenu()">Mod Queue</a>
         @endif
         @if(auth()->user()->is_admin ?? false)
           <a href="{{ route('admin.users.index') }}" class="admin-btn" onclick="toggleMobileMenu()">{{ __('messages.admin') }}</a>
-          <a href="{{ route('admin.settings.index') }}" class="admin-btn" style="background:#2c3e50; color:#fff;" onclick="toggleMobileMenu()">Settings</a>
         @endif
-        <a href="{{ route('images.create') }}" onclick="toggleMobileMenu()">{{ __('messages.upload') }}</a>
-        <a href="{{ route('profile.edit') }}" onclick="toggleMobileMenu()">Profile</a>
+
         <form method="POST" action="{{ route('logout') }}" style="width:100%; display:flex; justify-content:center;">
           @csrf
           <button type="submit" class="logout-btn">{{ __('messages.logout') }}</button>

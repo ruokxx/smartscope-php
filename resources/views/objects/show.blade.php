@@ -47,7 +47,7 @@
             <img class="thumb" src="{{ Storage::url($img->path) }}" alt="{{ $obj->name }}">
           </a>
           <div style="margin-top:6px"><strong>{{ $obj->catalog ?? $obj->name }}</strong></div>
-          <div class="muted">{{ __('messages.by') }}: {{ $img->user->name ?? $img->user->email ?? 'guest' }}</div>
+          <div class="muted">{{ __('messages.by') }}: <span style="color:{{ $img->user->role_color }}">{{ $img->user->name ?? $img->user->email ?? 'guest' }}</span></div>
           <div class="muted">{{ __('messages.scope') }}: {{ $img->scopeModel->name ?? '-' }}</div>
           
           <div style="margin-top:8px; font-size:11px; color:var(--muted); line-height:1.4; border-top:1px solid rgba(255,255,255,0.05); padding-top:4px;">

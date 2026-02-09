@@ -21,21 +21,33 @@
                     </div>
                     <div style="font-weight:bold; margin-bottom:4px;">{{ $img->filename }}</div>
                     <div class="muted" style="font-size:12px; margin-bottom:8px;">
-                        User: {{ $img->user->name ?? 'Unknown' }}<br>
-                        Object: {{ $img->object->name ?? 'None' }}<br>
+                        User: <span style="color:{{ $img->user->role_color }}">{{ $img->user->name ?? 'Unknown' }}</span><br>
                         Uploaded: {{ $img->created_at->diffForHumans() }}
                     </div>
-                    
-                    <div style="display:flex; gap:8px;">
-                        <form method="POST" action="{{ route('admin.moderation.approve', $img->id) }}" style="flex:1;">
-                            @csrf
-                            <button type="submit" class="btn" style="width:100%; background:var(--accent);">Approve</button>
-                        </form>
-                        <form method="POST" action="{{ route('admin.moderation.reject', $img->id) }}" style="flex:1;" onsubmit="return confirm('Reject and delete this image?');">
-                            @csrf
-                            <button type="submit" class="btn" style="width:100%; background:var(--danger); border-color:var(--danger);">Reject</button>
-                        </form>
-                    </div>
+
+                    <form method="POST" action="{{ route('admin.moderation.approve', $img->id) }}">
+                        @csrf
+                        <div style="margin-bottom:8px;">
+                            <label style="font-size:12px; color:var(--muted);">Assign Object:</label>
+                            <div class="styled-select-container">
+                                <select name="object_id" class="styled-select" style="padding:6px 24px 6px 8px; font-size:12px;">
+                                    <option value="">-- No Object --</option>
+                                    @foreach($objects as $obj)
+                                        <option value="{{ $obj->id }}" {{ $img->object_id == $obj->id ? 'selected' : '' }}>
+                                            {{ $obj->name ?: $obj->catalog }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="submit" class="btn" style="flex:1; background:var(--accent);">Approve</button>
+                    </form>
+                            <form method="POST" action="{{ route('admin.moderation.reject', $img->id) }}" style="flex:1;" onsubmit="return confirm('Reject and delete this image?');">
+                                @csrf
+                                <button type="submit" class="btn" style="width:100%; background:var(--danger); border-color:var(--danger);">Reject</button>
+                            </form>
+                        </div>
                 </div>
             @endforeach
         </div>

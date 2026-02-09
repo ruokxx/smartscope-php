@@ -22,7 +22,7 @@
         @foreach($users as $u)
           <tr>
             <td>{{ $u->id }}</td>
-            <td>{{ $u->name }}</td>
+            <td><span style="color:{{ $u->role_color }}">{{ $u->name }}</span></td>
             <td>{{ $u->email }}</td>
             <td>
                 @if($u->email_verified_at)

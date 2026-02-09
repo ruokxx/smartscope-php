@@ -58,10 +58,11 @@ class ImageController extends Controller
             'processing_software' => $req->processing_software,
             'processing_steps' => $req->processing_steps,
             'notes' => $req->notes,
-            'approved' => ($user && ($user->is_admin || $user->is_moderator)) ? true : false,
+            'notes' => $req->notes,
+            'approved' => ($user && ($user->is_admin || $user->is_moderator || !\App\Models\Setting::where('key', 'enable_moderation')->value('value'))) ? true : false,
         ]);
 
-        $message = $img->approved ? 'Image uploaded' : 'Image uploaded and pending approval.';
+        $message = $img->approved ? __('Image uploaded') : __('Image uploaded and pending approval.');
         return redirect()->route('objects.show', $req->object_id ?: $img->id)->with('success', $message);
     }
 

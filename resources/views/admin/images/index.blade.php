@@ -11,33 +11,47 @@
     </form>
   </div>
 
-  <div class="panel">
-    <table>
-      <thead>
-        <tr><th>ID</th><th>Thumb</th><th>Filename</th><th>User</th><th>Object</th><th>Scope</th><th>Approved</th><th>Actions</th></tr>
-      </thead>
-      <tbody>
-        @foreach($images as $img)
-        <tr>
-          <td>{{ $img->id }}</td>
-          <td>@if($img->path)<img src="{{ Storage::url($img->path) }}" class="thumb">@endif</td>
-          <td>{{ $img->filename }}</td>
-          <td>{{ $img->user->email ?? '—' }}</td>
-          <td>{{ $img->object->name ?? '—' }}</td>
-          <td>{{ $img->scopeModel->name ?? '—' }}</td>
-          <td>{{ $img->approved ? 'yes' : 'no' }}</td>
-          <td class="actions">
-            <a href="{{ route('admin.images.edit',$img->id) }}">Edit</a>
-            <form action="{{ route('admin.images.destroy',$img->id) }}" method="POST" style="display:inline">@csrf @method('DELETE')<button onclick="return confirm('Delete?')">Delete</button></form>
-            @if(!$img->approved)
-              <form action="{{ route('admin.images.approve',$img->id) }}" method="POST" style="display:inline">@csrf<button>Approve</button></form>
+  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:16px;">
+    @foreach($images as $img)
+      <div class="card" style="padding:0; overflow:hidden; display:flex; flex-direction:column; background:rgba(255,255,255,0.03);">
+        <div style="aspect-ratio:1/1; background:#000; position:relative;">
+            @if($img->path)
+                <a href="{{ Storage::url($img->path) }}" target="_blank">
+                    <img src="{{ Storage::url($img->path) }}" style="width:100%; height:100%; object-fit:cover;">
+                </a>
+            @else
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted)">No Image</div>
             @endif
-          </td>
-        </tr>
-        @endforeach
-      </tbody>
-    </table>
+            <div style="position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.6); color:#fff; padding:2px 6px; border-radius:4px; font-size:10px;">ID: {{ $img->id }}</div>
+        </div>
+        <div style="padding:12px; flex:1; display:flex; flex-direction:column; gap:4px;">
+            <div style="font-weight:bold; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="{{ $img->filename }}">{{ $img->filename }}</div>
+            <div style="font-size:12px; color:var(--muted);">User: <span style="color:{{ $img->user->role_color }}">{{ $img->user->name ?? '—' }}</span></div>
+            <div style="font-size:12px; color:var(--muted);">Obj: {{ $img->object->name ?? '—' }}</div>
+            <div style="font-size:12px; color:var(--muted);">
+                Status: 
+                @if($img->approved) <span style="color:#2ecc71">Approved</span>
+                @else <span style="color:#e74c3c">Pending</span> @endif
+            </div>
 
-    <div style="margin-top:12px">{{ $images->withQueryString()->links() }}</div>
+            <div style="margin-top:auto; padding-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
+                 <a href="{{ route('admin.images.edit',$img->id) }}" class="btn" style="padding:4px 8px; font-size:11px; background:rgba(255,255,255,0.1); color:#fff;">Edit</a>
+                 
+                 @if(!$img->approved)
+                    <form action="{{ route('admin.images.approve',$img->id) }}" method="POST" style="display:inline">
+                        @csrf <button class="btn" style="padding:4px 8px; font-size:11px; background:var(--accent);">Approve</button>
+                    </form>
+                 @endif
+
+                 <form action="{{ route('admin.images.destroy',$img->id) }}" method="POST" style="display:inline">
+                    @csrf @method('DELETE')
+                    <button class="btn" style="padding:4px 8px; font-size:11px; background:var(--danger); color:#fff;" onclick="return confirm('Delete?')">Del</button>
+                 </form>
+            </div>
+        </div>
+      </div>
+    @endforeach
   </div>
+
+  <div style="margin-top:20px">{{ $images->withQueryString()->links() }}</div>
 @endsection

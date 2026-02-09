@@ -51,6 +51,16 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->banned_at !== null;
     }
+
+    public function getRoleColorAttribute()
+    {
+        if ($this->is_admin)
+            return '#ff6b6b'; // Red
+        if ($this->is_moderator)
+            return '#2ecc71'; // Green
+        return 'inherit';
+    }
+
     public function scopes()
     {
         return $this->belongsToMany(\App\Models\Scope::class , 'scope_user');

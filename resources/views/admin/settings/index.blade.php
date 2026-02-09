@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('content')
+@section('admin-content')
 <div class="card full">
     <h2>SMTP Configuration</h2>
     
@@ -15,6 +15,13 @@
             <label style="display:flex; align-items:center; cursor:pointer;">
                 <input type="checkbox" name="smtp_enabled" value="1" {{ isset($settings['smtp_enabled']) && $settings['smtp_enabled'] ? 'checked' : '' }} style="width:auto; margin-right:8px;">
                 Enable Registration Emails
+            </label>
+        </div>
+
+        <div class="form-row">
+            <label style="display:flex; align-items:center; cursor:pointer;">
+                <input type="checkbox" name="enable_moderation" value="1" {{ isset($settings['enable_moderation']) && $settings['enable_moderation'] ? 'checked' : '' }} style="width:auto; margin-right:8px;">
+                Enable Image Moderation (Require Approval)
             </label>
         </div>
 

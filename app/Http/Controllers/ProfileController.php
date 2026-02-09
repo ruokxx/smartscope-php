@@ -71,10 +71,20 @@ class ProfileController extends Controller
 
         // fetch user's images
         $ownedImages = \App\Models\Image::where('user_id', $user->id)
+            ->where('approved', true) // MODERATION: Only approved in collection view
             ->orderBy('upload_time', 'desc')
             ->get()
             ->keyBy('object_id');
 
-        return view('profile.show', compact('user', 'objects', 'ownedImages'));
+        // MODERATION: Fetch pending uploads for the owner
+        $pendingImages = collect();
+        if (Auth::id() === $user->id) {
+            $pendingImages = \App\Models\Image::where('user_id', $user->id)
+                ->where('approved', false)
+                ->orderBy('upload_time', 'desc')
+                ->get();
+        }
+
+        return view('profile.show', compact('user', 'objects', 'ownedImages', 'pendingImages'));
     }
 }

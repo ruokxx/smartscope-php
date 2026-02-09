@@ -20,5 +20,8 @@
     "Confirm Password": "Passwort bestätigen",
     "Log in": "Einloggen",
     "Already registered?": "Bereits registriert?",
-    "Whoops! Something went wrong.": "Hoppla! Etwas ist schiefgelaufen."
+    "Whoops! Something went wrong.": "Hoppla! Etwas ist schiefgelaufen.",
+    "Image uploaded": "Bild hochgeladen",
+    "Image uploaded and pending approval.": "Bild hochgeladen und wartet auf Freigabe.",
+    "Pending Approval": "Wartet auf Freigabe"
 }

@@ -49,7 +49,7 @@
               <div style="font-weight:600; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#e6eef6;">
                   {{ $img->object->catalog ?? '' }} {{ $img->object->name ?? '' }}
               </div>
-              <div class="muted" style="font-size:12px">{{ __('messages.by') }}: {{ $img->user->name ?? '—' }}</div>
+              <div class="muted" style="font-size:12px">{{ __('messages.by') }}: <span style="color:{{ $img->user->role_color }}">{{ $img->user->name ?? '—' }}</span></div>
               <div class="muted" style="font-size:11px;">{{ optional($img->upload_time)->format('d.m.Y H:i') ?? '' }}</div>
             </div>
           </div>
@@ -75,7 +75,7 @@
             @forelse($news as $index => $n)
               <div class="news-item" data-index="{{ $index }}" style="display:{{ $index < 2 ? 'block' : 'none' }}; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.03);">
                 <div class="user-info">
-                    <span class="user-name">{{ $n->title }}</span>
+                    <span class="user-name" style="color:{{ $n->user->role_color ?? 'inherit' }}">{{ $n->title }}</span>
                     <span class="upload-date muted" style="font-size:12px">{{ $n->created_at instanceof \DateTime || $n->created_at instanceof \Carbon\Carbon ? $n->created_at->format('M d, Y') : \Carbon\Carbon::parse($n->created_at)->format('M d, Y') }}</span>
                 </div>
                 <div style="margin-top:6px;font-size:14px;">{!! nl2br(e(\Illuminate\Support\Str::limit($n->body, 400))) !!}</div>
@@ -98,7 +98,7 @@
           <div id="usersList" style="max-height:240px; overflow:auto; padding-right:6px;">
             @foreach($users->take(5) as $u)
               <div style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.02);">
-                <a href="#" class="user-link" data-user-id="{{ $u->id }}" style="color:var(--accent); text-decoration:none;">{{ $u->name ?? 'Unnamed' }}</a>
+                <a href="#" class="user-link" data-user-id="{{ $u->id }}" style="color:{{ $u->role_color === 'inherit' ? 'var(--accent)' : $u->role_color }}; text-decoration:none;">{{ $u->name ?? 'Unnamed' }}</a>
               </div>
             @endforeach
           </div>

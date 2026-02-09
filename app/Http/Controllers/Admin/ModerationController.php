@@ -12,12 +12,18 @@ class ModerationController extends Controller
     public function index()
     {
         $pendingImages = Image::where('approved', false)->orderBy('created_at', 'asc')->with('user', 'object')->get();
-        return view('admin.moderation.index', compact('pendingImages'));
+        $objects = \App\Models\Obj::orderBy('name')->get();
+        return view('admin.moderation.index', compact('pendingImages', 'objects'));
     }
 
-    public function approve($id)
+    public function approve(Request $req, $id)
     {
         $img = Image::findOrFail($id);
+
+        if ($req->has('object_id') && $req->object_id) {
+            $img->object_id = $req->object_id;
+        }
+
         $img->approved = true;
         $img->save();
 

@@ -35,13 +35,33 @@
                     @if($user->twitter)
                         <div style="margin-bottom:8px;"><a href="https://twitter.com/{{ $user->twitter }}" target="_blank" style="color:var(--muted); text-decoration:none; font-size:14px;">🐦 @ {{ $user->twitter }}</a></div>
                     @endif
-                    @if($user->instagram)
-                        <div><a href="https://instagram.com/{{ $user->instagram }}" target="_blank" style="color:var(--muted); text-decoration:none; font-size:14px;">📸 @ {{ $user->instagram }}</a></div>
-                    @endif
-                </div>
+            @if($user->instagram)
+                <div><a href="https://instagram.com/{{ $user->instagram }}" target="_blank" style="color:var(--muted); text-decoration:none; font-size:14px;">📸 @ {{ $user->instagram }}</a></div>
             @endif
         </div>
+    @endif
+</div>
+
+<!-- Pending Uploads (Owner Only) -->
+@if(isset($pendingImages) && $pendingImages->count() > 0)
+    <div class="card" style="margin-top:24px; border:1px solid rgba(255, 165, 0, 0.3); background:rgba(255, 165, 0, 0.05);">
+        <h3 style="margin-top:0; color:#ffcc00; font-size:16px;">{{ __('Pending Approval') }} ({{ $pendingImages->count() }})</h3>
+        <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:8px;">
+            @foreach($pendingImages as $img)
+                <div style="width:100px; flex:0 0 100px;">
+                     <div style="aspect-ratio:1/1; background:#000; border-radius:4px; overflow:hidden; position:relative;">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($img->path) }}" style="width:100%; height:100%; object-fit:cover; opacity:0.7;">
+                        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:bold; text-shadow:0 1px 3px #000;">⏳</div>
+                     </div>
+                     <div style="font-size:11px; color:var(--muted); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        {{ $img->object ? $img->object->name : 'Unknown' }}
+                     </div>
+                </div>
+            @endforeach
+        </div>
     </div>
+@endif
+</div>
 
     <!-- Collection Progress -->
     <div style="flex:1; min-width:0;">
