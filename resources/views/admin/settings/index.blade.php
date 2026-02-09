@@ -19,7 +19,12 @@
         </div>
 
         <div class="accent-line"></div>
-        <h3>Server Settings</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3>Server Settings</h3>
+            <button type="button" onclick="loadAllInkl()" class="btn" style="padding:4px 8px; font-size:11px; background:rgba(255,255,255,0.05); color:var(--muted); font-weight:normal;">
+                Load All-Inkl Preset
+            </button>
+        </div>
 
         <div class="row-2">
             <div class="form-row">
@@ -70,5 +75,34 @@
 
         <button type="submit" class="btn" style="margin-top:12px;">Save Settings</button>
     </form>
+    <div class="accent-line" style="margin-top:24px;"></div>
+    <h3>Test Configuration</h3>
+    
+    @if(session('mail_error'))
+        <div class="notice" style="background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.2); color:#fca5a5;">
+            <strong>Connection Failed:</strong><br>
+            {{ session('mail_error') }}
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('admin.settings.test') }}" style="margin-bottom:24px;">
+        @csrf
+        <div style="display:flex; align-items:center; gap:12px;">
+            <button type="submit" class="btn" style="background:#2c3e50; color:#fff;">
+                Test Email to {{ auth()->user()->email }}
+            </button>
+            <span style="font-size:12px; color:var(--muted);">Save settings before testing!</span>
+        </div>
+    </form>
 </div>
+
+<script>
+    function loadAllInkl() {
+        if(!confirm('Overwrite current settings with All-Inkl defaults?')) return;
+        
+        document.querySelector('input[name="mail_host"]').value = 'kasserver.com';
+        document.querySelector('input[name="mail_port"]').value = '465';
+        document.querySelector('select[name="mail_encryption"]').value = 'ssl';
+    }
+</script>
 @endsection

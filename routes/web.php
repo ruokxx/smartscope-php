@@ -93,4 +93,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
         // settings (admin)
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'index'])->name('settings.index');
         Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'update'])->name('settings.update');
+        Route::post('/settings/test', [\App\Http\Controllers\Admin\SettingController::class , 'sendTestEmail'])->name('settings.test');
     });

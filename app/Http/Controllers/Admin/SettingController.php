@@ -35,9 +35,26 @@ class SettingController extends Controller
         // Clear cache if you cache settings
         Cache::forget('app_settings');
 
-        // Optional: clear config cache to ensure new settings take effect immediately if any were cached
-        // Artisan::call('config:clear');
+        // Clear config cache to ensure new settings take effect immediately
+        Artisan::call('config:clear');
 
         return redirect()->route('admin.settings.index')->with('success', 'Settings updated successfully.');
+    }
+
+    public function sendTestEmail(Request $request)
+    {
+        $user = auth()->user();
+
+        try {
+            \Illuminate\Support\Facades\Mail::raw('This is a test email from SmartScope.', function ($message) use ($user) {
+                $message->to($user->email)
+                    ->subject('SMTP Test Email');
+            });
+
+            return redirect()->route('admin.settings.index')->with('success', 'Test email sent successfully to ' . $user->email);
+        }
+        catch (\Exception $e) {
+            return redirect()->route('admin.settings.index')->with('mail_error', $e->getMessage());
+        }
     }
 }
