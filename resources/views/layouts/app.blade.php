@@ -296,6 +296,7 @@
     </footer>
   </main>
   @include('partials.auth-modal')
+  @include('partials.verification-modal')
 
   <script>
       function toggleMobileMenu() {

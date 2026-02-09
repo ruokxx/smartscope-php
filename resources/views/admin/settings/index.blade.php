@@ -18,6 +18,11 @@
             </label>
         </div>
 
+        <div class="form-row">
+            <label>Welcome Message (Verification Email)</label>
+            <textarea name="welcome_message" rows="3" placeholder="Custom text to appear in the verification email...">{{ $settings['welcome_message'] ?? '' }}</textarea>
+        </div>
+
         <div class="accent-line"></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <h3>Server Settings</h3>

@@ -15,7 +15,7 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th><th>Name</th><th>Email</th><th>Admin</th><th>Actions</th>
+          <th>ID</th><th>Name</th><th>Email</th><th>Verified</th><th>Admin</th><th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -24,6 +24,13 @@
             <td>{{ $u->id }}</td>
             <td>{{ $u->name }}</td>
             <td>{{ $u->email }}</td>
+            <td>
+                @if($u->email_verified_at)
+                    <span style="color:#2ecc71">Yes</span>
+                @else
+                    <span style="color:#e74c3c">No</span>
+                @endif
+            </td>
             <td>{{ $u->is_admin ? 'yes' : 'no' }}</td>
             <td class="actions">
               <a href="{{ route('admin.users.edit', $u->id) }}">Edit</a>
