@@ -5,7 +5,7 @@
   <div style="margin-bottom:24px;">
       <details style="background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
           <summary style="padding:12px; cursor:pointer; font-weight:600; color:var(--muted); font-size:14px; display:flex; align-items:center; gap:8px;">
-              <span>📋 {{ __('messages.changelog') }}</span>
+              <span>📋 {{ __('Changelog') }}</span>
               <span style="font-size:11px; opacity:0.7;">(Click to expand)</span>
           </summary>
           <div style="padding:16px; border-top:1px solid rgba(255,255,255,0.05);">
@@ -18,7 +18,7 @@
                   <div class="muted" style="font-size:11px; margin-top:2px;">
                       {{ ($c->published_at instanceof \DateTime ? $c->published_at : \Carbon\Carbon::parse($c->published_at ?? $c->created_at))->format('Y-m-d') }}
                   </div>
-                  <div style="margin-top:4px;font-size:13px;color:#d0dce8;line-height:1.4">{!! nl2br(e(\Illuminate\Support\Str::limit($c->body, 400))) !!}</div>
+                  <div style="margin-top:4px;font-size:13px;color:#d0dce8;line-height:1.4">{!! nl2br(e($c->body)) !!}</div>
                 </div>
               @empty
                 <p class="muted" style="font-size:13px;">No changes yet.</p>
