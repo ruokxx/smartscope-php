@@ -27,6 +27,9 @@
       color:#e6eef6;
       -webkit-font-smoothing:antialiased;
     }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
 
     body::before{
       content:'';

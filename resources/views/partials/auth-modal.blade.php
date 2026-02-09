@@ -102,6 +102,7 @@
         const modal = document.getElementById('auth-modal');
         const card = modal.querySelector('div[style*="position:relative"]');
         modal.style.display = 'flex';
+        modal.style.pointerEvents = 'auto'; // Re-enable pointer events
         // Trigger reflow
         void modal.offsetWidth;
         modal.style.opacity = '1';
@@ -112,6 +113,7 @@
     function closeAuthModal() {
         const modal = document.getElementById('auth-modal');
         const card = modal.querySelector('div[style*="position:relative"]');
+        modal.style.pointerEvents = 'none'; // Disable pointer events immediately
         modal.style.opacity = '0';
         card.style.transform = 'scale(0.95)';
         setTimeout(() => {
