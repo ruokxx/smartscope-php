@@ -30,8 +30,8 @@ class ObjectController extends Controller
             ->limit(5)
             ->get();
 
-        // all registered users (only id & name)
-        $users = \App\Models\User::select('id', 'name')->orderBy('name')->get();
+        // all registered users (id, name, roles)
+        $users = \App\Models\User::select('id', 'name', 'is_admin', 'is_moderator', 'email')->orderBy('name')->get();
 
         return view('home', compact('images', 'news', 'changelogs', 'users'));
     }

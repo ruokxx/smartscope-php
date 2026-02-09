@@ -87,10 +87,25 @@
 
     .notice { padding:10px;border-radius:8px;background:rgba(111,184,255,0.06);border:1px solid rgba(111,184,255,0.06);color:#e6eef6;margin-bottom:14px }
     
-    input[type="text"], input[type="email"], input[type="number"], textarea, select {
-       width:100%; padding:8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);
-       background: rgba(255,255,255,0.02); color:#e6eef6; box-sizing:border-box;
-    }
+     input[type="text"], input[type="email"], input[type="number"], textarea, select {
+        width:100%; padding:8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);
+        background: rgba(255,255,255,0.02); color:#e6eef6; box-sizing:border-box; margin-top:4px; margin-bottom:12px;
+     }
+
+     /* Form Layout Utilities */
+     .upload-form { max-width:800px; margin:0 auto; }
+     .form-row { margin-bottom:14px; display:block; }
+     .form-row label { display:block; margin-bottom:6px; color:var(--muted); font-size:13px; }
+     .row-2 { display:flex; gap:16px; }
+     .row-2 .form-row { flex:1; }
+     
+     .styled-select-container { position: relative; width:100%; }
+     .styled-select {
+       appearance: none; -webkit-appearance: none; width: 100%; padding: 8px 12px; border-radius: 8px;
+       border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); color: #e6eef6;
+     }
+     .styled-select option { background:#07121b; } 
+     .accent-line { height:1px; background:rgba(255,255,255,0.06); margin:20px 0; }
   </style>
 </head>
 <body>

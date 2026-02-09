@@ -79,9 +79,9 @@
                 @if($img && $img->user)
                    <div style="font-size:10px; color:var(--muted); margin-top:2px;">
                         @auth
-                            by <a href="{{ route('profile.show', $img->user->id) }}" style="color:var(--accent); text-decoration:none;">{{ $img->user->display_name ?: $img->user->name }}</a>
+                            by <a href="{{ route('profile.show', $img->user->id) }}" style="color:{{ $img->user->role_color }}; text-decoration:none;">{{ $img->user->display_name ?: $img->user->name }}</a>
                         @else
-                            by {{ $img->user->display_name ?: $img->user->name }}
+                            by <span style="color:{{ $img->user->role_color }}">{{ $img->user->display_name ?: $img->user->name }}</span>
                         @endauth
                    </div>
                 @endif

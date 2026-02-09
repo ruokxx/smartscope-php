@@ -155,7 +155,7 @@
                   @foreach($otherUsers as $u)
                     <div style="padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.05);">
                         <div style="font-weight:600; font-size:14px; margin-bottom:2px;">
-                            <a href="{{ route('profile.show', $u->id) }}" style="color:#fff; text-decoration:none;">{{ $u->display_name ?: $u->name }}</a>
+                            <a href="{{ route('profile.show', $u->id) }}" style="color:{{ $u->role_color }}; text-decoration:none;">{{ $u->display_name ?: $u->name }}</a>
                         </div>
                         @if($u->scopes->count() > 0)
                             <div style="font-size:11px; color:var(--muted); line-height:1.2;">

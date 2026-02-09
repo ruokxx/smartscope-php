@@ -1,82 +1,91 @@
+@extends('admin.layouts.app')
 
-@extends('layouts.app')
-
-@section('content')
-Create Image (Admin)
+@section('admin-content')
+<div class="card full">
+  <h2>Upload Image (Admin)</h2>
 
   @if ($errors->any())
-    
+    <div class="notice" style="background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.2); color:#fca5a5;">
+        <ul style="margin:0; padding-left:20px;">
+            @foreach ($errors->all() as $e)
+                <li>{{ $e }}</li>
+            @endforeach
+        </ul>
+    </div>
+  @endif
 
-    @foreach ($errors->all() as $e)
-    {{ $e }}
-    @endforeach 
+  <form action="{{ route('admin.images.store') }}" method="POST" enctype="multipart/form-data" class="upload-form" style="max-width:100%;">
+    @csrf
 
-@endif
+    <div class="row-2">
+        <div class="form-row">
+            <label for="user_id">User</label>
+            <div class="styled-select-container">
+                <select name="user_id" id="user_id" class="styled-select">
+                    <option value="">-- Assign to User (Optional) --</option>
+                    @foreach($users as $u)
+                        <option value="{{ $u->id }}" {{ old('user_id') == $u->id ? 'selected' : '' }}>{{ $u->name ?? $u->email }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <label for="object_id">Target Object</label>
+             <div class="styled-select-container">
+                <select name="object_id" id="object_id" class="styled-select">
+                    <option value="">-- Select Object --</option>
+                    @foreach($objects as $o)
+                        <option value="{{ $o->id }}" {{ old('object_id') == $o->id ? 'selected' : '' }}>{{ $o->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
 
-@csrf 
+    <div class="row-2">
+         <div class="form-row">
+            <label for="scope_id">Scope Used</label>
+             <div class="styled-select-container">
+                <select name="scope_id" id="scope_id" class="styled-select">
+                    <option value="">-- Select Scope --</option>
+                    @foreach($scopes as $s)
+                        <option value="{{ $s->id }}" {{ old('scope_id') == $s->id ? 'selected' : '' }}>{{ $s->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+             <label for="image">Image File (JPG, PNG)</label>
+             <input type="file" name="image" id="image" accept=".jpg,.jpeg,.png" required style="padding:6px;">
+        </div>
+    </div>
 
+    <div class="accent-line"></div>
 
+    <div class="row-2">
+        <div class="form-row">
+            <label for="exposure_total_seconds">Exposure (seconds)</label>
+            <input type="text" name="exposure_total_seconds" id="exposure_total_seconds" value="{{ old('exposure_total_seconds') }}" placeholder="e.g. 3600">
+        </div>
+        <div class="form-row">
+             <label for="number_of_subs">Number of Subs</label>
+             <input type="number" name="number_of_subs" id="number_of_subs" value="{{ old('number_of_subs') }}" min="1">
+        </div>
+    </div>
 
+    <div class="form-row">
+        <label for="processing_software">Processing Software</label>
+        <input type="text" name="processing_software" id="processing_software" value="{{ old('processing_software') }}" placeholder="e.g. PixInsight, Photoshop">
+    </div>
 
-<form action="{{ route('admin.images.store') }}" method="POST" enctype="multipart/form-data">
-  @csrf
+    <div class="form-row">
+        <label for="notes">Notes</label>
+        <textarea name="notes" id="notes" rows="4">{{ old('notes') }}</textarea>
+    </div>
 
-  <div class="form-group">
-    <label for="user_id">User (optional)</label>
-    <select name="user_id" id="user_id" class="form-control">
-      <option value="">-- select user --</option>
-      @foreach($users as $u)
-        <option value="{{ $u->id }}" {{ old('user_id') == $u->id ? 'selected' : '' }}>{{ $u->name ?? $u->email }}</option>
-      @endforeach
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="object_id">Object (optional)</label>
-    <select name="object_id" id="object_id" class="form-control">
-      <option value="">-- select object --</option>
-      @foreach($objects as $o)
-        <option value="{{ $o->id }}" {{ old('object_id') == $o->id ? 'selected' : '' }}>{{ $o->name }}</option>
-      @endforeach
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="scope_id">Scope (optional)</label>
-    <select name="scope_id" id="scope_id" class="form-control">
-      <option value="">-- select scope --</option>
-      @foreach($scopes as $s)
-        <option value="{{ $s->id }}" {{ old('scope_id') == $s->id ? 'selected' : '' }}>{{ $s->name }}</option>
-      @endforeach
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="image">Image (jpg, png) — max 50MB</label>
-    <input type="file" name="image" id="image" class="form-control-file" accept=".jpg,.jpeg,.png" required>
-  </div>
-
-  <div class="form-group">
-    <label for="exposure_total_seconds">Exposure total seconds</label>
-    <input type="text" name="exposure_total_seconds" id="exposure_total_seconds" class="form-control" value="{{ old('exposure_total_seconds') }}">
-  </div>
-
-  <div class="form-group">
-    <label for="number_of_subs">Number of subs</label>
-    <input type="number" name="number_of_subs" id="number_of_subs" class="form-control" value="{{ old('number_of_subs') }}" min="1" step="1">
-  </div>
-
-  <div class="form-group">
-    <label for="processing_software">Processing software</label>
-    <input type="text" name="processing_software" id="processing_software" class="form-control" value="{{ old('processing_software') }}">
-  </div>
-
-  <div class="form-group">
-    <label for="notes">Notes</label>
-    <textarea name="notes" id="notes" class="form-control">{{ old('notes') }}</textarea>
-  </div>
-
-  <button class="btn btn-primary" type="submit">Upload</button>
-</form>
-
-
+    <div style="margin-top:20px;">
+        <button class="btn" type="submit" style="padding:10px 24px; font-size:14px;">Upload Image</button>
+    </div>
+  </form>
+</div>
+@endsection

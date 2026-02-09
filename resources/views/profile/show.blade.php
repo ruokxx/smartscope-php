@@ -5,7 +5,7 @@
     <!-- Profile Info Card -->
     <div class="card" style="padding:0; min-width:300px; flex:0 0 300px; overflow:hidden; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.02);">
         <div style="background: linear-gradient(90deg, rgba(111,184,255,0.1), rgba(178,123,255,0.1)); padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.05);">
-            <h2 style="margin:0; font-size:18px; font-weight:600; color:#fff;">{{ $user->display_name ?: $user->name }}</h2>
+            <h2 style="margin:0; font-size:18px; font-weight:600; color:{{ $user->role_color }};">{{ $user->display_name ?: $user->name }}</h2>
             @if($user->full_name)
                 <div style="font-size:13px; color:var(--muted); margin-top:4px;">{{ $user->full_name }}</div>
             @endif

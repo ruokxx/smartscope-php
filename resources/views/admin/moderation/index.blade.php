@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('content')
+@section('admin-content')
 <div class="card full">
     <h2>Moderation Queue</h2>
     
