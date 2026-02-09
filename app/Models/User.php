@@ -46,6 +46,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new \App\Notifications\CustomVerifyEmail);
+        try {
+            $this->notify(new \App\Notifications\CustomVerifyEmail);
+            \Illuminate\Support\Facades\Log::info('Verification email sent to ' . $this->email);
+        }
+        catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send verification email: ' . $e->getMessage());
+        }
     }
 }

@@ -5,10 +5,18 @@
     <!-- Modal Card -->
     <div style="position:relative; width:100%; max-width:400px; background:rgba(255, 255, 255, 0.05); backdrop-filter:blur(20px); border:1px solid rgba(255, 255, 255, 0.1); border-radius:12px; padding:24px; box-shadow:0 25px 50px -12px rgba(0, 0, 0, 0.5); text-align:center;">
         
+        <div style="position:absolute; top:12px; right:12px; display:flex; gap:8px;">
+            <a href="{{ route('lang.switch', 'en') }}" style="color:{{ app()->getLocale() == 'en' ? '#fff' : 'rgba(255,255,255,0.4)' }}; text-decoration:none; font-size:11px; font-weight:bold;">EN</a>
+            <a href="{{ route('lang.switch', 'de') }}" style="color:{{ app()->getLocale() == 'de' ? '#fff' : 'rgba(255,255,255,0.4)' }}; text-decoration:none; font-size:11px; font-weight:bold;">DE</a>
+        </div>
         <h2 style="font-size:20px; margin-bottom:12px; color:#fff;">{{ __('Verify Your Email') }}</h2>
         
         <p style="color:#d1d5db; font-size:14px; line-height:1.5; margin-bottom:24px;">
             {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you?') }}
+            <br><br>
+            <span style="color:#fbbf24; font-size:13px;">
+                ⚠️ {{ __('Please check your spam folder if you do not see the email. Delivery may take up to 5 minutes.') }}
+            </span>
         </p>
 
         @if (session('status') == 'verification-link-sent')

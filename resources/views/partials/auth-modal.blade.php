@@ -13,6 +13,10 @@
             <button onclick="switchAuthTab('register')" id="tab-register" style="flex:1; padding:16px; background:transparent; border:none; color:rgba(255,255,255,0.6); font-weight:600; cursor:pointer; border-bottom:2px solid transparent;">
                 {{ __('Register') }}
             </button>
+            <div style="position:absolute; top:16px; right:16px; display:flex; gap:8px; z-index:10;">
+                <a href="{{ route('lang.switch', 'en') }}" style="color:{{ app()->getLocale() == 'en' ? '#fff' : 'rgba(255,255,255,0.4)' }}; text-decoration:none; font-size:11px; font-weight:bold;">EN</a>
+                <a href="{{ route('lang.switch', 'de') }}" style="color:{{ app()->getLocale() == 'de' ? '#fff' : 'rgba(255,255,255,0.4)' }}; text-decoration:none; font-size:11px; font-weight:bold;">DE</a>
+            </div>
         </div>
 
         <!-- Login Form -->
@@ -76,7 +80,10 @@
 
                 <!-- Password -->
                 <div style="margin-bottom:16px;">
-                    <label style="display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7; margin-bottom:4px;">{{ __('Password') }}</label>
+                    <label style="display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7; margin-bottom:4px;">
+                        {{ __('Password') }}
+                        <span style="font-size:10px; opacity:0.7; text-transform:none; margin-left:4px;">{{ __('(min. 8 chars, mixed case, numbers)') }}</span>
+                    </label>
                     <input type="password" name="password" required autocomplete="new-password"
                            style="width:100%; padding:10px; border-radius:6px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; outline:none;">
                      @error('password', 'register') <div style="color:#ef4444; font-size:12px; margin-top:4px;">{{ $message }}</div> @enderror

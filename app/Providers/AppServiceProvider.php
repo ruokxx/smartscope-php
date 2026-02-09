@@ -16,10 +16,11 @@ class AppServiceProvider extends ServiceProvider
     }
     public function boot()
     {
-        // Wenn die App gerade in der Konsole läuft (z.B. beim composer install/migrate), skip ggf.
-        if ($this->app->runningInConsole()) {
-            return;
-        }
+        // Allow running in console to ensure queues get the config too
+        // if ($this->app->runningInConsole()) {
+        //     return;
+        // }
+
 
         // Verhindere DB‑Abfragen, wenn die Tabelle noch nicht existiert
         if (!Schema::hasTable('scopes') || !Schema::hasTable('settings')) {

@@ -15,7 +15,9 @@
                       <span style="font-weight:700; font-size:14px;">{{ $c->title }}</span>
                       @if($c->version) <span class="muted" style="font-size:11px; background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:4px;">{{ $c->version }}</span> @endif
                   </div>
-                  <div class="muted" style="font-size:11px; margin-top:2px;">{{ $c->published_at ? $c->published_at->format('Y-m-d') : $c->created_at->format('Y-m-d') }}</div>
+                  <div class="muted" style="font-size:11px; margin-top:2px;">
+                      {{ ($c->published_at instanceof \DateTime ? $c->published_at : \Carbon\Carbon::parse($c->published_at ?? $c->created_at))->format('Y-m-d') }}
+                  </div>
                   <div style="margin-top:4px;font-size:13px;color:#d0dce8;line-height:1.4">{!! nl2br(e(\Illuminate\Support\Str::limit($c->body, 400))) !!}</div>
                 </div>
               @empty
@@ -72,8 +74,10 @@
           <div id="newsContainer">
             @forelse($news as $index => $n)
               <div class="news-item" data-index="{{ $index }}" style="display:{{ $index < 2 ? 'block' : 'none' }}; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.03);">
-                <div style="font-weight:700">{{ $n->title }}</div>
-                <div class="muted" style="font-size:12px">{{ $n->created_at->format('Y-m-d') }}</div>
+                <div class="user-info">
+                    <span class="user-name">{{ $n->title }}</span>
+                    <span class="upload-date muted" style="font-size:12px">{{ $n->created_at instanceof \DateTime || $n->created_at instanceof \Carbon\Carbon ? $n->created_at->format('M d, Y') : \Carbon\Carbon::parse($n->created_at)->format('M d, Y') }}</span>
+                </div>
                 <div style="margin-top:6px;font-size:14px;">{!! nl2br(e(\Illuminate\Support\Str::limit($n->body, 400))) !!}</div>
               </div>
             @empty
@@ -222,7 +226,9 @@
                 <div style="font-weight:600">
                     ${i.object_id ? `<a href="/objects/${i.object_id}" style="color:inherit;text-decoration:none;">${displayName}</a>` : displayName}
                 </div>
-                <div class="muted" style="font-size:12px">${new Date(i.upload_time).toLocaleString()}</div>
+                <div class="muted" style="font-size:12px">
+                    ${new Date(i.upload_time).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                </div>
               </div>
             </div>`;
           }).join('');
