@@ -71,7 +71,11 @@ class ImageController extends Controller
         $hours = intval($req->get('hours', 2));
         $limit = intval($req->get('limit', 5));
         $since = now()->subHours($hours);
-        $images = Image::where('upload_time', '>=', $since)->orderBy('upload_time', 'desc')->limit($limit)->get();
+        $images = Image::where('approved', true) // MODERATION
+            ->where('upload_time', '>=', $since)
+            ->orderBy('upload_time', 'desc')
+            ->limit($limit)
+            ->get();
         return response()->json($images);
     }
     public function destroy($id)

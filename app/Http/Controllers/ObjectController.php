@@ -13,6 +13,7 @@ class ObjectController extends Controller
     {
         $since = now()->subHours(24);
         $images = Image::with('user', 'object')
+            ->where('approved', true) // MODERATION: Only approved images
             ->where('upload_time', '>=', $since)
             ->orderBy('upload_time', 'desc')
             ->limit(3)
@@ -44,7 +45,9 @@ class ObjectController extends Controller
         $perPage = (int)$req->get('per_page', 3);
         $page = (int)$req->get('page', 1);
 
-        $query = Image::with('object')->where('user_id', $id)->orderBy('upload_time', 'desc');
+        // Show only approved images, unless user is viewing their own profile?
+        // For simplicity, public profile shows approved only.
+        $query = Image::with('object')->where('user_id', $id)->where('approved', true)->orderBy('upload_time', 'desc');
         $paginator = $query->paginate($perPage, ['*'], 'page', $page);
 
         // einfache JSON-Antwort mit Meta
@@ -103,6 +106,7 @@ class ObjectController extends Controller
                 // We can use a subquery or just fetch all for these objects and group by object_id in PHP
                 // Since it's only 25 objects (paginated), checking images for them is reasonable.
                 $imgs = Image::whereIn('object_id', $objectIds)
+                    ->where('approved', true) // MODERATION
                     ->orderBy('upload_time', 'desc')
                     ->get()
                     ->groupBy('object_id');
@@ -144,6 +148,7 @@ class ObjectController extends Controller
         // all images for this object, eager loaded
         $allImages = Image::with('user', 'scopeModel')
             ->where('object_id', $obj->id)
+            ->where('approved', true) // MODERATION
             ->orderBy('upload_time', 'desc')
             ->get();
 
