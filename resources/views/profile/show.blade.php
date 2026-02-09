@@ -4,10 +4,17 @@
 <div class="row-2" style="display:flex; flex-wrap:wrap; align-items:start; gap:32px;">
     <!-- Profile Info Card -->
     <div class="card" style="padding:0; min-width:300px; flex:0 0 300px; overflow:hidden; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.02);">
-        <div style="background: linear-gradient(90deg, rgba(111,184,255,0.1), rgba(178,123,255,0.1)); padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.05);">
-            <h2 style="margin:0; font-size:18px; font-weight:600; color:{{ $user->role_color }};">{{ $user->display_name ?: $user->name }}</h2>
-            @if($user->full_name)
-                <div style="font-size:13px; color:var(--muted); margin-top:4px;">{{ $user->full_name }}</div>
+        <div style="background: linear-gradient(90deg, rgba(111,184,255,0.1), rgba(178,123,255,0.1)); padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2 style="margin:0; font-size:18px; font-weight:600; color:{{ $user->role_color }};">{{ $user->display_name ?: $user->name }}</h2>
+                @if($user->full_name)
+                    <div style="font-size:13px; color:var(--muted); margin-top:4px;">{{ $user->full_name }}</div>
+                @endif
+            </div>
+            @if(auth()->id() !== $user->id)
+                <a href="{{ route('messages.show', $user) }}" class="btn" style="padding: 6px 12px; font-size:12px; background:var(--accent); text-decoration:none; color:#fff;">
+                    ✉️ {{ __('Send Message') }}
+                </a>
             @endif
         </div>
         <div style="padding:24px;">

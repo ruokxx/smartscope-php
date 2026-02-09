@@ -41,6 +41,15 @@
             min-width: auto;
         }
     }
+    @keyframes blink {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.2); color: #ffeb3b; }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    .blink-icon {
+        animation: blink 1.5s infinite;
+        display: inline-block;
+    }
 </style>
 
 <div class="profile-layout">
@@ -48,22 +57,29 @@
       <div class="profile-col-left">
           <!-- Profile Settings Card -->
           <div class="card" style="padding:0; overflow:hidden; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.02);">
-              <div style="background: linear-gradient(90deg, rgba(111,184,255,0.1), rgba(178,123,255,0.1)); padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.05);">
-                <h2 style="margin:0; font-size:18px; font-weight:600; color:#fff;">{{ __('messages.profile') }}</h2>
+              <div style="background: linear-gradient(90deg, rgba(111,184,255,0.1), rgba(178,123,255,0.1)); padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin:0; font-size:18px; font-weight:600; color:#fff;">{{ __('Profile') }}</h2>
+                <a href="{{ route('messages.index') }}" style="font-size:12px; color:var(--accent); text-decoration:none; display:flex; align-items:center; gap:6px;">
+                    <span class="{{ isset($unreadCount) && $unreadCount > 0 ? 'blink-icon' : '' }}">✉️</span> 
+                    {{ __('Inbox') }}
+                    @if(isset($unreadCount) && $unreadCount > 0)
+                        <span style="background:var(--accent); color:#fff; border-radius:50%; padding:2px 6px; font-size:10px; font-weight:bold;">{{ $unreadCount }}</span>
+                    @endif
+                </a>
               </div>
               <div style="padding:24px;">
                   <form method="POST" action="{{ route('profile.update') }}">
                     @csrf
-                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('messages.name') }}</label><input name="name" value="{{ old('name',$user->name) }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
-                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('messages.display_name') }}</label><input name="display_name" value="{{ old('display_name',$user->display_name ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
-                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('messages.full_name') }}</label><input name="full_name" value="{{ old('full_name',$user->full_name ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
-                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('messages.email') }}</label><input name="email" value="{{ old('email',$user->email) }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6; opacity:0.6; cursor:not-allowed;" disabled></div>
-                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('messages.twitter') }}</label><input name="twitter" value="{{ old('twitter',$user->twitter ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
-                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('messages.instagram') }}</label><input name="instagram" value="{{ old('instagram',$user->instagram ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
-                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('messages.homepage') }}</label><input name="homepage" value="{{ old('homepage',$user->homepage ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
+                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Name') }}</label><input name="name" value="{{ (string)old('name', $user->name) }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
+                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Display Name') }}</label><input name="display_name" value="{{ (string)old('display_name', $user->display_name ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
+                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Full Name') }}</label><input name="full_name" value="{{ (string)old('full_name', $user->full_name ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
+                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Email') }}</label><input name="email" value="{{ (string)old('email', $user->email) }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6; opacity:0.6; cursor:not-allowed;" disabled></div>
+                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Twitter') }}</label><input name="twitter" value="{{ (string)old('twitter', $user->twitter ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
+                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Instagram') }}</label><input name="instagram" value="{{ (string)old('instagram', $user->instagram ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
+                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Homepage') }}</label><input name="homepage" value="{{ (string)old('homepage', $user->homepage ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
                     
                     <div style="margin-top:24px; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;">
-                        <label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7; display:block; margin-bottom:8px;">{{ __('messages.equipment') ?? 'My Equipment' }}</label>
+                        <label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7; display:block; margin-bottom:8px;">{{ __('My Equipment') }}</label>
                         <div style="display:flex; flex-direction:column; gap:8px;">
                             @foreach($allScopes as $scope)
                                 <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">

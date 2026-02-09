@@ -226,6 +226,7 @@
 
       @auth
         <a href="{{ route('images.create') }}">{{ __('messages.upload') }}</a>
+        <a href="{{ route('community.index') }}">{{ __('messages.community') }}</a>
         <a href="{{ route('profile.edit') }}">Profile</a>
 
         @if((auth()->user()->is_admin ?? false) || (auth()->user()->is_moderator ?? false))
@@ -258,6 +259,7 @@
 
       @auth
         <a href="{{ route('images.create') }}" onclick="toggleMobileMenu()">{{ __('messages.upload') }}</a>
+        <a href="{{ route('community.index') }}" onclick="toggleMobileMenu()">{{ __('messages.community') }}</a>
         <a href="{{ route('profile.edit') }}" onclick="toggleMobileMenu()">Profile</a>
 
         @if((auth()->user()->is_admin ?? false) || (auth()->user()->is_moderator ?? false))

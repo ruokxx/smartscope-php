@@ -59,8 +59,8 @@
       </div>
     </div>
 
-    <!-- news box aligned and full-width inside centered container -->
-    <div class="home-news-wrap">
+    <!-- news and community side-by-side -->
+    <div class="home-news-wrap" style="display:grid; grid-template-columns: 1fr 300px; gap:24px;">
       <aside>
         <div class="card" id="newsPanel" style="padding:16px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -85,10 +85,47 @@
             @endforelse
           </div>
         </div>
+      </aside>
 
-
+      <!-- Community Widget -->
+      <aside>
+        <div class="card" style="padding:16px; height:100%;">
+            <h3 style="margin-top:0; margin-bottom:12px;">{{ __('Recent Community Activity') }}</h3>
+            @forelse($communityPosts as $post)
+                <div style="margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex; gap:8px; align-items:flex-start;">
+                        <div style="width:24px; height:24px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px; flex-shrink:0;">
+                            {{ strtoupper(substr($post->user->name, 0, 1)) }}
+                        </div>
+                        <div style="overflow:hidden;">
+                            <div style="font-size:12px; font-weight:bold; color:{{ $post->user->role_color }};">
+                                {{ $post->user->display_name ?: $post->user->name }}
+                            </div>
+                            <div style="font-size:13px; color:#ddd; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                {{ $post->content }}
+                            </div>
+                            <div style="font-size:10px; color:var(--muted); margin-top:2px;">
+                                {{ $post->created_at->diffForHumans() }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="muted" style="font-size:13px;">{{ __('No recent activity.') }}</p>
+            @endforelse
+            <div style="margin-top:auto; text-align:right;">
+                <a href="{{ route('community.index') }}" style="font-size:12px; color:var(--accent);">{{ __('View all') }} &rarr;</a>
+            </div>
+        </div>
       </aside>
     </div>
+    
+    <style>
+        .home-news-wrap { display: grid; grid-template-columns: 1fr 300px; gap: 24px; }
+        @media (max-width: 800px) {
+            .home-news-wrap { grid-template-columns: 1fr; }
+        }
+    </style>
 
     <!-- users + uploads side-by-side, left-aligned and symmetric spacing -->
     <div class="home-two-col">

@@ -141,6 +141,9 @@
         <a href="{{ route('admin.settings.index') }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
             <span>Settings</span>
         </a>
+        <a href="{{ route('admin.community.index') }}" class="{{ request()->routeIs('admin.community.*') ? 'active' : '' }}">
+            <span>Community</span>
+        </a>
       </nav>
       <div class="sidebar-footer">
         <a href="{{ route('home') }}" class="btn-exit">← Back to Site</a>

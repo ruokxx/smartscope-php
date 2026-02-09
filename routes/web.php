@@ -40,6 +40,11 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/compare/{objectId}', [CompareController::class , 'show'])->name('compare.show');
         }
         );
+
+        // Messaging Routes
+        Route::get('/messages', [\App\Http\Controllers\MessageController::class , 'index'])->name('messages.index');
+        Route::get('/messages/{user}', [\App\Http\Controllers\MessageController::class , 'show'])->name('messages.show');
+        Route::post('/messages', [\App\Http\Controllers\MessageController::class , 'store'])->name('messages.store');
     });
 
 /*
@@ -115,4 +120,27 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin/users')->name('admin.user
     Route::post('/{user}/verify', [AdminUserController::class , 'verifyEmail'])->name('verify');
     Route::post('/{user}/ban', [AdminUserController::class , 'ban'])->name('ban');
     Route::post('/{user}/unban', [AdminUserController::class , 'unban'])->name('unban');
+});
+
+// Community Routes (Auth required)
+Route::middleware(['auth', 'verified'])->prefix('community')->name('community.')->group(function () {
+    Route::get('/', [App\Http\Controllers\CommunityController::class , 'index'])->name('index');
+    Route::post('/posts', [App\Http\Controllers\CommunityController::class , 'store'])->name('posts.store'); // Changed to /posts
+    Route::post('/{post}/comment', [App\Http\Controllers\CommunityController::class , 'storeComment'])->name('comments.store');
+    Route::delete('/{post}', [App\Http\Controllers\CommunityController::class , 'destroy'])->name('posts.destroy'); // Named posts.destroy
+    Route::delete('/comments/{comment}', [App\Http\Controllers\CommunityController::class , 'destroyComment'])->name('comments.destroy');
+});
+
+// Groups Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('groups', \App\Http\Controllers\GroupController::class);
+    Route::post('groups/{group}/join', [\App\Http\Controllers\GroupController::class , 'join'])->name('groups.join');
+    Route::post('groups/{group}/approve/{user}', [\App\Http\Controllers\GroupController::class , 'approve'])->name('groups.approve');
+    Route::post('groups/{group}/remove/{user}', [\App\Http\Controllers\GroupController::class , 'remove'])->name('groups.remove');
+});
+
+// Admin Community Route
+Route::middleware(['auth', 'is_admin'])->prefix('admin/community')->name('admin.community.')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\CommunityController::class , 'index'])->name('index');
+    Route::delete('/{post}', [App\Http\Controllers\Admin\CommunityController::class , 'destroy'])->name('destroy');
 });

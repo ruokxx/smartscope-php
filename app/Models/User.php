@@ -84,4 +84,25 @@ class User extends Authenticatable implements MustVerifyEmail
             \Illuminate\Support\Facades\Log::error('Failed to send verification email: ' . $e->getMessage());
         }
     }
+    public function groups()
+    {
+        return $this->belongsToMany(\App\Models\Group::class , 'group_user')->withTimestamps();
+    }
+
+    public function isOnline()
+    {
+        return $this->last_seen_at && $this->last_seen_at->diffInMinutes(now()) < 5;
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(\App\Models\Message::class , 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(\App\Models\Message::class , 'receiver_id');
+    }
+
+
 }

@@ -33,7 +33,10 @@ class ObjectController extends Controller
         // all registered users (id, name, roles)
         $users = \App\Models\User::select('id', 'name', 'is_admin', 'is_moderator', 'email')->orderBy('name')->get();
 
-        return view('home', compact('images', 'news', 'changelogs', 'users'));
+        // Community Widget (Latest 3 posts)
+        $communityPosts = \App\Models\Post::with('user')->whereNull('group_id')->latest()->take(3)->get();
+
+        return view('home', compact('images', 'news', 'changelogs', 'users', 'communityPosts'));
     }
 
 

@@ -41,13 +41,17 @@ class ProfileController extends Controller
         // paginate users (10 per page), utilize a custom page name 'users_page'
         $otherUsers = $otherUsersQuery->paginate(10, ['*'], 'users_page')->withQueryString();
 
-        return view('profile.edit', compact('user', 'objects', 'ownedImages', 'allScopes', 'otherUsers', 'uq'));
+        $unreadCount = \App\Models\Message::where('receiver_id', $user->id)
+            ->whereNull('read_at')
+            ->count();
+
+        return view('profile.edit', compact('user', 'objects', 'ownedImages', 'allScopes', 'otherUsers', 'uq', 'unreadCount'));
     }
 
     public function update(Request $req)
     {
         $user = Auth::user();
-        $data = $req->only(['username', 'display_name', 'full_name', 'twitter', 'instagram', 'homepage']);
+        $data = $req->only(['name', 'display_name', 'full_name', 'twitter', 'instagram', 'homepage']);
         $user->fill($data);
         $user->save();
 

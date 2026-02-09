@@ -58,7 +58,6 @@ class ImageController extends Controller
             'processing_software' => $req->processing_software,
             'processing_steps' => $req->processing_steps,
             'notes' => $req->notes,
-            'notes' => $req->notes,
             'approved' => ($user && ($user->is_admin || $user->is_moderator || !\App\Models\Setting::where('key', 'enable_moderation')->value('value'))) ? true : false,
         ]);
 
