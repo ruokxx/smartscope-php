@@ -17,7 +17,7 @@ Route::get('/objects/{id}', [ObjectController::class , 'show'])->name('objects.s
 Route::get('/api/user/{id}/images', [ObjectController::class , 'userImages']);
 Route::get('lang/{locale}', [App\Http\Controllers\LanguageController::class , 'switch'])->name('lang.switch');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');
     Route::post('/profile', [ProfileController::class , 'update'])->name('profile.update');
     Route::get('/user/{id}', [ProfileController::class , 'show'])->name('profile.show');
