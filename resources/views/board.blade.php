@@ -27,7 +27,7 @@
   <div class="card full">
     <h2>{{ __('messages.collection') }}</h2>
 
-    <form method="GET" style="margin:12px 0; display:flex; gap:8px; align-items:center;">
+    <form method="GET" style="margin:12px 0; display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
       <input type="search" name="q" value="{{ old('q', $q) }}" placeholder="{{ __('messages.search_placeholder') }}" style="flex:1;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#e6eef6">
       <button class="btn" type="submit">{{ __('messages.search') }}</button>
       <a href="{{ route('board') }}" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">{{ __('messages.reset') }}</a>

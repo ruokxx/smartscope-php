@@ -41,8 +41,38 @@
 .user-link { color:var(--accent); text-decoration:none; }
 
 /* responsive */
-@media (max-width:880px) {
+@media (max-width:800px) {
+  /* Stack distinct sections vertically */
   .home-two-col { flex-direction:column; }
   .home-two-col aside { width:100% !important; }
-  .home-thumbs-inner { justify-content:flex-start; }
+  
+  /* Stack the "Latest Uploads" horizontal row into a vertical list */
+  .home-thumbs-row { 
+    overflow-x: visible; 
+    white-space: normal; 
+    padding-bottom: 0;
+  }
+  .home-thumbs-inner { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px; 
+  }
+  .thumb-item { 
+    width: 100%; 
+    display: flex; 
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
+  }
+  .thumb-inner {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+  }
+  
+  /* Ensure news grid also stacks (already handled by grid-template-columns but ensuring consistency) */
+  .home-news-wrap { grid-template-columns: 1fr; }
 }
