@@ -80,4 +80,10 @@ return [
     'equipment' => 'Meine Ausrüstung',
     'community' => 'Community',
     'site_title' => 'Smartscope Bilder Vergleich',
+    'welcome_back' => 'Willkommen zurück',
+    'edit_profile' => 'Profil bearbeiten',
+    'quick_actions' => 'Schnellzugriff',
+    'view_collection_progress' => 'Sammlungsfortschritt und Objekte anzeigen.',
+    'upload_submit' => 'Neues Bild zur Überprüfung einreichen.',
+    'community_desc' => 'Diskussionen beitreten und Aktivitäten sehen.',
 ];

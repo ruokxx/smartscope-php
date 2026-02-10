@@ -24,6 +24,18 @@ class SettingController extends Controller
         if (!isset($data['smtp_enabled'])) {
             $data['smtp_enabled'] = '0';
         }
+        if (!isset($data['ssl_enabled'])) {
+            $data['ssl_enabled'] = '0';
+        }
+        if (!isset($data['enable_moderation'])) {
+            $data['enable_moderation'] = '0';
+        }
+        if (!isset($data['community_enabled'])) {
+            $data['community_enabled'] = '0';
+        }
+        if (!isset($data['forum_enabled'])) {
+            $data['forum_enabled'] = '0';
+        }
 
         foreach ($data as $key => $value) {
             Setting::updateOrCreate(

@@ -2,6 +2,12 @@
 
 @section('content')
 <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <div class="home-centered-container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+            <h2 class="page-title" style="margin-top:0; font-size:24px;">{{ __('messages.community') }}</h2>
+            <a href="{{ route('community.forum.index') }}" class="btn" style="background:var(--accent); color:#fff; padding:8px 16px; border-radius:8px; text-decoration:none;">Go to Forum</a>
+        </div>
+    </div>
     <div class="grid" style="display: grid; grid-template-columns: 250px 1fr 250px; gap: 24px;">
         
         <!-- Left Sidebar: Navigation & Groups -->
@@ -102,15 +108,70 @@
                 </script>
             </div>
 
-            <!-- Posts List -->
-            @foreach($posts as $post)
-                @include('community.partials.post', ['post' => $post])
-            @endforeach
-
-            <div style="margin-top:24px;">
-                {{ $posts->links() }}
+            <!-- Posts List Container -->
+            <div id="posts-container">
+                @include('community.partials.posts_list', ['posts' => $posts])
             </div>
+
+            <!-- Load More Button -->
+            @if($posts->hasMorePages())
+                <div style="margin-top:24px; text-align:center;">
+                    <button id="load-more-btn" data-url="{{ $posts->nextPageUrl() }}" class="btn" style="background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid rgba(255,255,255,0.1); width:100%;">
+                        Start older posts
+                    </button>
+                    <div id="loading-spinner" style="display:none; color:var(--accent); margin-top:10px;">Loading...</div>
+                </div>
+            @endif
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const loadMoreBtn = document.getElementById('load-more-btn');
+                const container = document.getElementById('posts-container');
+                const spinner = document.getElementById('loading-spinner');
+
+                if (loadMoreBtn) {
+                    loadMoreBtn.addEventListener('click', function() {
+                        const url = this.getAttribute('data-url');
+                        if (!url) return;
+
+                        this.style.display = 'none';
+                        spinner.style.display = 'block';
+
+                        fetch(url, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Append html
+                            const temp = document.createElement('div');
+                            temp.innerHTML = data.html;
+                            
+                            while (temp.firstChild) {
+                                container.appendChild(temp.firstChild);
+                            }
+
+                            // Update button
+                            if (data.next_page_url) {
+                                loadMoreBtn.setAttribute('data-url', data.next_page_url);
+                                loadMoreBtn.style.display = 'inline-block';
+                            } else {
+                                loadMoreBtn.remove(); // No more pages
+                            }
+                            spinner.style.display = 'none';
+                        })
+                        .catch(err => {
+                            console.error('Error loading posts:', err);
+                            spinner.style.display = 'none';
+                            loadMoreBtn.style.display = 'inline-block';
+                            alert('Failed to load posts.');
+                        });
+                    });
+                }
+            });
+        </script>
 
         <!-- Right Sidebar: Online Users -->
         <div class="sidebar-right">

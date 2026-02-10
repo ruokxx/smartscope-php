@@ -59,9 +59,8 @@
       </div>
     </div>
 
-    <!-- news and community side-by-side -->
-    <div class="home-news-wrap" style="display:grid; grid-template-columns: 1fr 300px; gap:24px;">
-      <aside>
+    <!-- News Section (Full Width) -->
+    <div style="margin-bottom:24px;">
         <div class="card" id="newsPanel" style="padding:16px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
              <h3 style="margin-top:0; text-align:left; margin-bottom:12px;">{{ __('messages.recent_news') }}</h3>
@@ -85,11 +84,45 @@
             @endforelse
           </div>
         </div>
-      </aside>
+    </div>
 
-      <!-- Community Widget -->
-      <aside>
-        <div class="card" style="padding:16px; height:100%;">
+    <!-- Forum & Community Grid -->
+    <div class="home-widgets-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-bottom:24px;">
+        
+        <!-- Forum Widget -->
+        @if(\App\Models\Setting::where('key', 'forum_enabled')->value('value') !== '0')
+        <div class="card" style="padding:16px; height:100%; display:flex; flex-direction:column;">
+            <h3 style="margin-top:0; margin-bottom:12px;">{{ __('Latest Forum Threads') }}</h3>
+             @forelse($latestThreads as $thread)
+                <div style="margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex; gap:8px; align-items:flex-start;">
+                        <div style="width:32px; height:32px; border-radius:50%; background:#2c3e50; overflow:hidden; flex-shrink:0;">
+                             <img src="{{ $thread->user->avatar_url }}" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                        <div style="overflow:hidden; flex:1;">
+                            <div style="font-size:14px; font-weight:bold;">
+                                <a href="{{ route('community.forum.thread', $thread->id) }}" style="text-decoration:none; color:inherit;">{{ $thread->title }}</a>
+                            </div>
+                            <div style="font-size:11px; color:var(--muted); margin-top:2px; display:flex; gap:6px; align-items:center;">
+                                <span style="background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:3px;">{{ $thread->category->name ?? 'General' }}</span>
+                                <span>by <span style="color:{{ $thread->user->role_color }}">{{ $thread->user->display_name ?: $thread->user->name }}</span></span>
+                                <span>&bull; {{ $thread->created_at->diffForHumans() }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="muted" style="font-size:13px;">{{ __('No recent threads.') }}</p>
+            @endforelse
+            <div style="margin-top:auto; text-align:right;">
+                <a href="{{ route('community.forum.index') }}" style="font-size:12px; color:var(--accent);">{{ __('Go to Forum') }} &rarr;</a>
+            </div>
+        </div>
+        @endif
+
+        <!-- Community Widget -->
+        @if(\App\Models\Setting::where('key', 'community_enabled')->value('value') !== '0')
+        <div class="card" style="padding:16px; height:100%; display:flex; flex-direction:column;">
             <h3 style="margin-top:0; margin-bottom:12px;">{{ __('Recent Community Activity') }}</h3>
             @forelse($communityPosts as $post)
                 <div style="margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05);">
@@ -97,7 +130,7 @@
                         <div style="width:24px; height:24px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px; flex-shrink:0;">
                             {{ strtoupper(substr($post->user->name, 0, 1)) }}
                         </div>
-                        <div style="overflow:hidden;">
+                        <div style="overflow:hidden; flex:1;">
                             <div style="font-size:12px; font-weight:bold; color:{{ $post->user->role_color }};">
                                 {{ $post->user->display_name ?: $post->user->name }}
                             </div>
@@ -117,13 +150,14 @@
                 <a href="{{ route('community.index') }}" style="font-size:12px; color:var(--accent);">{{ __('View all') }} &rarr;</a>
             </div>
         </div>
-      </aside>
+        @endif
+
     </div>
     
     <style>
-        .home-news-wrap { display: grid; grid-template-columns: 1fr 300px; gap: 24px; }
+        .home-widgets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         @media (max-width: 800px) {
-            .home-news-wrap { grid-template-columns: 1fr; }
+            .home-widgets-grid { grid-template-columns: 1fr; }
         }
     </style>
 

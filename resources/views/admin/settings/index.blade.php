@@ -84,6 +84,22 @@
             </label>
         </div>
 
+        <div class="accent-line"></div>
+
+        <h3>Feature Toggles</h3>
+        <div class="form-row">
+            <label style="display:flex; align-items:center; cursor:pointer;">
+                <input type="checkbox" name="community_enabled" value="1" {{ isset($settings['community_enabled']) && $settings['community_enabled'] ? 'checked' : '' }} style="width:auto; margin-right:8px;">
+                Enable Community (Feed, Groups)
+            </label>
+        </div>
+        <div class="form-row">
+            <label style="display:flex; align-items:center; cursor:pointer;">
+                <input type="checkbox" name="forum_enabled" value="1" {{ isset($settings['forum_enabled']) && $settings['forum_enabled'] ? 'checked' : '' }} style="width:auto; margin-right:8px;">
+                Enable Forum
+            </label>
+        </div>
+
         <div class="form-row">
             <label>Welcome Message (Verification Email)</label>
             <textarea name="welcome_message" rows="3" placeholder="Custom text to appear in the verification email...">{{ $settings['welcome_message'] ?? '' }}</textarea>

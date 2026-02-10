@@ -17,7 +17,15 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */protected $fillable = [
-        'name', 'email', 'password', 'display_name', 'full_name', 'twitter', 'instagram', 'homepage', 'is_admin', 'is_moderator', 'banned_at', 'banned_until'];
+        'name', 'email', 'password', 'display_name', 'full_name', 'twitter', 'instagram', 'homepage', 'avatar_path', 'is_admin', 'is_moderator', 'banned_at', 'banned_until'];
+
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar_path) {
+            return \Illuminate\Support\Facades\Storage::url($this->avatar_path);
+        }
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&color=fff';
+    }
 
 
     /**

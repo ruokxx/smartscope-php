@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-@section('content')
 <style>
     .profile-layout {
         display: flex;
@@ -59,6 +58,10 @@
           <div class="card" style="padding:0; overflow:hidden; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.02);">
               <div style="background: linear-gradient(90deg, rgba(111,184,255,0.1), rgba(178,123,255,0.1)); padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
                 <h2 style="margin:0; font-size:18px; font-weight:600; color:#fff;">{{ __('Profile') }}</h2>
+                <div style="display:flex; gap:16px; align-items:center;">
+                    <a href="{{ route('dashboard') }}" style="font-size:12px; color:var(--muted); text-decoration:none; display:flex; align-items:center; gap:6px;">
+                        ⬅️ {{ __('Dashboard') }}
+                    </a>
                 <a href="{{ route('messages.index') }}" style="font-size:12px; color:var(--accent); text-decoration:none; display:flex; align-items:center; gap:6px;">
                     <span class="{{ isset($unreadCount) && $unreadCount > 0 ? 'blink-icon' : '' }}">✉️</span> 
                     {{ __('Inbox') }}
@@ -67,11 +70,44 @@
                     @endif
                 </a>
               </div>
+            </div>
+
               <div style="padding:24px;">
-                  <form method="POST" action="{{ route('profile.update') }}">
+                  
+                  <!-- Avatar & Progress Display -->
+                  <div style="text-align:center; margin-bottom:24px;">
+                      <div style="width:100px; height:100px; border-radius:50%; overflow:hidden; border:4px solid rgba(255,255,255,0.1); background:#000; margin:0 auto;">
+                          <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" style="width:100%; height:100%; object-fit:cover;">
+                      </div>
+                      
+                      <div style="margin-top:16px;">
+                          <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">{{ __('messages.collection_progress') }}</div>
+                          <div style="font-size:16px; font-weight:bold; color:var(--accent);">
+                              {{ $ownedCount }} / {{ $totalObjects }}
+                          </div>
+                          <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; margin-top:6px; overflow:hidden;">
+                              <div style="width:{{ $progressPercent }}%; height:100%; background:var(--accent); border-radius:3px;"></div>
+                          </div>
+                          <div style="font-size:10px; color:var(--muted); margin-top:2px;">{{ $progressPercent }}% {{ __('messages.captured') }}</div>
+                      </div>
+                  </div>
+
+                  <hr style="border:0; border-top:1px solid rgba(255,255,255,0.05); margin-bottom:24px;">
+
+                  <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                     @csrf
-                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Name') }}</label><input name="name" value="{{ (string)old('name', $user->name) }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
-                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Display Name') }}</label><input name="display_name" value="{{ (string)old('display_name', $user->display_name ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
+
+                    <div class="form-row">
+                        <label>Profile Picture</label>
+                        <div style="display:flex; align-items:center; gap:16px;">
+                            <div style="width:64px; height:64px; border-radius:50%; overflow:hidden; background:#000;">
+                                <img src="{{ $user->avatar_url }}" alt="Avatar" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <input type="file" name="avatar" accept="image/*" style="flex:1;">
+                        </div>
+                    </div>
+                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Name') }}</label><input name="name" value="{{ (string)old('name', $user->name) }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6; {{ !auth()->user()->is_admin ? 'opacity:0.6; cursor:not-allowed;' : '' }}" {{ !auth()->user()->is_admin ? 'readonly' : '' }}></div>
+                    <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Display Name') }}</label><input name="display_name" value="{{ (string)old('display_name', $user->display_name ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6; {{ !auth()->user()->is_admin ? 'opacity:0.6; cursor:not-allowed;' : '' }}" {{ !auth()->user()->is_admin ? 'readonly' : '' }}></div>
                     <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Full Name') }}</label><input name="full_name" value="{{ (string)old('full_name', $user->full_name ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>
                     <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Email') }}</label><input name="email" value="{{ (string)old('email', $user->email) }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6; opacity:0.6; cursor:not-allowed;" disabled></div>
                     <div class="form-row"><label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('Twitter') }}</label><input name="twitter" value="{{ (string)old('twitter', $user->twitter ?? '') }}" style="background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.05); color:#e6eef6;"></div>

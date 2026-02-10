@@ -1,77 +1,135 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row-2" style="display:flex; flex-wrap:wrap; align-items:start; gap:32px;">
-    <!-- Profile Info Card -->
-    <div class="card" style="padding:0; min-width:300px; flex:0 0 300px; overflow:hidden; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.02);">
-        <div style="background: linear-gradient(90deg, rgba(111,184,255,0.1), rgba(178,123,255,0.1)); padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
-            <div>
-                <h2 style="margin:0; font-size:18px; font-weight:600; color:{{ $user->role_color }};">{{ $user->display_name ?: $user->name }}</h2>
-                @if($user->full_name)
-                    <div style="font-size:13px; color:var(--muted); margin-top:4px;">{{ $user->full_name }}</div>
+<style>
+    .profile-layout {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: start;
+        gap: 32px;
+    }
+    .profile-col-left {
+        flex: 0 0 300px;
+        min-width: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+    .profile-col-center {
+        flex: 1;
+        min-width: 0; /* allows grid to shrink */
+    }
+    
+    @media (max-width: 900px) {
+        .profile-layout {
+            flex-direction: column;
+            gap: 24px;
+        }
+        .profile-col-left, 
+        .profile-col-center {
+            flex: 1;
+            width: 100%;
+            min-width: auto;
+        }
+    }
+</style>
+
+<div class="profile-layout">
+    <!-- Left Column: User Info -->
+    <div class="profile-col-left">
+        <div class="card" style="padding:0; overflow:hidden; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.02);">
+            <div style="background: linear-gradient(90deg, rgba(111,184,255,0.1), rgba(178,123,255,0.1)); padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2 style="margin:0; font-size:18px; font-weight:600; color:{{ $user->role_color }};">{{ $user->display_name ?: $user->name }}</h2>
+                    @if($user->full_name)
+                        <div style="font-size:13px; color:var(--muted); margin-top:4px;">{{ $user->full_name }}</div>
+                    @endif
+                </div>
+                @if(auth()->id() !== $user->id)
+                    <a href="{{ route('messages.show', $user) }}" class="btn" style="padding: 6px 12px; font-size:12px; background:var(--accent); text-decoration:none; color:#fff;">
+                        ✉️ {{ __('Send Message') }}
+                    </a>
+                @elseif(auth()->id() === $user->id)
+                     <a href="{{ route('dashboard') }}" class="btn" style="padding: 6px 12px; font-size:12px; background:rgba(255,255,255,0.1); text-decoration:none; color:#fff; border:1px solid rgba(255,255,255,0.1);">
+                        ⬅️ {{ __('Dashboard') }}
+                    </a>
                 @endif
             </div>
-            @if(auth()->id() !== $user->id)
-                <a href="{{ route('messages.show', $user) }}" class="btn" style="padding: 6px 12px; font-size:12px; background:var(--accent); text-decoration:none; color:#fff;">
-                    ✉️ {{ __('Send Message') }}
-                </a>
-            @endif
-        </div>
-        <div style="padding:24px;">
-            <!-- Equipment List -->
-            @if($user->scopes->count() > 0)
-                <div style="margin-bottom:24px;">
-                    <h3 style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--accent); margin-top:0;">{{ __('messages.equipment') }}</h3>
-                    <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;">
-                        @foreach($user->scopes as $scope)
-                            <li style="display:flex; align-items:center; gap:8px; font-size:14px;">
-                                <span style="width:6px; height:6px; background:var(--accent); border-radius:50%; display:inline-block;"></span>
-                                {{ $scope->name }}
-                            </li>
-                        @endforeach
-                    </ul>
+            
+            <div style="padding:24px;">
+                <div class="profile-avatar" style="width:100px; height:100px; border-radius:50%; overflow:hidden; border:4px solid rgba(255,255,255,0.1); background:#000;">
+                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" style="width:100%; height:100%; object-fit:cover;">
                 </div>
-            @endif
-
-            <!-- Social / Web -->
-            @if($user->homepage || $user->twitter || $user->instagram)
-                <div style="border-top:1px solid rgba(255,255,255,0.05); paddingTop:16px;">
-                    @if($user->homepage)
-                        <div style="margin-bottom:8px;"><a href="{{ $user->homepage }}" target="_blank" style="color:var(--muted); text-decoration:none; font-size:14px;">🌐 {{ parse_url($user->homepage, PHP_URL_HOST) }}</a></div>
-                    @endif
-                    @if($user->twitter)
-                        <div style="margin-bottom:8px;"><a href="https://twitter.com/{{ $user->twitter }}" target="_blank" style="color:var(--muted); text-decoration:none; font-size:14px;">🐦 @ {{ $user->twitter }}</a></div>
-                    @endif
-            @if($user->instagram)
-                <div><a href="https://instagram.com/{{ $user->instagram }}" target="_blank" style="color:var(--muted); text-decoration:none; font-size:14px;">📸 @ {{ $user->instagram }}</a></div>
-            @endif
-        </div>
-    @endif
-</div>
-
-<!-- Pending Uploads (Owner Only) -->
-@if(isset($pendingImages) && $pendingImages->count() > 0)
-    <div class="card" style="margin-top:24px; border:1px solid rgba(255, 165, 0, 0.3); background:rgba(255, 165, 0, 0.05);">
-        <h3 style="margin-top:0; color:#ffcc00; font-size:16px;">{{ __('Pending Approval') }} ({{ $pendingImages->count() }})</h3>
-        <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:8px;">
-            @foreach($pendingImages as $img)
-                <div style="width:100px; flex:0 0 100px;">
-                     <div style="aspect-ratio:1/1; background:#000; border-radius:4px; overflow:hidden; position:relative;">
-                        <img src="{{ \Illuminate\Support\Facades\Storage::url($img->path) }}" style="width:100%; height:100%; object-fit:cover; opacity:0.7;">
-                        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:bold; text-shadow:0 1px 3px #000;">⏳</div>
-                     </div>
-                     <div style="font-size:11px; color:var(--muted); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                        {{ $img->object ? $img->object->name : 'Unknown' }}
-                     </div>
+                
+                <!-- Collection Status -->
+                <div style="margin-top:16px; text-align:center;">
+                    <div style="font-size:12px; color:var(--muted); margin-bottom:4px;">{{ __('Collection Progress') }}</div>
+                    <div style="font-size:16px; font-weight:bold; color:var(--accent);">
+                        {{ $ownedCount }} / {{ $totalObjects }}
+                    </div>
+                    <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; margin-top:6px; overflow:hidden;">
+                        <div style="width:{{ $progressPercent }}%; height:100%; background:var(--accent); border-radius:3px;"></div>
+                    </div>
+                    <div style="font-size:10px; color:var(--muted); margin-top:2px;">{{ $progressPercent }}% Complete</div>
                 </div>
-            @endforeach
+            
+                <div class="profile-info" style="margin-top:16px;">
+                    <!-- Equipment List -->
+                    @if($user->scopes->count() > 0)
+                        <div style="margin-bottom:24px;">
+                            <h3 style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--accent); margin-top:0;">{{ __('messages.equipment') }}</h3>
+                            <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;">
+                                @foreach($user->scopes as $scope)
+                                    <li style="display:flex; align-items:center; gap:8px; font-size:14px;">
+                                        <span style="width:6px; height:6px; background:var(--accent); border-radius:50%; display:inline-block;"></span>
+                                        {{ $scope->name }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <!-- Social / Web -->
+                    @if($user->homepage || $user->twitter || $user->instagram)
+                        <div style="border-top:1px solid rgba(255,255,255,0.05); paddingTop:16px;">
+                            @if($user->homepage)
+                                <div style="margin-bottom:8px;"><a href="{{ $user->homepage }}" target="_blank" style="color:var(--muted); text-decoration:none; font-size:14px;">🌐 {{ parse_url($user->homepage, PHP_URL_HOST) }}</a></div>
+                            @endif
+                            @if($user->twitter)
+                                <div style="margin-bottom:8px;"><a href="https://twitter.com/{{ $user->twitter }}" target="_blank" style="color:var(--muted); text-decoration:none; font-size:14px;">🐦 @ {{ $user->twitter }}</a></div>
+                            @endif
+                            @if($user->instagram)
+                                <div><a href="https://instagram.com/{{ $user->instagram }}" target="_blank" style="color:var(--muted); text-decoration:none; font-size:14px;">📸 @ {{ $user->instagram }}</a></div>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
+
+        <!-- Pending Uploads (Owner Only) -->
+        @if(isset($pendingImages) && $pendingImages->count() > 0)
+            <div class="card" style="margin-top:24px; border:1px solid rgba(255, 165, 0, 0.3); background:rgba(255, 165, 0, 0.05);">
+                <h3 style="margin-top:0; color:#ffcc00; font-size:16px;">{{ __('Pending Approval') }} ({{ $pendingImages->count() }})</h3>
+                <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:8px;">
+                    @foreach($pendingImages as $img)
+                        <div style="width:100px; flex:0 0 100px;">
+                             <div style="aspect-ratio:1/1; background:#000; border-radius:4px; overflow:hidden; position:relative;">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($img->path) }}" style="width:100%; height:100%; object-fit:cover; opacity:0.7;">
+                                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:bold; text-shadow:0 1px 3px #000;">⏳</div>
+                             </div>
+                             <div style="font-size:11px; color:var(--muted); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                {{ $img->object ? $img->object->name : 'Unknown' }}
+                             </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
-@endif
-</div>
 
-    <!-- Collection Progress -->
-    <div style="flex:1; min-width:0;">
+    <!-- Right Column: Collection Progress -->
+    <div class="profile-col-center">
         <h2 style="margin-top:0; margin-bottom:24px;">{{ __('messages.collection_progress') }}</h2>
         
         <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:16px;">

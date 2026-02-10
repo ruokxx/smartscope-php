@@ -45,13 +45,38 @@ class ProfileController extends Controller
             ->whereNull('read_at')
             ->count();
 
-        return view('profile.edit', compact('user', 'objects', 'ownedImages', 'allScopes', 'otherUsers', 'uq', 'unreadCount'));
+        // Calculate progress for the view
+        $totalObjects = \App\Models\Obj::count();
+        $ownedCount = $ownedImages->count();
+        $progressPercent = $totalObjects > 0 ? round(($ownedCount / $totalObjects) * 100) : 0;
+
+        return view('profile.edit', compact('user', 'objects', 'ownedImages', 'allScopes', 'otherUsers', 'uq', 'unreadCount', 'totalObjects', 'ownedCount', 'progressPercent'));
     }
 
     public function update(Request $req)
     {
         $user = Auth::user();
-        $data = $req->only(['name', 'display_name', 'full_name', 'twitter', 'instagram', 'homepage']);
+        if ($req->hasFile('avatar')) {
+            $req->validate([
+                'avatar' => 'image|max:5120|dimensions:max_width=2048,max_height=2048', // 5MB, max 2k res
+            ]);
+            $path = $req->file('avatar')->store('avatars', 'public');
+            $user->avatar_path = $path;
+        }
+
+        $data = $req->only([
+            'full_name',
+            'email',
+            'twitter',
+            'instagram',
+            'homepage'
+        ]);
+
+        if (Auth::user()->is_admin) {
+            $data['name'] = $req->input('name');
+            $data['display_name'] = $req->input('display_name');
+        }
+
         $user->fill($data);
         $user->save();
 
@@ -89,6 +114,11 @@ class ProfileController extends Controller
                 ->get();
         }
 
-        return view('profile.show', compact('user', 'objects', 'ownedImages', 'pendingImages'));
+        // Calculate progress
+        $totalObjects = $objects->count();
+        $ownedCount = $ownedImages->count();
+        $progressPercent = $totalObjects > 0 ? round(($ownedCount / $totalObjects) * 100) : 0;
+
+        return view('profile.show', compact('user', 'objects', 'ownedImages', 'pendingImages', 'totalObjects', 'ownedCount', 'progressPercent'));
     }
 }

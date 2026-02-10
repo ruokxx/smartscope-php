@@ -9,12 +9,23 @@ use App\Models\Group;
 
 class CommunityController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Check if feature is enabled (unless admin)
+        $isEnabled = \App\Models\Setting::where('key', 'community_enabled')->value('value');
+        if ($isEnabled === '0' && !(auth()->user()->is_admin ?? false)) {
+            abort(403, 'Community is disabled.');
+        }
+
         $posts = Post::whereNull('group_id') // Only show global posts in main feed
             ->with('user', 'comments.user', 'group')
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate(10); // Reduced from 20 for better "load more" UX
+
+        if ($request->ajax()) {
+            $view = view('community.partials.posts_list', compact('posts'))->render();
+            return response()->json(['html' => $view, 'next_page_url' => $posts->nextPageUrl()]);
+        }
 
         $onlineUsers = \App\Models\User::where('last_seen_at', '>=', now()->subMinutes(5))->get();
         $myGroups = auth()->user()->groups;

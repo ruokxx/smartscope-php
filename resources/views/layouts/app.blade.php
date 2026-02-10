@@ -226,14 +226,16 @@
 
       @auth
         <a href="{{ route('images.create') }}">{{ __('messages.upload') }}</a>
-        <a href="{{ route('community.index') }}">{{ __('messages.community') }}</a>
+        @if(\App\Models\Setting::where('key', 'community_enabled')->value('value') !== '0')
+            <a href="{{ route('community.index') }}">{{ __('messages.community') }}</a>
+        @endif
         <a href="{{ route('profile.edit') }}">Profile</a>
 
         @if((auth()->user()->is_admin ?? false) || (auth()->user()->is_moderator ?? false))
           <a href="{{ route('admin.moderation.index') }}" class="admin-btn" style="background:var(--accent2); color:#fff;">Mod</a>
         @endif
         @if(auth()->user()->is_admin ?? false)
-          <a href="{{ route('admin.users.index') }}" class="admin-btn">{{ __('messages.admin') }}</a>
+            <a href="{{ route('admin.users.index') }}" class="admin-btn">{{ __('messages.admin') }}</a>
         @endif
 
         <form method="POST" action="{{ route('logout') }}" style="display:inline;margin:0">
@@ -259,14 +261,16 @@
 
       @auth
         <a href="{{ route('images.create') }}" onclick="toggleMobileMenu()">{{ __('messages.upload') }}</a>
-        <a href="{{ route('community.index') }}" onclick="toggleMobileMenu()">{{ __('messages.community') }}</a>
+        @if(\App\Models\Setting::where('key', 'community_enabled')->value('value') !== '0')
+            <a href="{{ route('community.index') }}" onclick="toggleMobileMenu()">{{ __('messages.community') }}</a>
+        @endif
         <a href="{{ route('profile.edit') }}" onclick="toggleMobileMenu()">Profile</a>
 
         @if((auth()->user()->is_admin ?? false) || (auth()->user()->is_moderator ?? false))
           <a href="{{ route('admin.moderation.index') }}" class="admin-btn" style="background:var(--accent2); color:#fff;" onclick="toggleMobileMenu()">Mod Queue</a>
         @endif
         @if(auth()->user()->is_admin ?? false)
-          <a href="{{ route('admin.users.index') }}" class="admin-btn" onclick="toggleMobileMenu()">{{ __('messages.admin') }}</a>
+            <a href="{{ route('admin.users.index') }}" onclick="toggleMobileMenu()" style="color:var(--accent);">{{ __('messages.admin') }}</a>
         @endif
 
         <form method="POST" action="{{ route('logout') }}" style="width:100%; display:flex; justify-content:center;">

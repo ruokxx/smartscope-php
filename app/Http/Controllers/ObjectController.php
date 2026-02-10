@@ -36,7 +36,10 @@ class ObjectController extends Controller
         // Community Widget (Latest 3 posts)
         $communityPosts = \App\Models\Post::with('user')->whereNull('group_id')->latest()->take(3)->get();
 
-        return view('home', compact('images', 'news', 'changelogs', 'users', 'communityPosts'));
+        // Latest Forum Threads (3)
+        $latestThreads = \App\Models\ForumThread::with('user', 'category')->latest()->take(3)->get();
+
+        return view('home', compact('images', 'news', 'changelogs', 'users', 'communityPosts', 'latestThreads'));
     }
 
 

@@ -80,4 +80,10 @@ return [
     'equipment' => 'My Equipment',
     'community' => 'Community',
     'site_title' => 'Smartscope Picture Compare',
+    'welcome_back' => 'Welcome back',
+    'edit_profile' => 'Edit Profile',
+    'quick_actions' => 'Quick Actions',
+    'view_collection_progress' => 'View your collected objects and progress.',
+    'upload_submit' => 'Submit a new image for approval.',
+    'community_desc' => 'Join discussions and see what others are up to.',
 ];

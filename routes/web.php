@@ -105,6 +105,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'index'])->name('settings.index');
         Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'update'])->name('settings.update');
         Route::post('/settings/test', [\App\Http\Controllers\Admin\SettingController::class , 'sendTestEmail'])->name('settings.test');
+
+        // Forum Categories (admin)
+        Route::resource('forum/categories', \App\Http\Controllers\Admin\ForumCategoryController::class)->names([
+            'index' => 'forum.categories.index',
+            'create' => 'forum.categories.create',
+            'store' => 'forum.categories.store',
+            'show' => 'forum.categories.show',
+            'edit' => 'forum.categories.edit',
+            'update' => 'forum.categories.update',
+            'destroy' => 'forum.categories.destroy',
+        ]);
+
+        // Backups
+        Route::get('backups', [\App\Http\Controllers\Admin\BackupController::class , 'index'])->name('backups.index');
+        Route::post('backups', [\App\Http\Controllers\Admin\BackupController::class , 'store'])->name('backups.store');
+        Route::get('backups/{filename}', [\App\Http\Controllers\Admin\BackupController::class , 'download'])->name('backups.download');
+        Route::delete('backups/{filename}', [\App\Http\Controllers\Admin\BackupController::class , 'destroy'])->name('backups.destroy');
     });
 
 /*
@@ -129,7 +146,20 @@ Route::middleware(['auth', 'verified'])->prefix('community')->name('community.')
     Route::post('/{post}/comment', [App\Http\Controllers\CommunityController::class , 'storeComment'])->name('comments.store');
     Route::delete('/{post}', [App\Http\Controllers\CommunityController::class , 'destroy'])->name('posts.destroy'); // Named posts.destroy
     Route::delete('/comments/{comment}', [App\Http\Controllers\CommunityController::class , 'destroyComment'])->name('comments.destroy');
-});
+
+    // Forum Routes
+    Route::prefix('forum')->name('forum.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\ForumController::class , 'index'])->name('index');
+            Route::get('/category/{category}', [\App\Http\Controllers\ForumController::class , 'category'])->name('category');
+            Route::get('/category/{category}/create', [\App\Http\Controllers\ForumController::class , 'createThread'])->name('create');
+            Route::post('/category/{category}', [\App\Http\Controllers\ForumController::class , 'storeThread'])->name('store');
+            Route::get('/thread/{thread}', [\App\Http\Controllers\ForumController::class , 'thread'])->name('thread');
+            Route::post('/thread/{thread}/reply', [\App\Http\Controllers\ForumController::class , 'storePost'])->name('post.store');
+            Route::delete('/thread/{thread}', [\App\Http\Controllers\ForumController::class , 'destroyThread'])->name('thread.destroy');
+            Route::delete('/post/{post}', [\App\Http\Controllers\ForumController::class , 'destroyPost'])->name('post.destroy');
+        }
+        );
+    });
 
 // Groups Routes
 Route::middleware(['auth', 'verified'])->group(function () {
