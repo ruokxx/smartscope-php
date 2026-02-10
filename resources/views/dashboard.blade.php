@@ -80,10 +80,14 @@
         <div class="card" style="border:1px solid rgba(239, 68, 68, 0.2); background:rgba(239, 68, 68, 0.05); padding: 12px;">
             <div style="display:flex; gap:12px; flex-wrap:wrap;">
                 <a href="{{ route('admin.users.index') }}" class="btn" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); font-size:13px; color: #fff;">👥 {{ __('Users') }}</a>
+                <a href="{{ route('admin.moderation.index') }}" class="btn" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); font-size:13px; color: #fff;">🛡️ {{ __('Moderation') }}</a>
                 <a href="{{ route('admin.images.index') }}" class="btn" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); font-size:13px; color: #fff;">🖼️ {{ __('Images') }}</a>
+                <a href="{{ route('admin.objects.index') }}" class="btn" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); font-size:13px; color: #fff;">🔭 {{ __('Objects') }}</a>
                 <a href="{{ route('admin.forum.categories.index') }}" class="btn" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); font-size:13px; color: #fff;">📂 {{ __('Forum') }}</a>
                 <a href="{{ route('admin.news.index') }}" class="btn" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); font-size:13px; color: #fff;">📰 {{ __('News') }}</a>
                 <a href="{{ route('admin.changelogs.index') }}" class="btn" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); font-size:13px; color: #fff;">📜 {{ __('Changelogs') }}</a>
+                <a href="{{ route('admin.community.index') }}" class="btn" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); font-size:13px; color: #fff;">💬 {{ __('Community') }}</a>
+                <a href="{{ route('admin.backups.index') }}" class="btn" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); font-size:13px; color: #fff;">💾 {{ __('Backups') }}</a>
                 <a href="{{ route('admin.settings.index') }}" class="btn" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); font-size:13px; color: #fff;">⚙️ {{ __('Settings') }}</a>
             </div>
         </div>

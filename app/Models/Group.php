@@ -18,7 +18,25 @@ class Group extends Model
 
     public function members()
     {
-        return $this->belongsToMany(User::class , 'group_user')->withTimestamps();
+        return $this->belongsToMany(User::class , 'group_user')
+            ->withPivot('status')
+            ->withTimestamps()
+            ->wherePivot('status', 'approved');
+    }
+
+    public function pendingMembers()
+    {
+        return $this->belongsToMany(User::class , 'group_user')
+            ->withPivot('status')
+            ->withTimestamps()
+            ->wherePivot('status', 'pending');
+    }
+
+    public function allMembers()
+    {
+        return $this->belongsToMany(User::class , 'group_user')
+            ->withPivot('status')
+            ->withTimestamps();
     }
 
     public function posts()

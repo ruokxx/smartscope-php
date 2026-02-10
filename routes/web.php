@@ -104,6 +104,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
         // settings (admin)
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'index'])->name('settings.index');
         Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'update'])->name('settings.update');
+        Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'update'])->name('settings.update');
+        Route::post('/settings/sync-objects', [\App\Http\Controllers\Admin\SettingController::class , 'syncObjects'])->name('settings.sync_objects');
         Route::post('/settings/test', [\App\Http\Controllers\Admin\SettingController::class , 'sendTestEmail'])->name('settings.test');
 
         // Forum Categories (admin)
@@ -122,6 +124,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
         Route::post('backups', [\App\Http\Controllers\Admin\BackupController::class , 'store'])->name('backups.store');
         Route::get('backups/{filename}', [\App\Http\Controllers\Admin\BackupController::class , 'download'])->name('backups.download');
         Route::delete('backups/{filename}', [\App\Http\Controllers\Admin\BackupController::class , 'destroy'])->name('backups.destroy');
+
+        // Deep Sky Objects
+        Route::resource('objects', \App\Http\Controllers\Admin\DeepSkyObjectController::class);
     });
 
 /*
@@ -162,11 +167,16 @@ Route::middleware(['auth', 'verified'])->prefix('community')->name('community.')
     });
 
 // Groups Routes
+// Groups Routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('groups', \App\Http\Controllers\GroupController::class);
-    Route::post('groups/{group}/join', [\App\Http\Controllers\GroupController::class , 'join'])->name('groups.join');
-    Route::post('groups/{group}/approve/{user}', [\App\Http\Controllers\GroupController::class , 'approve'])->name('groups.approve');
-    Route::post('groups/{group}/remove/{user}', [\App\Http\Controllers\GroupController::class , 'remove'])->name('groups.remove');
+    // Groups managed by CommunityController
+    Route::get('community/groups/create', [\App\Http\Controllers\CommunityController::class , 'createGroup'])->name('community.groups.create');
+    Route::post('community/groups', [\App\Http\Controllers\CommunityController::class , 'storeGroup'])->name('community.groups.store');
+    Route::get('community/groups/{group}', [\App\Http\Controllers\CommunityController::class , 'showGroup'])->name('community.groups.show');
+    Route::post('community/groups/{group}/join', [\App\Http\Controllers\CommunityController::class , 'joinGroup'])->name('community.groups.join');
+    Route::post('community/groups/{group}/leave', [\App\Http\Controllers\CommunityController::class , 'leaveGroup'])->name('community.groups.leave');
+    Route::post('community/groups/{group}/approve/{user}', [\App\Http\Controllers\CommunityController::class , 'approveRequest'])->name('community.groups.approve');
+    Route::post('community/groups/{group}/reject/{user}', [\App\Http\Controllers\CommunityController::class , 'rejectRequest'])->name('community.groups.reject');
 });
 
 // Admin Community Route

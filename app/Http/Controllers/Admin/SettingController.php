@@ -53,6 +53,20 @@ class SettingController extends Controller
         return redirect()->route('admin.settings.index')->with('success', 'Settings updated successfully.');
     }
 
+    public function syncObjects()
+    {
+        try {
+            Artisan::call('db:seed', [
+                '--class' => 'DeepSkyObjectsSeeder',
+                '--force' => true // Required for production
+            ]);
+            return redirect()->back()->with('success', 'Deep Sky Objects synced successfully!');
+        }
+        catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to sync objects: ' . $e->getMessage());
+        }
+    }
+
     public function sendTestEmail(Request $request)
     {
         $user = auth()->user();

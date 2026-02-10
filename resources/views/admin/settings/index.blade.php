@@ -181,6 +181,21 @@
             <span style="font-size:12px; color:var(--muted);">Save settings before testing!</span>
         </div>
     </form>
+    </form>
+    
+    <div class="accent-line" style="margin-top:24px;"></div>
+    
+    <div class="card" style="padding:16px; margin-bottom:24px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05);">
+        <h3 style="margin-top:0; margin-bottom:16px; font-size:16px;">Database Maintenance</h3>
+        <p style="color:var(--muted); margin-bottom:16px; font-size:13px;">Sync missing database records (e.g. new Deep Sky Objects) without losing existing data.</p>
+        
+        <form action="{{ route('admin.settings.sync_objects') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn" style="background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer;" onclick="return confirm('This will check for missing Deep Sky Objects and add them. existing objects will stay. Continue?')">
+                🔄 Sync Deep Sky Objects
+            </button>
+        </form>
+    </div>
 </div>
 
 <script>

@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('content')
-<div class="home-centered-container">
+@section('admin-content')
+<div>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
         <h2 class="page-title" style="margin:0; text-align:left;">Manage Forum Categories</h2>
         <a href="{{ route('admin.users.index') }}" class="btn" style="background:transparent; border:1px solid rgba(255,255,255,0.1); color:var(--muted);">Back to Admin</a>

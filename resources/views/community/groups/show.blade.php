@@ -1,111 +1,93 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container" style="max-width: 900px; margin: 0 auto; padding: 20px;">
-    
+<div class="home-centered-container">
+    <div style="margin-bottom:24px;">
+        <a href="{{ route('community.index') }}" style="color:var(--muted); text-decoration:none;">&larr; Back to Community</a>
+    </div>
+
     <!-- Group Header -->
-    <div class="card" style="margin-bottom:24px; padding:24px; background: linear-gradient(to right, rgba(111,184,255,0.1), transparent);">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <div>
-                <h1 style="margin:0; font-size:28px;">{{ $group->name }}</h1>
-                <p style="color:var(--muted); margin-top:8px;">{{ $group->description }}</p>
-                <div style="font-size:13px; color:var(--muted); margin-top:12px;">
-                    {{ $group->members()->count() }} Members • Created by {{ $group->owner->name }}
-                </div>
-            </div>
-            <div>
-                @if($isMember)
-                    <form action="{{ route('groups.leave', $group) }}" method="POST" onsubmit="return confirm('Leave this group?');">
-                        @csrf
-                        <button class="btn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);">Leave Group</button>
-                    </form>
-                @else
-                    <form action="{{ route('groups.join', $group) }}" method="POST">
-                        @csrf
-                        <button class="btn">Join Group</button>
-                    </form>
-                @endif
-            </div>
+    <div class="card" style="margin-bottom:24px; padding:32px; text-align:center; position:relative; overflow:hidden;">
+        <!-- Background Decoration -->
+        <div style="position:absolute; top:0; left:0; right:0; height:100%; background:linear-gradient(135deg, rgba(111,184,255,0.05) 0%, rgba(0,0,0,0) 100%); pointer-events:none;"></div>
+        
+        <div style="font-size:48px; margin-bottom:16px;">👥</div>
+        <h1 style="margin:0 0 8px; font-size:32px;">{{ $group->name }}</h1>
+        <p style="color:var(--muted); margin:0 0 24px; max-width:600px; margin-left:auto; margin-right:auto;">{{ $group->description }}</p>
+        
+        <div style="display:flex; justify-content:center; gap:12px;">
+            @if($isOwner)
+                <span class="badge" style="background:#f1c40f; color:#000;">👑 Owner</span>
+            @elseif($isMember)
+                <span class="badge" style="background:var(--accent); color:#fff;">✅ Member</span>
+                <form action="{{ route('community.groups.leave', $group) }}" method="POST" onsubmit="return confirm('Leave this group?');">
+                    @csrf
+                    <button type="submit" class="btn" style="background:rgba(255,255,255,0.1); color:#fff; border:none;">Leave</button>
+                </form>
+            @elseif($isPending)
+                <span class="badge" style="background:rgba(255,255,255,0.1); color:var(--muted);">⏳ Request Pending</span>
+            @else
+                <form action="{{ route('community.groups.join', $group) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-primary" style="background:var(--accent); color:#fff; border:none; padding:10px 24px;">Join Group</button>
+                </form>
+            @endif
         </div>
     </div>
 
-    <!-- Feed -->
-    @if($isMember)
-        <!-- Member Requests (Owner Only) -->
-        @if($isOwner && $pendingMembers->count() > 0)
-            <div class="card" style="margin-bottom: 24px; border: 1px solid var(--accent);">
-                <h3 style="margin-top:0; font-size:16px; margin-bottom:12px;">{{ __('Member Requests') }}</h3>
-                <div style="display:flex; flex-direction:column; gap:12px;">
-                    @foreach($pendingMembers as $user)
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <div style="width:32px; height:32px; border-radius:50%; background:var(--muted); display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px;">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                                </div>
-                                <span>{{ $user->name }}</span>
-                            </div>
-                            <div style="display:flex; gap:8px;">
-                                <form action="{{ route('groups.approve', [$group, $user]) }}" method="POST">
-                                    @csrf
-                                    <button class="btn" style="padding:4px 12px; font-size:12px; background:var(--success);">{{ __('Approve') }}</button>
-                                </form>
-                                <form action="{{ route('groups.remove', [$group, $user]) }}" method="POST" onsubmit="return confirm('Reject user?');">
-                                    @csrf
-                                    <button class="btn" style="padding:4px 12px; font-size:12px; background:var(--danger);">{{ __('Reject') }}</button>
-                                </form>
-                            </div>
+    <!-- Owner Actions: Pending Requests -->
+    @if($isOwner && $pendingMembers->count() > 0)
+    <div class="card" style="margin-bottom:24px; border:1px solid var(--accent);">
+        <h3 style="margin-top:0; color:var(--accent);">Pending Join Requests ({{ $pendingMembers->count() }})</h3>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            @foreach($pendingMembers as $user)
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:12px; border-radius:8px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <img src="{{ $user->avatar_url }}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                        <div>
+                            <div style="font-weight:bold;">{{ $user->name }}</div>
+                            <div style="font-size:12px; color:var(--muted);">Requested {{ $user->pivot->created_at->diffForHumans() }}</div>
                         </div>
-                    @endforeach
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <form action="{{ route('community.groups.approve', [$group, $user]) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn" style="background:#2ecc71; color:#fff; border:none; padding:6px 12px; font-size:12px;">Approve</button>
+                        </form>
+                        <form action="{{ route('community.groups.reject', [$group, $user]) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn" style="background:#e74c3c; color:#fff; border:none; padding:6px 12px; font-size:12px;">Reject</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        @endif
+            @endforeach
+        </div>
+    </div>
+    @endif
 
-        <!-- Create Post -->
-        <div class="card" style="margin-bottom: 24px;">
-            <h2 style="margin-top:0; font-size:18px; margin-bottom:16px;">{{ __('Post to') }} {{ $group->name }}</h2>
-            <form action="{{ route('community.posts.store') }}" method="POST" enctype="multipart/form-data">
+    <!-- Group Posts -->
+    <div class="card">
+        <h3>Group Posts</h3>
+        @if($isMember || $isOwner)
+            <!-- Post Form -->
+            <form action="{{ route('community.posts.store') }}" method="POST" enctype="multipart/form-data" style="margin-bottom:24px;">
                 @csrf
                 <input type="hidden" name="group_id" value="{{ $group->id }}">
-                <textarea name="content" rows="3" class="input-field" placeholder="{{ __('Share something with the group...') }}" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:8px; padding:12px; font-family:inherit; resize:vertical;"></textarea>
-                
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
-                    <div>
-                        <label for="group-image-upload" style="cursor:pointer; color:var(--accent); font-size:14px; display:flex; align-items:center; gap:6px;">
-                            📷 {{ __('Add Image') }}
-                        </label>
-                        <input type="file" name="image" id="group-image-upload" style="display:none;" accept="image/*" onchange="document.getElementById('group-file-name').innerText = this.files[0].name">
-                        <span id="group-file-name" style="font-size:12px; color:var(--muted); margin-left:8px;"></span>
-                    </div>
-                    <button type="submit" class="btn" style="background:var(--accent); color:#fff; padding:8px 24px;">{{ __('Post') }}</button>
+                <textarea name="content" rows="3" placeholder="Post something to this group..." style="width:100%; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.2); color:#fff; resize:vertical;"></textarea>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                    <input type="file" name="image" style="font-size:12px; color:var(--muted);">
+                    <button type="submit" class="btn btn-primary" style="background:var(--accent); color:#fff; border:none; padding:8px 20px; border-radius:6px; font-weight:600;">Post</button>
                 </div>
             </form>
-        </div>
 
-        <!-- Group Posts -->
-        @foreach($posts as $post)
-            @include('community.partials.post', ['post' => $post])
-        @endforeach
-
-        <div style="margin-top:24px;">{{ $posts->links() }}</div>
-
-        <!-- Members List (Owner Only - Simplified) -->
-        @if($isOwner)
-             <div class="card" style="margin-top: 40px;">
-                <h3 style="margin-top:0; font-size:16px;">{{ __('Members Management') }}</h3>
-                <p style="font-size:13px; color:var(--muted);">{{ __('Total Members') }}: {{ $group->members()->count() }}</p>
-                <!-- Could add a link to a full members management page if list is too long -->
-            </div>
+            @forelse($group->posts as $post)
+                @include('community.partials.post_card', ['post' => $post])
+            @empty
+                <p style="color:var(--muted); text-align:center; padding:20px;">No posts yet. Be the first!</p>
+            @endforelse
+        @else
+            <p style="text-align:center; padding:40px; color:var(--muted);">You must be a member to view posts.</p>
         @endif
-
-    @elseif($isPending)
-        <div class="card" style="text-align:center; padding:40px;">
-            <h3>{{ __('Membership Pending') }}</h3>
-            <p style="color:var(--muted);">{{ __('Your request to join this group is waiting for approval by the owner.') }}</p>
-        </div>
-    @else
-        <div class="card" style="text-align:center; padding:40px;">
-            <h3>{{ __('Join this group to see posts and participate!') }}</h3>
-        </div>
-    @endif
+    </div>
 </div>
 @endsection

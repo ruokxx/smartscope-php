@@ -105,7 +105,23 @@
        border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.02); color: #e6eef6;
      }
      .styled-select option { background:#07121b; } 
+     .styled-select option { background:#07121b; } 
      .accent-line { height:1px; background:rgba(255,255,255,0.06); margin:20px 0; }
+
+     /* Fix Laravel Pagination Arrows */
+     nav[role="navigation"] svg { width:20px; height:20px; }
+     nav[role="navigation"] .hidden { display:none; }
+
+     /* Custom Pagination Styling */
+     .pagination { display:flex; list-style:none; padding:0; gap:4px; }
+     .page-item .page-link {
+        display:flex; align-items:center; justify-content:center;
+        padding:8px 12px; border-radius:6px; background:rgba(255,255,255,0.05); color:var(--muted);
+        text-decoration:none; font-size:13px; transition:all 0.2s; min-width:32px; height:32px;
+     }
+     .page-item.active .page-link { background:var(--accent); color:#fff; font-weight:bold; }
+     .page-item.disabled .page-link { opacity:0.5; pointer-events:none; }
+     .page-item:not(.active):not(.disabled) .page-link:hover { background:rgba(255,255,255,0.1); color:#fff; }
   </style>
 </head>
 <body>
@@ -132,17 +148,26 @@
         <a href="{{ route('admin.images.index') }}" class="{{ request()->routeIs('admin.images.*') ? 'active' : '' }}">
             <span>Images</span>
         </a>
+        <a href="{{ route('admin.objects.index') }}" class="{{ request()->routeIs('admin.objects.*') ? 'active' : '' }}">
+            <span>Objects</span>
+        </a>
+        <a href="{{ route('admin.forum.categories.index') }}" class="{{ request()->routeIs('admin.forum.*') ? 'active' : '' }}">
+            <span>Forum</span>
+        </a>
         <a href="{{ route('admin.news.index') }}" class="{{ request()->routeIs('admin.news.*') ? 'active' : '' }}">
             <span>News</span>
         </a>
         <a href="{{ route('admin.changelogs.index') }}" class="{{ request()->routeIs('admin.changelogs.*') ? 'active' : '' }}">
             <span>Changelogs</span>
         </a>
-        <a href="{{ route('admin.settings.index') }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-            <span>Settings</span>
-        </a>
         <a href="{{ route('admin.community.index') }}" class="{{ request()->routeIs('admin.community.*') ? 'active' : '' }}">
             <span>Community</span>
+        </a>
+        <a href="{{ route('admin.backups.index') }}" class="{{ request()->routeIs('admin.backups.*') ? 'active' : '' }}">
+            <span>Backups</span>
+        </a>
+        <a href="{{ route('admin.settings.index') }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+            <span>Settings</span>
         </a>
       </nav>
       <div class="sidebar-footer">

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Schema;
 use App\Models\Scope;
 
 
+use Illuminate\Pagination\Paginator; // Use Paginator
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register()
@@ -16,6 +18,8 @@ class AppServiceProvider extends ServiceProvider
     }
     public function boot()
     {
+        Paginator::useBootstrapFive(); // Enable Bootstrap 5 Pagination
+
         // Allow running in console to ensure queues get the config too
         // if ($this->app->runningInConsole()) {
         //     return;

@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
-@section('content')
-<div class="container" style="max-width:1000px; margin:0 auto; padding:20px;">
+@section('admin-content')
+<div class="card full">
     
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
         <h1 style="margin:0; font-size:24px;">Database Backups</h1>

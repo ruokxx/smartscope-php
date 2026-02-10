@@ -19,7 +19,7 @@
                     <a href="{{ route('community.index') }}" style="display:flex; align-items:center; gap:8px; padding:8px; border-radius:8px; background:rgba(255,255,255,0.05); color:#fff; text-decoration:none;">
                         <span>🏠</span> {{ __('Home Feed') }}
                     </a>
-                    <a href="{{ route('groups.create') }}" style="display:flex; align-items:center; gap:8px; padding:8px; border-radius:8px; background:rgba(255,255,255,0.05); color:#fff; text-decoration:none;">
+                    <a href="{{ route('community.groups.create') }}" style="display:flex; align-items:center; gap:8px; padding:8px; border-radius:8px; background:rgba(255,255,255,0.05); color:#fff; text-decoration:none;">
                         <span>➕</span> {{ __('Create Group') }}
                     </a>
                 </nav>
@@ -31,7 +31,7 @@
                 @if($myGroups->count() > 0)
                     <div style="display:flex; flex-direction:column; gap:8px;">
                         @foreach($myGroups as $group)
-                            <a href="{{ route('groups.show', $group) }}" style="display:flex; align-items:center; gap:8px; padding:6px; border-radius:6px; color:#e6eef6; text-decoration:none; transition:background 0.2s;">
+                            <a href="{{ route('community.groups.show', $group) }}" style="display:flex; align-items:center; gap:8px; padding:6px; border-radius:6px; color:#e6eef6; text-decoration:none; transition:background 0.2s;">
                                 <div style="width:24px; height:24px; background:var(--accent); border-radius:4px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px; color:#fff;">
                                     {{ strtoupper(substr($group->name, 0, 1)) }}
                                 </div>
@@ -51,11 +51,8 @@
                     <div style="display:flex; flex-direction:column; gap:8px;">
                         @foreach($allGroups as $group)
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <a href="{{ route('groups.show', $group) }}" style="font-size:14px; color:#e6eef6; text-decoration:none;">{{ $group->name }}</a>
-                                <form action="{{ route('groups.join', $group) }}" method="POST">
-                                    @csrf
-                                    <button style="background:rgba(255,255,255,0.1); border:none; color:var(--accent); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">{{ __('Join') }}</button>
-                                </form>
+                                <a href="{{ route('community.groups.show', $group) }}" style="font-size:14px; color:#e6eef6; text-decoration:none;">{{ $group->name }}</a>
+                                <a href="{{ route('community.groups.show', $group) }}" style="background:rgba(255,255,255,0.1); border:none; color:var(--accent); font-size:11px; padding:2px 6px; border-radius:4px; text-decoration:none;">{{ __('View') }}</a>
                             </div>
                         @endforeach
                     </div>
