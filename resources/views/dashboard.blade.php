@@ -36,6 +36,7 @@
             </a>
 
             <!-- Moderation -->
+            @if(auth()->user()->is_moderator || auth()->user()->is_admin)
             <a href="{{ route('admin.moderation.index') }}" class="card dashboard-card" style="text-decoration:none; color:inherit; transition:transform 0.2s, border-color 0.2s; border:1px solid rgba(255,255,255,0.05); background:rgba(255,255,255,0.02); height:100%;">
                 <div style="display:flex; flex-direction:column; height:100%; padding:24px;">
                     <div style="font-size:32px; margin-bottom:16px;">🛡️</div>
@@ -43,8 +44,10 @@
                     <p style="margin:0; color:var(--muted); font-size:14px; flex:1;">Review reported content and uploaded images.</p>
                 </div>
             </a>
+            @endif
 
             <!-- Backups -->
+            @if(auth()->user()->is_admin)
             <a href="{{ route('admin.backups.index') }}" class="card dashboard-card" style="text-decoration:none; color:inherit; transition:transform 0.2s, border-color 0.2s; border:1px solid rgba(255,255,255,0.05); background:rgba(255,255,255,0.02); height:100%;">
                 <div style="display:flex; flex-direction:column; height:100%; padding:24px;">
                     <div style="font-size:32px; margin-bottom:16px;">💾</div>
@@ -52,6 +55,7 @@
                     <p style="margin:0; color:var(--muted); font-size:14px; flex:1;">Create and download database backups.</p>
                 </div>
             </a>
+            @endif
 
             <!-- Upload Image -->
             <a href="{{ route('images.create') }}" class="card dashboard-card" style="text-decoration:none; color:inherit; transition:transform 0.2s, border-color 0.2s; border:1px solid rgba(255,255,255,0.05); background:rgba(255,255,255,0.02); height:100%;">
