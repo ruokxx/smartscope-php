@@ -184,3 +184,9 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin/community')->name('admin.
     Route::get('/', [App\Http\Controllers\Admin\CommunityController::class , 'index'])->name('index');
     Route::delete('/{post}', [App\Http\Controllers\Admin\CommunityController::class , 'destroy'])->name('destroy');
 });
+
+// Admin Groups Route
+Route::middleware(['auth', 'is_admin'])->prefix('admin/groups')->name('admin.groups.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\GroupController::class , 'index'])->name('index');
+    Route::delete('/{group}', [\App\Http\Controllers\Admin\GroupController::class , 'destroy'])->name('destroy');
+});

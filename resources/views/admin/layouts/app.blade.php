@@ -160,6 +160,9 @@
         <a href="{{ route('admin.changelogs.index') }}" class="{{ request()->routeIs('admin.changelogs.*') ? 'active' : '' }}">
             <span>Changelogs</span>
         </a>
+        <a href="{{ route('admin.groups.index') }}" class="{{ request()->routeIs('admin.groups.*') ? 'active' : '' }}">
+            <span>Groups</span>
+        </a>
         <a href="{{ route('admin.community.index') }}" class="{{ request()->routeIs('admin.community.*') ? 'active' : '' }}">
             <span>Community</span>
         </a>
