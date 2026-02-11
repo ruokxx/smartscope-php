@@ -53,5 +53,9 @@
     "My Equipment": "Meine Ausrüstung",
     "Inbox": "Posteingang",
     "View all": "Alle anzeigen",
-    "Changelog": "Änderungsprotokoll"
+    "Changelog": "Änderungsprotokoll",
+    "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Passwort vergessen? Kein Problem. Gib einfach deine E-Mail-Adresse an, und wir senden dir einen Link zum Zurücksetzen des Passworts.",
+    "Back to Login": "Zurück zum Login",
+    "Reset Password": "Passwort zurücksetzen",
+    "Email Password Reset Link": "Link zum Zurücksetzen senden"
 }
