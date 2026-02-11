@@ -76,7 +76,7 @@
                     <span class="user-name {{ (optional($n->user)->is_admin || optional($n->user)->is_moderator) ? 'team-member-name' : '' }}" style="font-weight:bold; font-size:15px; color:{{ $n->user->role_color ?? 'var(--accent)' }}">{{ $n->title }}</span>
                     <span class="upload-date muted" style="font-size:12px; white-space:nowrap;">{{ $n->created_at instanceof \DateTime || $n->created_at instanceof \Carbon\Carbon ? $n->created_at->format('d.m.Y H:i') : \Carbon\Carbon::parse($n->created_at)->format('d.m.Y H:i') }}</span>
                 </div>
-                <div class="news-body" style="font-size:14px; line-height:1.5; overflow-wrap: anywhere; word-break: break-word; white-space: normal; max-width: 100%;">
+                <div class="news-body">
                     {!! \Illuminate\Support\Str::markdown($n->body) !!}
                 </div>
               </div>
@@ -163,13 +163,37 @@
 
     </div>
     
-    <style>
-        .home-widgets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .news-body ul, .news-body ol { padding-left: 20px; margin: 0; }
-        .news-body p { margin-bottom: 8px; }
-        .news-body p:last-child { margin-bottom: 0; }
+        .news-body { 
+            font-size: 14px; 
+            line-height: 1.6; 
+            color: #d1d5db; 
+            overflow-wrap: break-word; 
+            word-wrap: break-word; 
+            word-break: break-word; 
+            hyphens: auto; 
+            max-width: 100%;
+        }
+        .news-body ul, .news-body ol { 
+            padding-left: 1.2em; 
+            margin: 0.5em 0; 
+        }
+        .news-body li {
+            margin-bottom: 0.25em;
+        }
+        .news-body p { 
+            margin-bottom: 0.75em; 
+        }
+        .news-body p:last-child { 
+            margin-bottom: 0; 
+        }
+        .news-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
         @media (max-width: 800px) {
             .home-widgets-grid { grid-template-columns: 1fr; }
+            .news-item { padding: 12px !important; }
         }
     </style>
 
