@@ -65,6 +65,32 @@
     </div>
     @endif
 
+    <!-- Member List -->
+    <div class="card" style="margin-bottom:24px;">
+        <h3>Members ({{ $group->members->count() }})</h3>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:12px;">
+            @foreach($group->members as $member)
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                    <a href="{{ route('profile.show', $member->id) }}" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit;">
+                        <img src="{{ $member->avatar_url }}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
+                        <span style="font-size:14px; font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $member->name }}</span>
+                    </a>
+                    
+                    @if($group->owner_id === $member->id)
+                        <span title="Owner" style="font-size:16px;">👑</span>
+                    @elseif($isOwner)
+                        <form action="{{ route('community.groups.remove', [$group, $member]) }}" method="POST" onsubmit="return confirm('Remove this member?');">
+                            @csrf
+                            <button type="submit" title="Remove Member" style="background:transparent; border:none; color:#e74c3c; cursor:pointer; font-size:16px; padding:4px;">
+                                ✕
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    </div>
+
     <!-- Group Posts -->
     <div class="card">
         <h3>Group Posts</h3>

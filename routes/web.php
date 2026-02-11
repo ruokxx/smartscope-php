@@ -177,6 +177,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('community/groups/{group}/leave', [\App\Http\Controllers\CommunityController::class , 'leaveGroup'])->name('community.groups.leave');
     Route::post('community/groups/{group}/approve/{user}', [\App\Http\Controllers\CommunityController::class , 'approveRequest'])->name('community.groups.approve');
     Route::post('community/groups/{group}/reject/{user}', [\App\Http\Controllers\CommunityController::class , 'rejectRequest'])->name('community.groups.reject');
+    Route::post('community/groups/{group}/remove/{user}', [\App\Http\Controllers\CommunityController::class , 'removeMember'])->name('community.groups.remove');
 });
 
 // Admin Community Route

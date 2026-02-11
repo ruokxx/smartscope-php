@@ -18,6 +18,9 @@
                 <a href="{{ route('lang.switch', 'de') }}" style="color:{{ app()->getLocale() == 'de' ? '#fff' : 'rgba(255,255,255,0.4)' }}; text-decoration:none; font-size:11px; font-weight:bold;">DE</a>
             </div>
         </div>
+
+        <!-- Custom Message (Alert) -->
+        <div id="auth-message" style="display:none; padding:12px 16px; background:rgba(231, 76, 60, 0.1); border-bottom:1px solid rgba(231, 76, 60, 0.2); color:#e74c3c; font-size:13px; text-align:center;"></div>
         
         <!-- Forgot Password Header (Only visible in forgot mode) -->
         <div id="header-forgot" style="display:none; padding:16px; border-bottom:1px solid rgba(255,255,255,0.1); align-items:center;">
@@ -153,9 +156,18 @@
 </div>
 
 <script>
-    function openAuthModal(tab = 'login') {
+    function openAuthModal(tab = 'login', message = null) {
         const modal = document.getElementById('auth-modal');
         const card = modal.querySelector('div[style*="position:relative"]');
+        const msgEl = document.getElementById('auth-message');
+
+        if (message) {
+            msgEl.textContent = message;
+            msgEl.style.display = 'block';
+        } else {
+            msgEl.style.display = 'none';
+        }
+
         modal.style.display = 'flex';
         modal.style.pointerEvents = 'auto'; // Re-enable pointer events
         // Trigger reflow

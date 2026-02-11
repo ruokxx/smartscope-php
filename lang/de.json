@@ -60,5 +60,6 @@
     "Email Password Reset Link": "Link zum Zurücksetzen senden",
     "messages.stats_images": ":count Bilder online",
     "messages.stats_users": ":count Benutzer registriert",
-    "messages.stats_disk": "Speicher: :used GB belegt / :free GB frei"
+    "messages.stats_disk": "Speicher: :used GB belegt / :free GB frei",
+    "messages.login_required": "Bitte logge dich ein oder registriere dich, um diese Funktion zu nutzen."
 }

@@ -115,7 +115,11 @@
                 <p class="muted" style="font-size:13px;">{{ __('No recent threads.') }}</p>
             @endforelse
             <div style="margin-top:auto; text-align:right;">
-                <a href="{{ route('community.forum.index') }}" style="font-size:12px; color:var(--accent);">{{ __('Go to Forum') }} &rarr;</a>
+                @guest
+                    <a href="#" onclick="event.preventDefault(); openAuthModal('login', '{{ __('messages.login_required') }}')" style="font-size:12px; color:var(--accent);">{{ __('Go to Forum') }} &rarr;</a>
+                @else
+                    <a href="{{ route('community.forum.index') }}" style="font-size:12px; color:var(--accent);">{{ __('Go to Forum') }} &rarr;</a>
+                @endguest
             </div>
         </div>
         @endif
@@ -147,7 +151,11 @@
                 <p class="muted" style="font-size:13px;">{{ __('No recent activity.') }}</p>
             @endforelse
             <div style="margin-top:auto; text-align:right;">
-                <a href="{{ route('community.index') }}" style="font-size:12px; color:var(--accent);">{{ __('View all') }} &rarr;</a>
+                @guest
+                    <a href="#" onclick="event.preventDefault(); openAuthModal('login', '{{ __('messages.login_required') }}')" style="font-size:12px; color:var(--accent);">{{ __('View all') }} &rarr;</a>
+                @else
+                    <a href="{{ route('community.index') }}" style="font-size:12px; color:var(--accent);">{{ __('View all') }} &rarr;</a>
+                @endguest
             </div>
         </div>
         @endif

@@ -89,4 +89,5 @@ return [
     'stats_images' => ':count Images online',
     'stats_users' => ':count Users registered',
     'stats_disk' => 'Disk: :used GB used / :free GB free',
+    'login_required' => 'Please log in or register to access this feature.',
 ];

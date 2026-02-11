@@ -176,4 +176,20 @@ class CommunityController extends Controller
         $group->allMembers()->detach($user->id);
         return back()->with('success', 'Request rejected.');
     }
+
+    public function removeMember(Group $group, User $user)
+    {
+        // Only owner can remove members
+        if ($group->owner_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Cannot remove self
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'You cannot remove yourself.');
+        }
+
+        $group->allMembers()->detach($user->id);
+        return back()->with('success', 'Member removed from group.');
+    }
 }
