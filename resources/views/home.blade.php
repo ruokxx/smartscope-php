@@ -72,11 +72,11 @@
                     <div id="newsContainer">
             @forelse($news as $index => $n)
               <div class="news-item" data-index="{{ $index }}" style="display:{{ $index < 2 ? 'block' : 'none' }}; margin-bottom:12px; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
-                <div class="user-info" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px; margin-bottom:8px;">
+                <div class="user-info" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
                     <span class="user-name {{ (optional($n->user)->is_admin || optional($n->user)->is_moderator) ? 'team-member-name' : '' }}" style="font-weight:bold; font-size:15px; color:{{ $n->user->role_color ?? 'var(--accent)' }}">{{ $n->title }}</span>
                     <span class="upload-date muted" style="font-size:12px; white-space:nowrap;">{{ $n->created_at instanceof \DateTime || $n->created_at instanceof \Carbon\Carbon ? $n->created_at->format('d.m.Y H:i') : \Carbon\Carbon::parse($n->created_at)->format('d.m.Y H:i') }}</span>
                 </div>
-                <div style="font-size:14px; line-height:1.5;">{!! \Illuminate\Support\Str::markdown($n->body) !!}</div>
+                <div style="font-size:14px; line-height:1.5; overflow-wrap: break-word; word-break: break-word;">{!! \Illuminate\Support\Str::markdown($n->body) !!}</div>
               </div>
             @empty
               <p class="muted">No news yet.</p>
