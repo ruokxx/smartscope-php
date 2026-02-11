@@ -1,26 +1,26 @@
-# 🌙 Smartscope Bilder Vergleich (Picture Compare)
+# 🌙 Smart Teleskop Astrofoto
 
 **Ein Ort zum Teilen, Vergleichen und Entdecken von Astrofotografie.**
-*Entwickelt für Smart-Teleskope wie Seestar S50, Dwarf II.*
+*Entwickelt für Smart-Teleskope wie Seestar S50, Dwarf II, Vespera.*
 
 ---
 
 ## 🚀 Über das Projekt
 
-**Smartscope Bilder Vergleich** ist eine Webanwendung, die es Astrofotografen ermöglicht, ihre Aufnahmen hochzuladen, zu katalogisieren und mit anderen zu vergleichen. Ziel ist es, die Leistung verschiedener Smart-Teleskope unter verschiedenen Bedingungen (Bortle-Skala, Belichtungszeit, Filter) direkt gegenüberzustellen.
+**Smart Teleskop Astrofoto** (ehemals Smartscope Bilder Vergleich) ist eine Webanwendung, die es Astrofotografen ermöglicht, ihre Aufnahmen hochzuladen, zu katalogisieren und mit anderen zu vergleichen. Ziel ist es, die Leistung verschiedener Smart-Teleskope unter verschiedenen Bedingungen (Bortle-Skala, Belichtungszeit, Filter) direkt gegenüberzustellen.
 
 ### ✨ Features
 
 *   **🔭 Deep Sky Objekt (DSO) Datenbank**: Umfangreicher Katalog an Nebeln, Galaxien und Sternhaufen (Messier, NGC, IC).
-*   **🆚 Vergleichsmodus**: Wähle zwei Bilder aus und vergleiche sie Seite an Seite, um Unterschiede in Details und Qualität zu analysieren.
-*   **👤 Benutzerprofile & Sammlungen**:
-    *   Verfolge deinen Fortschritt (Welche Objekte habe ich schon fotografiert?).
-    *   "Captured" vs. "Missing" Status für jedes Objekt.
-    *   Verwalte deine eigene Ausrüstung (Teleskope).
-*   **📱 Responsive Design**: Optimiert für Desktop, Tablet und Smartphone.
-*   **🌍 Mehrsprachigkeit**: Vollständig lokalisiert in **Deutsch** (Standard) und **Englisch**.
-*   **🎨 Premium UI**: Modernes Dark-Theme (Space-Look) mit Glassmorphism-Effekten und Gradienten.
-*   **📰 News & Changelog**: Integriertes System für Neuigkeiten und Updates direkt auf der Startseite.
+*   **🆚 Vergleichsmodus**: Wähle zwei Bilder aus und vergleiche sie Seite an Seite.
+*   **👥 Community & Gruppen**: Erstelle Gruppen, trete bei und teile deine Ergebnisse im Feed.
+*   **💬 Forum**: Dedizierter Bereich für Diskussionen, Fragen und Tutorials.
+*   **👤 Benutzerprofile**: Verfolge deinen Fortschritt, Ausrüstung und "Captured" Status.
+*   **🛠️ Admin Dashboard**: Verwaltung von Benutzern, Gruppen, Einstellungen (SMTP, Texte) und Server-Statistiken.
+*   **📱 Responsive & Modern**: Dark-Theme mit "Space"-Ästhetik, Animationen und mobilem Support.
+*   **🌍 Mehrsprachigkeit**: Deutsch & Englisch.
+*   **🔒 Sicherheit**: Rollenbasierte Zugriffsrechte (Admin, Moderator, User).
+*   **📰 News & Changelog**: Integriertes Update-System.
 
 ---
 

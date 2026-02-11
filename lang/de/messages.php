@@ -79,7 +79,7 @@ return [
     'profile' => 'Profil',
     'equipment' => 'Meine Ausrüstung',
     'community' => 'Community',
-    'site_title' => 'Smartscope Bilder Vergleich',
+    'site_title' => 'Smart Teleskop Astrofoto',
     'welcome_back' => 'Willkommen zurück',
     'edit_profile' => 'Profil bearbeiten',
     'quick_actions' => 'Schnellzugriff',

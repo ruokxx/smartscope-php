@@ -49,7 +49,7 @@
               <div style="font-weight:600; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#e6eef6;">
                   {{ $img->object->catalog ?? '' }} {{ $img->object->name ?? '' }}
               </div>
-              <div class="muted" style="font-size:12px">{{ __('messages.by') }}: <span style="color:{{ $img->user->role_color }}">{{ $img->user->name ?? '—' }}</span></div>
+              <div class="muted" style="font-size:12px">{{ __('messages.by') }}: <span class="{{ (optional($img->user)->is_admin || optional($img->user)->is_moderator) ? 'team-member-name' : '' }}" style="color:{{ $img->user->role_color }}">{{ $img->user->name ?? '—' }}</span></div>
               <div class="muted" style="font-size:11px;">{{ optional($img->upload_time)->format('d.m.Y H:i') ?? '' }}</div>
             </div>
           </div>
@@ -74,7 +74,7 @@
             @forelse($news as $index => $n)
               <div class="news-item" data-index="{{ $index }}" style="display:{{ $index < 2 ? 'block' : 'none' }}; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.03);">
                 <div class="user-info">
-                    <span class="user-name" style="color:{{ $n->user->role_color ?? 'inherit' }}">{{ $n->title }}</span>
+                    <span class="user-name {{ (optional($n->user)->is_admin || optional($n->user)->is_moderator) ? 'team-member-name' : '' }}" style="color:{{ $n->user->role_color ?? 'inherit' }}">{{ $n->title }}</span>
                     <span class="upload-date muted" style="font-size:12px">{{ $n->created_at instanceof \DateTime || $n->created_at instanceof \Carbon\Carbon ? $n->created_at->format('M d, Y') : \Carbon\Carbon::parse($n->created_at)->format('M d, Y') }}</span>
                 </div>
                 <div style="margin-top:6px;font-size:14px;">{!! nl2br(e(\Illuminate\Support\Str::limit($n->body, 400))) !!}</div>
@@ -105,7 +105,7 @@
                             </div>
                             <div style="font-size:11px; color:var(--muted); margin-top:2px; display:flex; gap:6px; align-items:center;">
                                 <span style="background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:3px;">{{ $thread->category->name ?? 'General' }}</span>
-                                <span>by <span style="color:{{ $thread->user->role_color }}">{{ $thread->user->display_name ?: $thread->user->name }}</span></span>
+                                <span>by <span class="{{ (optional($thread->user)->is_admin || optional($thread->user)->is_moderator) ? 'team-member-name' : '' }}" style="color:{{ $thread->user->role_color }}">{{ $thread->user->display_name ?: $thread->user->name }}</span></span>
                                 <span>&bull; {{ $thread->created_at->diffForHumans() }}</span>
                             </div>
                         </div>
@@ -135,7 +135,7 @@
                             {{ strtoupper(substr($post->user->name, 0, 1)) }}
                         </div>
                         <div style="overflow:hidden; flex:1;">
-                            <div style="font-size:12px; font-weight:bold; color:{{ $post->user->role_color }};">
+                            <div class="{{ (optional($post->user)->is_admin || optional($post->user)->is_moderator) ? 'team-member-name' : '' }}" style="font-size:12px; font-weight:bold; color:{{ $post->user->role_color }};">
                                 {{ $post->user->display_name ?: $post->user->name }}
                             </div>
                             <div style="font-size:13px; color:#ddd; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -177,7 +177,7 @@
           <div id="usersList" style="max-height:240px; overflow:auto; padding-right:6px;">
             @foreach($users->take(5) as $u)
               <div style="padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.02);">
-                <a href="#" class="user-link" data-user-id="{{ $u->id }}" style="color:{{ $u->role_color === 'inherit' ? 'var(--accent)' : $u->role_color }}; text-decoration:none;">{{ $u->name ?? 'Unnamed' }}</a>
+                <a href="#" class="user-link {{ (optional($u)->is_admin || optional($u)->is_moderator) ? 'team-member-name' : '' }}" data-user-id="{{ $u->id }}" style="color:{{ $u->role_color === 'inherit' ? 'var(--accent)' : $u->role_color }}; text-decoration:none;">{{ $u->name ?? 'Unnamed' }}</a>
               </div>
             @endforeach
           </div>

@@ -86,6 +86,7 @@ class AppServiceProvider extends ServiceProvider
             $stats = array_merge($stats, $diskStats);
 
             view()->share('global_stats', $stats);
+            view()->share('settings', $settings);
         }
 
         view()->share('scopes', $scopes);

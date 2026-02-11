@@ -11,6 +11,18 @@
     <form method="POST" action="{{ route('admin.settings.update') }}" class="upload-form">
         @csrf
 
+        <!-- General Settings -->
+        <h3>General Settings</h3>
+        <div class="card" style="background:rgba(255,255,255,0.02); padding:16px; margin-bottom:24px; border:1px solid rgba(255,255,255,0.05);">
+            <div class="form-row">
+                <label>Header Description</label>
+                <input type="text" name="header_description" value="{{ $settings['header_description'] ?? '' }}" placeholder="Your Community for Smart Telescope Astrophotography">
+                <div style="font-size:11px; color:var(--muted); margin-top:2px;">
+                    Appears between the site title and navigation. Leave empty to use the default translation.
+                </div>
+            </div>
+        </div>
+
         <!-- Domain & SSL Settings -->
         <h3>Domain & SSL</h3>
         <div class="card" style="background:rgba(255,255,255,0.02); padding:16px; margin-bottom:24px; border:1px solid rgba(255,255,255,0.05);">

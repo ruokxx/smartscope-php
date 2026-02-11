@@ -57,11 +57,10 @@
     }
 
     h1{margin:0;font-size:20px;font-weight:700}
-    h1 a{
-      background: linear-gradient(90deg, #e6eef6, var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-decoration:none;
+    /* shimmer animation moved to shared block below */
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
     }
 
     nav{display:flex;gap:10px;align-items:center;z-index:2}
@@ -121,23 +120,31 @@
       background: rgba(255,255,255,0.02); color:#e6eef6; margin-top:8px; margin-bottom:12px; box-sizing:border-box;
     }
 
+    h1 a, .shimmer-text, h2, h3, .team-member-name {
+      background: linear-gradient(90deg, #e6eef6, var(--accent), #e6eef6);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-decoration:none;
+      animation: shimmer 3s linear infinite;
+    }
+
     button, .btn {
-      padding:8px 12px; border-radius:8px; background: linear-gradient(90deg,var(--accent),var(--accent2));
+      padding:8px 12px; border-radius:8px;
+      /* Background shimmer for buttons (so they are visible) */
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+      background-size: 200% auto;
+      animation: shimmer 3s linear infinite;
+      
       color:#041229; border:0; cursor:pointer; font-weight:700;
     }
 
-    .notice { padding:10px;border-radius:8px;background:rgba(111,184,255,0.06);border:1px solid rgba(111,184,255,0.06);color:#e6eef6;margin-bottom:14px }
-
-    /* Pagination */
-    .pagination { display:flex; gap:8px; list-style:none; padding:0; margin:18px 0; justify-content:center; color:var(--muted); }
-    .pagination li { display:inline-block; }
-    .pagination a, .pagination span {
-      display:inline-flex; align-items:center; justify-content:center; min-width:36px; height:36px; padding:0 10px;
-      border-radius:8px; text-decoration:none; color:var(--muted); background:rgba(255,255,255,0.01);
-      border:1px solid rgba(255,255,255,0.03); transition:background .12s ease, color .12s ease, transform .08s ease; font-size:13px;
-    }
+    /* Keep pagination colors distinct */
     .pagination .active span, .pagination .active a {
-      background: linear-gradient(90deg,var(--accent),var(--accent2)); color:#041229; border-color:transparent; font-weight:700;
+      background: linear-gradient(90deg,var(--accent),var(--accent2),var(--accent));
+      background-size: 200% auto;
+      animation: shimmer 3s linear infinite;
+      color:#041229; border-color:transparent; font-weight:700;
     }
     .pagination a:hover { background: rgba(255,255,255,0.03); color:#fff; transform:translateY(-2px); }
 
@@ -204,12 +211,34 @@
 
       /* Mobile nav layout */
       .mobile-menu a, .mobile-menu button { font-size: 18px; padding: 12px; }
+      .header-description { display: none; }
+    }
+    
+    .header-description {
+        flex:1; 
+        text-align:center; 
+        padding:0 24px; 
+        color:var(--muted); 
+        font-size:13px; 
+        font-weight:500;
+        display:block;
+    }
+    @media (max-width: 900px) {
+        .header-description { display: none; }
     }
   </style>
 </head>
 <body style="background-color: var(--bg1);"> <!-- Ensure background color is set to avoid white footer -->
   <header>
-    <div style="z-index: 21;"><h1><a href="{{ route('home') }}">{{ __('messages.site_title') }}</a></h1></div>
+    <div style="z-index: 21;">
+        <h1><a href="{{ route('home') }}">{{ __('messages.site_title') }}</a></h1>
+        <div class="shimmer-text" style="font-size:11px; font-weight:600; margin-top:0px;">Vergleiche und Entscheide ! Welches Smart Scope ?</div>
+    </div>
+
+    <!-- Site Description -->
+    <div class="header-description">
+        {{ $settings['header_description'] ?? __('messages.header_description') }}
+    </div>
     
     <!-- Desktop Nav -->
     <nav class="desktop-nav">
@@ -298,7 +327,7 @@
     
     <footer class="site-footer">
       <div class="container">
-        smarte scope vergleich beta v1 • © Sebastian Thielke 2026
+        <span class="shimmer-text">Smart Teleskop Astrofoto Beta V2 • © Sebastian Thielke 2026</span>
         <a href="https://www.facebook.com/T4hund3R/" target="_blank" style="color:#9aa6b2; text-decoration:none; vertical-align:middle; margin-left:10px; display:inline-flex; align-items:center;" title="Facebook">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
             <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
@@ -307,7 +336,7 @@
         <br>
         <div style="display:flex; justify-content:center; align-items:center; gap:24px; margin-top:12px;">
             <!-- Simple text stats -->
-            <span style="font-size:11px; opacity:0.7;">
+            <span class="shimmer-text" style="font-size:11px; opacity:0.7; font-weight:bold;">
                 {{ __('messages.stats_images', ['count' => $global_stats['images_count'] ?? 0]) }} • 
                 {{ __('messages.stats_users', ['count' => $global_stats['users_count'] ?? 0]) }}
             </span>
