@@ -76,7 +76,9 @@
                     <span class="user-name {{ (optional($n->user)->is_admin || optional($n->user)->is_moderator) ? 'team-member-name' : '' }}" style="font-weight:bold; font-size:15px; color:{{ $n->user->role_color ?? 'var(--accent)' }}">{{ $n->title }}</span>
                     <span class="upload-date muted" style="font-size:12px; white-space:nowrap;">{{ $n->created_at instanceof \DateTime || $n->created_at instanceof \Carbon\Carbon ? $n->created_at->format('d.m.Y H:i') : \Carbon\Carbon::parse($n->created_at)->format('d.m.Y H:i') }}</span>
                 </div>
-                <div style="font-size:14px; line-height:1.5; overflow-wrap: break-word; word-break: break-word;">{!! \Illuminate\Support\Str::markdown($n->body) !!}</div>
+                <div class="news-body" style="font-size:14px; line-height:1.5; overflow-wrap: anywhere; word-break: break-word; white-space: normal; max-width: 100%;">
+                    {!! \Illuminate\Support\Str::markdown($n->body) !!}
+                </div>
               </div>
             @empty
               <p class="muted">No news yet.</p>
@@ -163,6 +165,9 @@
     
     <style>
         .home-widgets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .news-body ul, .news-body ol { padding-left: 20px; margin: 0; }
+        .news-body p { margin-bottom: 8px; }
+        .news-body p:last-child { margin-bottom: 0; }
         @media (max-width: 800px) {
             .home-widgets-grid { grid-template-columns: 1fr; }
         }
