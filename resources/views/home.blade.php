@@ -69,15 +69,14 @@
                  <button id="btnNewsNext" class="btn" style="padding:4px 8px; font-size:12px;">▶</button>
              </div>
           </div>
-          
-          <div id="newsContainer">
+                    <div id="newsContainer">
             @forelse($news as $index => $n)
-              <div class="news-item" data-index="{{ $index }}" style="display:{{ $index < 2 ? 'block' : 'none' }}; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.03);">
-                <div class="user-info">
-                    <span class="user-name {{ (optional($n->user)->is_admin || optional($n->user)->is_moderator) ? 'team-member-name' : '' }}" style="color:{{ $n->user->role_color ?? 'inherit' }}">{{ $n->title }}</span>
-                    <span class="upload-date muted" style="font-size:12px">{{ $n->created_at instanceof \DateTime || $n->created_at instanceof \Carbon\Carbon ? $n->created_at->format('M d, Y') : \Carbon\Carbon::parse($n->created_at)->format('M d, Y') }}</span>
+              <div class="news-item" data-index="{{ $index }}" style="display:{{ $index < 2 ? 'block' : 'none' }}; margin-bottom:12px; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+                <div class="user-info" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px; margin-bottom:8px;">
+                    <span class="user-name {{ (optional($n->user)->is_admin || optional($n->user)->is_moderator) ? 'team-member-name' : '' }}" style="font-weight:bold; font-size:15px; color:{{ $n->user->role_color ?? 'var(--accent)' }}">{{ $n->title }}</span>
+                    <span class="upload-date muted" style="font-size:12px; white-space:nowrap;">{{ $n->created_at instanceof \DateTime || $n->created_at instanceof \Carbon\Carbon ? $n->created_at->format('d.m.Y H:i') : \Carbon\Carbon::parse($n->created_at)->format('d.m.Y H:i') }}</span>
                 </div>
-                <div style="margin-top:6px;font-size:14px;">{!! nl2br(e(\Illuminate\Support\Str::limit($n->body, 400))) !!}</div>
+                <div style="font-size:14px; line-height:1.5;">{!! \Illuminate\Support\Str::markdown($n->body) !!}</div>
               </div>
             @empty
               <p class="muted">No news yet.</p>
@@ -208,41 +207,44 @@
     (function(){
       // News Carousel Logic
       const newsItems = document.querySelectorAll('.news-item');
-      const btnNewsPrev = document.getElementById('btnNewsPrev');
-      const btnNewsNext = document.getElementById('btnNewsNext');
+      const btnPrev = document.getElementById('btnNewsPrev');
+      const btnNext = document.getElementById('btnNewsNext');
       const newsNav = document.getElementById('newsNav');
-      let newsIndex = 0;
-      const newsPerPage = 2;
       
-      if(newsItems.length > newsPerPage) {
-          newsNav.style.display = 'flex';
-      }
-
+      let newsIndex = 0;
+      const newsPerPage = 2; // Max 2 news visible
+      
       function updateNews() {
-          newsItems.forEach((item, index) => {
-              if(index >= newsIndex && index < newsIndex + newsPerPage) {
-                  item.style.display = 'block';
-              } else {
-                  item.style.display = 'none';
+        newsItems.forEach((item, i) => {
+            if (i >= newsIndex && i < newsIndex + newsPerPage) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        btnPrev.disabled = (newsIndex === 0);
+        btnNext.disabled = (newsIndex + newsPerPage >= newsItems.length);
+      }
+      
+      if (newsItems.length > newsPerPage) {
+          newsNav.style.display = 'flex';
+          
+          btnPrev.addEventListener('click', () => {
+              if (newsIndex > 0) {
+                  newsIndex -= newsPerPage; // Jump by 2 (or 1?) - let's jump by 2
+                  if(newsIndex < 0) newsIndex = 0;
+                  updateNews();
               }
           });
-          btnNewsPrev.disabled = newsIndex === 0;
-          btnNewsNext.disabled = newsIndex + newsPerPage >= newsItems.length;
+          
+          btnNext.addEventListener('click', () => {
+              if (newsIndex + newsPerPage < newsItems.length) {
+                  newsIndex += newsPerPage;
+                  updateNews();
+              }
+          });
       }
-
-      btnNewsPrev?.addEventListener('click', () => {
-          if(newsIndex > 0) {
-              newsIndex -= newsPerPage;
-              updateNews();
-          }
-      });
-
-      btnNewsNext?.addEventListener('click', () => {
-          if(newsIndex + newsPerPage < newsItems.length) {
-              newsIndex += newsPerPage;
-              updateNews();
-          }
-      });
 
       // User Images Logic
       const userLinks = document.querySelectorAll('.user-link');
