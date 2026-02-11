@@ -163,6 +163,7 @@
 
     </div>
     
+    <style>
         .news-body { 
             font-size: 14px; 
             line-height: 1.6; 
