@@ -59,6 +59,35 @@ class AppServiceProvider extends ServiceProvider
 
         // jetzt erst sichere Abfragen, z.B. falls vorher Scope::orderBy(...) stand:
         $scopes = Scope::orderBy('name')->get();
+
+        // Share stats with all views
+        if (Schema::hasTable('users') && Schema::hasTable('images')) {
+            $stats = [
+                'users_count' => \App\Models\User::count(),
+                'images_count' => \App\Models\Image::count(),
+            ];
+
+            // Disk Space Calculation (Cached for 1 hour to avoid performance hit)
+            // Use Cache facade
+            $diskStats = \Illuminate\Support\Facades\Cache::remember('disk_stats', 3600, function () {
+                $path = base_path(); // Check disk space of the partition where the app is installed
+                $total = disk_total_space($path);
+                $free = disk_free_space($path);
+                $used = $total - $free;
+
+                return [
+                'total_gb' => round($total / 1024 / 1024 / 1024, 2),
+                'free_gb' => round($free / 1024 / 1024 / 1024, 2),
+                'used_gb' => round($used / 1024 / 1024 / 1024, 2),
+                'used_percent' => $total > 0 ? round(($used / $total) * 100, 1) : 0,
+                ];
+            });
+
+            $stats = array_merge($stats, $diskStats);
+
+            view()->share('global_stats', $stats);
+        }
+
         view()->share('scopes', $scopes);
 
     // ... weitere initialisierungen, die DB benötigen ...

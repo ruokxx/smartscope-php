@@ -86,4 +86,7 @@ return [
     'view_collection_progress' => 'View your collected objects and progress.',
     'upload_submit' => 'Submit a new image for approval.',
     'community_desc' => 'Join discussions and see what others are up to.',
+    'stats_images' => ':count Images online',
+    'stats_users' => ':count Users registered',
+    'stats_disk' => 'Disk: :used GB used / :free GB free',
 ];
