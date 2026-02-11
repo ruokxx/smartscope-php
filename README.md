@@ -1,7 +1,7 @@
 # 🌙 Smart Teleskop Astrofoto
 
 **Ein Ort zum Teilen, Vergleichen und Entdecken von Astrofotografie.**
-*Entwickelt für Smart-Teleskope wie Seestar S50, Dwarf II, Vespera.*
+*Entwickelt für Smart-Teleskope wie Seestar S50, Dwarf III.*
 
 ---
 
