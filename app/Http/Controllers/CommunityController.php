@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Group;
+use App\Models\User;
 
 class CommunityController extends Controller
 {
