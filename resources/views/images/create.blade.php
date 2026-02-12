@@ -12,9 +12,9 @@
     </div>
 
     <div class="form-row">
-      <label>{{ __('messages.object') }} (optional)</label>
+      <label>{{ __('messages.object') }} <span style="color:red">*</span></label>
       <div class="styled-select-container">
-        <select name="object_id" class="styled-select">
+        <select name="object_id" class="styled-select" required>
           <option value="">{{ __('messages.none') }}</option>
           @foreach($objects as $o)
             <option value="{{ $o->id }}" {{ request('object_id') == $o->id ? 'selected' : '' }}>
@@ -26,9 +26,9 @@
     </div>
 
     <div class="form-row">
-      <label>{{ __('messages.scope') }}</label>
+      <label>{{ __('messages.scope') }} <span style="color:red">*</span></label>
       <div class="styled-select-container">
-        <select name="scope_id" class="styled-select">
+        <select name="scope_id" class="styled-select" required>
           <option value="">{{ __('messages.none') }}</option>
           @foreach($scopes as $s)
             <option value="{{ $s->id }}" {{ old('scope_id') == $s->id ? 'selected' : '' }}>{{ $s->name }}</option>
@@ -39,20 +39,20 @@
 
     <div class="row-2">
       <div class="form-row">
-        <label>{{ __('messages.sub_exposure') }}</label>
-        <input type="number" step="0.1" name="sub_exposure_time" value="{{ old('sub_exposure_time') }}" placeholder="e.g. 10">
+        <label>{{ __('messages.sub_exposure') }} <span style="color:red">*</span></label>
+        <input type="number" step="0.1" name="sub_exposure_time" value="{{ old('sub_exposure_time') }}" placeholder="e.g. 10" required>
       </div>
 
       <div class="form-row">
-        <label>{{ __('messages.number_of_subs') }}</label>
-        <input type="number" name="number_of_subs" value="{{ old('number_of_subs') }}" placeholder="e.g. 120">
+        <label>{{ __('messages.number_of_subs') }} <span style="color:red">*</span></label>
+        <input type="number" name="number_of_subs" value="{{ old('number_of_subs') }}" placeholder="e.g. 120" required>
       </div>
     </div>
 
     <div class="row-2">
       <div class="form-row">
-        <label>{{ __('messages.gain') }}</label>
-        <input type="number" name="gain" value="{{ old('gain') }}" placeholder="e.g. 80 or 1600">
+        <label>{{ __('messages.gain') }} <span style="color:red">*</span></label>
+        <input type="number" name="gain" value="{{ old('gain') }}" placeholder="e.g. 80 or 1600" required>
       </div>
 
       <div class="form-row">

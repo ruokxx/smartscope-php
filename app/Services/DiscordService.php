@@ -43,19 +43,17 @@ class DiscordService
 
         $user = $image->user;
 
-        Log::info('Discord Notification Debug', [
-            'image_id' => $image->id,
-            'object_id' => $image->object_id,
-            'generated_url' => route('objects.show', $image->id)
-        ]);
+        // Use object_id for the URL if available, as that's where the gallery is.
+        $targetId = $image->object_id ?: $image->id;
+        $url = route('objects.show', $targetId);
 
-        $msg = "📸 **New Image Uploaded!**\n\n**{$image->title}** by **{$user->name}**\n\n" . route('objects.show', $image->id);
+        $msg = "📸 **New Image Uploaded!**\n\n**{$image->title}** by **{$user->name}**\n\n" . $url;
 
         // Add embed with thumbnail if possible
         $embeds = [
             [
                 'title' => $image->title,
-                'url' => route('objects.show', $image->id),
+                'url' => $url,
                 'color' => 5814783, // #5865F2 (Discord Blurple)
                 'image' => [
                     'url' => $image->url // using the accessor we made earlier

@@ -22,12 +22,15 @@ class ImageController extends Controller
     {
         $req->validate([
             'image' => 'required|file|mimes:jpg,jpeg,png|mimetypes:image/jpeg,image/png|max:51200',
-            'object_id' => 'nullable|exists:objects,id',
+            'object_id' => 'required|exists:objects,id',
+            'scope_id' => 'required|exists:scopes,id',
+            'number_of_subs' => 'required|integer|min:1',
+            'number_of_subs' => 'required|integer|min:1',
+            'sub_exposure_time' => 'required|numeric|min:0.1',
+            'gain' => 'required|integer',
             'bortle' => 'nullable|integer|min:1|max:9',
             'seeing' => 'nullable|string|max:255',
             'session_date' => 'nullable|date',
-            'sub_exposure_time' => 'nullable|numeric',
-            'gain' => 'nullable|integer',
         ]);
 
         if (!$req->hasFile('image')) {
