@@ -28,6 +28,14 @@
                 </div>
             </div>
 
+            <div class="form-row" style="margin-top:16px;">
+                <label>Invite Link (Footer)</label>
+                <input type="text" name="discord_invite_url" value="{{ $settings['discord_invite_url'] ?? '' }}" placeholder="https://discord.gg/...">
+                <div style="font-size:12px; color:var(--muted); margin-top:4px;">
+                    This link will be displayed in the site footer as a Discord icon.
+                </div>
+            </div>
+
             <div class="accent-line" style="margin:20px 0; background:rgba(255,255,255,0.1);"></div>
 
             <h4 style="margin-top:0; margin-bottom:16px;">Notification Events</h4>
