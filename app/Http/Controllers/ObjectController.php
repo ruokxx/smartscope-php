@@ -75,6 +75,10 @@ class ObjectController extends Controller
         $user = Auth::user();
         $q = trim($req->get('q', ''));
 
+        // distinct options for dropdowns
+        $filters = ['Kein', 'Dualband', 'Astro'];
+        // $gains removed (manual input)
+
         // base query for objects with optional search
         $query = Obj::query();
         if ($q !== '') {
@@ -86,17 +90,52 @@ class ObjectController extends Controller
             });
         }
 
+        // Apply Image Filters to Object Query (Show only objects that have matching images)
+        if ($req->anyFilled(['min_exposure', 'filter', 'gain'])) {
+            $query->whereHas('images', function ($q) use ($req, $user) {
+                if ($user) {
+                    $q->where('user_id', $user->id);
+                }
+                else {
+                    $q->where('approved', true);
+                }
+
+                if ($req->filled('min_exposure')) {
+                    $q->where('exposure_total_seconds', '>=', $req->min_exposure * 60);
+                }
+                if ($req->filled('filter')) {
+                    $q->where('filter', $req->filter);
+                }
+                if ($req->filled('gain')) {
+                    $q->where('gain', $req->gain);
+                }
+            });
+        }
+
         // paginate results
         $objects = $query->orderBy('name')->paginate(25)->withQueryString();
 
         // preload user's latest images for visible objects
         $objectIds = $objects->pluck('id')->toArray();
         $owned = [];
-        if ($user) {
-            // User is logged in: fetch their own images
-            if (count($objectIds)) {
-                $imgs = Image::whereIn('object_id', $objectIds)
-                    ->where('user_id', $user->id)
+
+        if (count($objectIds)) {
+            $imgQuery = Image::whereIn('object_id', $objectIds);
+
+            // Apply same filters to the display image fetch
+            if ($req->filled('min_exposure')) {
+                $imgQuery->where('exposure_total_seconds', '>=', $req->min_exposure * 60);
+            }
+            if ($req->filled('filter')) {
+                $imgQuery->where('filter', $req->filter);
+            }
+            if ($req->filled('gain')) {
+                $imgQuery->where('gain', $req->gain);
+            }
+
+            if ($user) {
+                // User is logged in: fetch their own images
+                $imgs = $imgQuery->where('user_id', $user->id)
                     ->get()
                     ->groupBy('object_id');
 
@@ -104,15 +143,9 @@ class ObjectController extends Controller
                     $owned[$objId] = $group->sortByDesc('upload_time')->first();
                 }
             }
-        }
-        else {
-            // Guest: fetch latest image for each visible object from ANY user
-            if (count($objectIds)) {
-                // Determine latest image per object_id efficiently
-                // We can use a subquery or just fetch all for these objects and group by object_id in PHP
-                // Since it's only 25 objects (paginated), checking images for them is reasonable.
-                $imgs = Image::whereIn('object_id', $objectIds)
-                    ->where('approved', true) // MODERATION
+            else {
+                // Guest: fetch latest image for each visible object from ANY user
+                $imgs = $imgQuery->where('approved', true) // MODERATION
                     ->orderBy('upload_time', 'desc')
                     ->get()
                     ->groupBy('object_id');
@@ -123,7 +156,7 @@ class ObjectController extends Controller
             }
         }
 
-        return view('board', compact('objects', 'owned', 'q'));
+        return view('board', compact('objects', 'owned', 'q', 'filters'));
     }
 
     // API: board with ownership info

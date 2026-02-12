@@ -27,10 +27,42 @@
   <div class="card full">
     <h2>{{ __('messages.collection') }}</h2>
 
-    <form method="GET" style="margin:12px 0; display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
-      <input type="search" name="q" value="{{ old('q', $q) }}" placeholder="{{ __('messages.search_placeholder') }}" style="flex:1;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:#e6eef6">
-      <button class="btn" type="submit">{{ __('messages.search') }}</button>
-      <a href="{{ route('board') }}" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">{{ __('messages.reset') }}</a>
+    <form method="GET" style="margin:12px 0; display:flex; flex-direction:column; gap:12px;">
+      
+      <!-- Search Row -->
+      <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+        <input type="search" name="q" value="{{ old('q', $q) }}" placeholder="{{ __('messages.search_placeholder') }}" style="flex:1; min-width:200px; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); background:rgba(255,255,255,0.02); color:#e6eef6">
+        <button class="btn" type="submit">{{ __('messages.search') }}</button>
+        <a href="{{ route('board') }}" class="btn" style="background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted)">{{ __('messages.reset') }}</a>
+      </div>
+
+      <!-- Filters Row -->
+      <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start; background:rgba(255,255,255,0.02); padding:12px; border-radius:8px;">
+          <div style="display:flex; flex-direction:column;">
+              <label style="font-size:11px; color:var(--muted); text-transform:uppercase; margin-bottom:4px; display:block; height:15px; line-height:15px; overflow:hidden; white-space:nowrap;">Min. Exposure</label>
+              <input type="number" name="min_exposure" value="{{ request('min_exposure') }}" placeholder="Alle anzeigen" style="margin:0; display:block; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 8px; border-radius:4px; width:120px; height:36px; box-sizing:border-box;">
+          </div>
+          
+          <div style="display:flex; flex-direction:column;">
+              <label style="font-size:11px; color:var(--muted); text-transform:uppercase; margin-bottom:4px; display:block; height:15px; line-height:15px; overflow:hidden; white-space:nowrap;">Filter</label>
+              <select name="filter" style="margin:0; display:block; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 8px; border-radius:4px; width:120px; height:36px; box-sizing:border-box;">
+                  <option value="" style="color:#000;">Alle anzeigen</option>
+                  @foreach($filters as $f)
+                      <option value="{{ $f }}" {{ request('filter') == $f ? 'selected' : '' }} style="color:#000;">{{ $f }}</option>
+                  @endforeach
+              </select>
+          </div>
+
+          <div style="display:flex; flex-direction:column;">
+              <label style="font-size:11px; color:var(--muted); text-transform:uppercase; margin-bottom:4px; display:block; height:15px; line-height:15px; overflow:hidden; white-space:nowrap;">Gain</label>
+              <input type="number" name="gain" value="{{ request('gain') }}" placeholder="Alle anzeigen" style="margin:0; display:block; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 8px; border-radius:4px; width:120px; height:36px; box-sizing:border-box;">
+          </div>
+          
+          <div style="display:flex; flex-direction:column;">
+             <label style="font-size:11px; color:transparent; text-transform:uppercase; margin-bottom:4px; display:block; height:15px; line-height:15px; overflow:hidden; white-space:nowrap; user-select:none;">Action</label>
+             <button type="submit" class="btn" style="margin:0; display:block; background:var(--accent); color:#fff; font-size:12px; padding:0 16px; height:36px; display:flex; align-items:center; justify-content:center; border:1px solid transparent; box-sizing:border-box;">Apply</button>
+          </div>
+      </div>
     </form>
 
     <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:16px; margin-top:24px;">
@@ -46,7 +78,7 @@
             <div style="aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#000; position:relative;">
                  @if($img)
                      <a href="{{ route('objects.show', $o->id) }}" style="width:100%; height:100%; display:block;">
-                        <img src="{{ \Illuminate\Support\Facades\Storage::url($img->path) }}" alt="{{ $img->filename }}" style="width:100%; height:100%; object-fit:cover;">
+                        <img src="{{ $img->url }}" alt="{{ $img->filename }}" style="width:100%; height:100%; object-fit:cover;">
                      </a>
                      @auth
                         <!-- Green Check only for logged in users -->
@@ -79,9 +111,9 @@
                 @if($img && $img->user)
                    <div style="font-size:10px; color:var(--muted); margin-top:2px;">
                         @auth
-                            by <a href="{{ route('profile.show', $img->user->id) }}" style="color:{{ $img->user->role_color }}; text-decoration:none;">{{ $img->user->display_name ?: $img->user->name }}</a>
+                            by <a href="{{ route('profile.show', $img->user->id) }}" style="color:{{ $img->user->role_color }}; text-decoration:none;" class="{{ $img->user->is_admin ? 'user-admin' : ($img->user->is_moderator ? 'user-moderator' : '') }}">{{ $img->user->display_name ?: $img->user->name }}</a>
                         @else
-                            by <span style="color:{{ $img->user->role_color }}">{{ $img->user->display_name ?: $img->user->name }}</span>
+                            by <span style="color:{{ $img->user->role_color }}" class="{{ $img->user->is_admin ? 'user-admin' : ($img->user->is_moderator ? 'user-moderator' : '') }}">{{ $img->user->display_name ?: $img->user->name }}</span>
                         @endauth
                    </div>
                 @endif

@@ -34,10 +34,14 @@ class ImageController extends Controller
             return back()->withErrors(['image' => 'No file uploaded']);
         }
 
+        // Determine storage disk from settings
+        $settings = \App\Models\Setting::all()->pluck('value', 'key');
+        $disk = $settings['storage_driver'] ?? 'public';
+
         $user = Auth::user();
         $file = $req->file('image');
         $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-        $path = $file->storeAs('uploads', $filename, 'public');
+        $path = $file->storeAs('uploads', $filename, $disk);
 
         $img = Image::create([
             'user_id' => $user ? $user->id : null,
@@ -45,6 +49,7 @@ class ImageController extends Controller
             'scope_id' => $req->scope_id ?: null,
             'filename' => $filename,
             'path' => $path,
+            'disk' => $disk,
             'exposure_total_seconds' => $req->exposure_total_seconds,
             'sub_exposure_seconds' => $req->sub_exposure_seconds,
             'sub_exposure_time' => $req->sub_exposure_time,
@@ -60,6 +65,16 @@ class ImageController extends Controller
             'notes' => $req->notes,
             'approved' => ($user && ($user->is_admin || $user->is_moderator || !\App\Models\Setting::where('key', 'enable_moderation')->value('value'))) ? true : false,
         ]);
+
+        // Discord Notification
+        if ($img->approved) {
+            try {
+                (new \App\Services\DiscordService())->sendUpload($img);
+            }
+            catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Discord Upload Notification failed: ' . $e->getMessage());
+            }
+        }
 
         $message = $img->approved ? __('Image uploaded') : __('Image uploaded and pending approval.');
         return redirect()->route('objects.show', $req->object_id ?: $img->id)->with('success', $message);
@@ -88,7 +103,7 @@ class ImageController extends Controller
 
         // Delete file
         if ($img->path) {
-            Storage::disk('public')->delete($img->path);
+            Storage::disk($img->disk ?: 'public')->delete($img->path);
         }
 
         $img->delete();

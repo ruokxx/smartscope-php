@@ -7,7 +7,7 @@
         <div style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px; margin-bottom:15px; display:flex; align-items:center; justify-content:space-between;">
             <div style="display:flex; align-items:center; gap:10px;">
                 <a href="{{ route('messages.index') }}" style="text-decoration:none; color:var(--muted); font-size:20px; margin-right:10px;">&larr;</a>
-                <h2 style="margin:0; font-size:18px;">{{ $user->name }}</h2>
+                <h2 style="margin:0; font-size:18px;" class="{{ $user->is_admin ? 'user-admin' : ($user->is_moderator ? 'user-moderator' : '') }}">{{ $user->name }}</h2>
             </div>
             <a href="{{ route('profile.show', $user->id) }}" style="font-size:12px; color:var(--accent); text-decoration:none;">View Profile</a>
         </div>
@@ -20,7 +20,11 @@
                 @endphp
                 <div style="display:flex; flex-direction:column; align-items: {{ $isMe ? 'flex-end' : 'flex-start' }}; margin-bottom:10px;">
                     <div style="font-size:10px; color:var(--muted); margin-bottom:2px; margin-left:4px; margin-right:4px;">
-                        {{ $isMe ? 'Du' : $user->name }}
+                        @if(!$isMe)
+                            <span class="{{ $user->is_admin ? 'user-admin' : ($user->is_moderator ? 'user-moderator' : '') }}">{{ $user->name }}</span>
+                        @else
+                            {{ 'Du' }}
+                        @endif
                     </div>
                     <div style="max-width:70%; padding:10px 15px; border-radius:12px; font-size:14px; line-height:1.4; box-shadow:0 2px 4px rgba(0,0,0,0.2);
                         {{ $isMe 

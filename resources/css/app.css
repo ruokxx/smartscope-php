@@ -12,67 +12,182 @@
 }
 
 /* title */
-.page-title { text-align:center; margin-bottom:18px; }
+.page-title {
+  text-align: center;
+  margin-bottom: 18px;
+}
 
 /* thumbs row */
-.home-thumbs-row { overflow-x:auto; white-space:nowrap; padding-bottom:8px; margin-bottom:18px; }
-.home-thumbs-inner { display:inline-flex; gap:16px; align-items:flex-start; padding-left:0; }
-.thumb-item { display:inline-block; vertical-align:top; width:180px; padding:8px; text-align:left; box-sizing:border-box; }
-.thumb-inner { height:110px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:6px; }
-.thumb-inner img { max-height:100%; max-width:100%; object-fit:cover; display:block; }
+.home-thumbs-row {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+}
+
+.home-thumbs-inner {
+  display: inline-flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding-left: 0;
+}
+
+.thumb-item {
+  display: inline-block;
+  vertical-align: top;
+  width: 180px;
+  padding: 8px;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.thumb-inner {
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.thumb-inner img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 /* news already ok */
 
 /* two column area: users + uploads */
 .home-two-col {
-  display:flex;
-  gap:18px;
-  align-items:flex-start;
-  justify-content:space-between;
-  margin-bottom:24px;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
 }
-.home-two-col aside { box-sizing:border-box; }
-.home-two-col aside:first-child { width:calc(50% - 9px); min-width:260px; }
-.home-two-col aside:last-child  { width:calc(50% - 9px); min-width:260px; }
+
+.home-two-col aside {
+  box-sizing: border-box;
+}
+
+.home-two-col aside:first-child {
+  width: calc(50% - 9px);
+  min-width: 260px;
+}
+
+.home-two-col aside:last-child {
+  width: calc(50% - 9px);
+  min-width: 260px;
+}
 
 /* users list */
-.users-list { max-height:240px; overflow:auto; padding-right:6px; }
-.user-row { padding:8px 4px; border-bottom:1px solid rgba(255,255,255,0.02); }
-.user-link { color:var(--accent); text-decoration:none; }
+.users-list {
+  max-height: 240px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.user-row {
+  padding: 8px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.user-link {
+  color: var(--accent);
+  text-decoration: none;
+}
 
 /* responsive */
 @media (max-width:800px) {
+
   /* Stack distinct sections vertically */
-  .home-two-col { flex-direction:column; }
-  .home-two-col aside { width:100% !important; }
-  
+  .home-two-col {
+    flex-direction: column;
+  }
+
+  .home-two-col aside {
+    width: 100% !important;
+  }
+
   /* Stack the "Latest Uploads" horizontal row into a vertical list */
-  .home-thumbs-row { 
-    overflow-x: visible; 
-    white-space: normal; 
+  .home-thumbs-row {
+    overflow-x: visible;
+    white-space: normal;
     padding-bottom: 0;
   }
-  .home-thumbs-inner { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 16px; 
+
+  .home-thumbs-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
-  .thumb-item { 
-    width: 100%; 
-    display: flex; 
+
+  .thumb-item {
+    width: 100%;
+    display: flex;
     gap: 12px;
     align-items: center;
     padding: 12px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 8px;
   }
+
   .thumb-inner {
     width: 80px;
     height: 80px;
     flex-shrink: 0;
   }
-  
+
   /* Ensure news grid also stacks (already handled by grid-template-columns but ensuring consistency) */
-  .home-news-wrap { grid-template-columns: 1fr; }
+  .home-news-wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* User Role Animations */
+@keyframes glow-red {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+    color: #ff6b6b;
+  }
+
+  50% {
+    text-shadow: 0 0 15px rgba(255, 107, 107, 0.8), 0 0 5px rgba(255, 107, 107, 0.5);
+    color: #ff8e8e;
+  }
+
+  100% {
+    text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+    color: #ff6b6b;
+  }
+}
+
+@keyframes glow-green {
+  0% {
+    text-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
+    color: #2ecc71;
+  }
+
+  50% {
+    text-shadow: 0 0 15px rgba(46, 204, 113, 0.8), 0 0 5px rgba(46, 204, 113, 0.5);
+    color: #58d68d;
+  }
+
+  100% {
+    text-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
+    color: #2ecc71;
+  }
+}
+
+.user-admin {
+  animation: glow-red 2s infinite ease-in-out;
+  font-weight: bold;
+}
+
+.user-moderator {
+  animation: glow-green 2s infinite ease-in-out;
+  font-weight: bold;
 }

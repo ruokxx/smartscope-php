@@ -102,6 +102,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'is_admin'])->group(
         ]);
 
         // settings (admin)
+        Route::get('/discord', [\App\Http\Controllers\Admin\DiscordController::class , 'index'])->name('discord.index');
+        Route::post('/discord', [\App\Http\Controllers\Admin\DiscordController::class , 'update'])->name('discord.update');
+        Route::post('/discord/test', [\App\Http\Controllers\Admin\DiscordController::class , 'test'])->name('discord.test');
+
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'index'])->name('settings.index');
         Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'update'])->name('settings.update');
         Route::post('/settings', [\App\Http\Controllers\Admin\SettingController::class , 'update'])->name('settings.update');

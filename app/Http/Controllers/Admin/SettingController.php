@@ -37,6 +37,7 @@ class SettingController extends Controller
             $data['forum_enabled'] = '0';
         }
 
+
         foreach ($data as $key => $value) {
             Setting::updateOrCreate(
             ['key' => $key],

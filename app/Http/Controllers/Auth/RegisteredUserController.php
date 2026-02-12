@@ -44,6 +44,14 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // Discord Notification
+        try {
+            (new \App\Services\DiscordService())->sendRegistration($user);
+        }
+        catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Discord Registration Notification failed: ' . $e->getMessage());
+        }
+
         Auth::login($user);
 
         return redirect()->route('verification.notice');

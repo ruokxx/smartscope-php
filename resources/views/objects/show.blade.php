@@ -43,11 +43,11 @@
     <div id="imagesContainer" class="grid" style="margin-top:12px">
       @foreach($imagesByUser->flatten(1) as $img)
         <div class="card thumb-small image-card" data-user-id="{{ $img->user->id ?? 0 }}" data-image-id="{{ $img->id }}">
-          <a href="{{ Storage::url($img->path) }}" target="_blank" title="{{ __('messages.open_full_res') }}">
-            <img class="thumb" src="{{ Storage::url($img->path) }}" alt="{{ $obj->name }}">
+          <a href="{{ $img->url }}" target="_blank" title="{{ __('messages.open_full_res') }}" style="display:block; height:180px; overflow:hidden; border-radius:8px; background:#000;">
+            <img class="thumb" src="{{ $img->url }}" alt="{{ $obj->name }}" style="width:100%; height:100%; object-fit:cover; display:block;">
           </a>
           <div style="margin-top:6px"><strong>{{ $obj->catalog ?? $obj->name }}</strong></div>
-          <div class="muted">{{ __('messages.by') }}: <span style="color:{{ $img->user->role_color }}">{{ $img->user->name ?? $img->user->email ?? 'guest' }}</span></div>
+          <div class="muted">{{ __('messages.by') }}: <span style="color:{{ $img->user->role_color }}" class="{{ $img->user->is_admin ? 'user-admin' : ($img->user->is_moderator ? 'user-moderator' : '') }}">{{ $img->user->name ?? $img->user->email ?? 'guest' }}</span></div>
           <div class="muted">{{ __('messages.scope') }}: {{ $img->scopeModel->name ?? '-' }}</div>
           
           <div style="margin-top:8px; font-size:11px; color:var(--muted); line-height:1.4; border-top:1px solid rgba(255,255,255,0.05); padding-top:4px;">
@@ -64,12 +64,8 @@
                 @endif
               </div>
             @endif
-            @if($img->gain || $img->iso_or_gain)
-              <div><span style="color:var(--accent)">{{ __('messages.gain') }}:</span> {{ $img->gain ?? $img->iso_or_gain }}</div>
-            @endif
-            @if($img->filter)
-              <div><span style="color:var(--accent)">{{ __('messages.filter') }}:</span> {{ $img->filter }}</div>
-            @endif
+            <div><span style="color:var(--accent)">{{ __('messages.gain') }}:</span> {{ $img->gain ?? $img->iso_or_gain ?? '-' }}</div>
+            <div><span style="color:var(--accent)">{{ __('messages.filter') }}:</span> {{ $img->filter ?? '-' }}</div>
             @if($img->bortle)
               <div><span style="color:var(--accent)">{{ __('messages.bortle') }}:</span> {{ $img->bortle }}</div>
             @endif
@@ -93,52 +89,129 @@
       @endforeach
     </div>
 
-    <!-- Compare modal/area -->
-    <div id="compareArea" style="display:none;margin-top:18px">
-      <h3>{{ __('messages.compare') }}</h3>
-      <div style="display:flex;gap:12px">
-        <div id="compareLeft" class="card full" style="flex:1"></div>
-        <div id="compareRight" class="card full" style="flex:1"></div>
-      </div>
+    <!-- Compare Modal -->
+    <div id="compareModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:10000; flex-direction:column;">
+        <div style="padding:16px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05);">
+            <h3 style="margin:0; color:#fff;">{{ __('messages.compare') }}</h3>
+            <button onclick="closeCompareModal()" style="background:#e74c3c; color:#fff; padding:6px 12px; border-radius:4px; font-weight:600; font-size:14px; border:none; cursor:pointer;">Schließen</button>
+        </div>
+        <div style="flex:1; display:flex; gap:2px; overflow:hidden;">
+            <!-- Left Image Container -->
+            <div class="compare-pane" id="panLeft" style="flex:1; position:relative; overflow:hidden; border-right:1px solid rgba(255,255,255,0.1); background:#07121b;">
+                <div class="pan-content" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; transform-origin:center center;">
+                    <img id="imgLeft" src="" style="max-width:100%; max-height:100%; pointer-events:none; user-select:none;">
+                </div>
+                <div id="labelLeft" style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.7); color:#fff; padding:4px 8px; border-radius:4px; font-size:12px; pointer-events:none;"></div>
+            </div>
+            <!-- Right Image Container -->
+            <div class="compare-pane" id="panRight" style="flex:1; position:relative; overflow:hidden; background:#07121b;">
+                <div class="pan-content" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; transform-origin:center center;">
+                     <img id="imgRight" src="" style="max-width:100%; max-height:100%; pointer-events:none; user-select:none;">
+                </div>
+                <div id="labelRight" style="position:absolute; bottom:10px; left:10px; background:rgba(0,0,0,0.7); color:#fff; padding:4px 8px; border-radius:4px; font-size:12px; pointer-events:none;"></div>
+            </div>
+        </div>
+        <div style="padding:8px; text-align:center; color:var(--muted); font-size:12px;">
+            Scroll to Zoom • Drag to Pan
+        </div>
     </div>
+
   </div>
 
   <script>
     (function(){
-const images = Array.from(document.querySelectorAll('.image-card[data-image-id]'));
-const uploaderSelect = document.getElementById('uploaderSelect');
+      const images = Array.from(document.querySelectorAll('.image-card[data-image-id]'));
+      const uploaderSelect = document.getElementById('uploaderSelect');
       const myImageSelect = document.getElementById('myImageSelect');
       const compareBtn = document.getElementById('compareBtn');
-      const compareArea = document.getElementById('compareArea');
-      const compareLeft = document.getElementById('compareLeft');
-      const compareRight = document.getElementById('compareRight');
+      const modal = document.getElementById('compareModal');
+      
+      // Move modal to body to ensure it sits on top of header (z-index context fix)
+      if(modal && document.body) {
+          document.body.appendChild(modal);
+      }
+      
+      // Pan/Zoom State
+      let state = {
+          left: { scale: 1, x: 0, y: 0, isDragging: false, startX: 0, startY: 0 },
+          right: { scale: 1, x: 0, y: 0, isDragging: false, startX: 0, startY: 0 },
+      };
 
-// robustes Setup: finde alle cards die ein data-image-id besitzen
-// const images = Array.from(document.querySelectorAll('.image-card[data-image-id]'));
-//const uploaderSelect = document.getElementById('uploaderSelect');
+      window.closeCompareModal = function(){
+          modal.style.display = 'none';
+          document.body.style.overflow = '';
+      };
 
-function filterByUser(userId){
-  images.forEach(card => {
-    const uid = card.getAttribute('data-user-id') || '0';
-    // sichtbarkeit: alle oder match
-    if(userId === 'all' || String(uid) === String(userId)) {
-      card.style.display = '';
-      // falls img lazy o.ä., stelle sicher src gesetzt ist
-      const img = card.querySelector('img.thumb');
-      if(img && !img.src) img.src = img.dataset.src || img.getAttribute('data-src') || img.getAttribute('src');
-    } else {
-      card.style.display = 'none';
-    }
-  });
-}
+      function resetState(){
+          state = {
+              left: { scale: 1, x: 0, y: 0, isDragging: false, startX: 0, startY: 0 },
+              right: { scale: 1, x: 0, y: 0, isDragging: false, startX: 0, startY: 0 },
+          };
+          updateTransform(document.querySelector('#panLeft .pan-content'), state.left);
+          updateTransform(document.querySelector('#panRight .pan-content'), state.right);
+      }
 
-// safe init: nur wenn uploaderSelect existiert
-if (uploaderSelect) {
-  uploaderSelect.addEventListener('change', function(){
-    filterByUser(this.value);
-  });
-}
+      function updateTransform(el, s) {
+          el.style.transform = `translate(${s.x}px, ${s.y}px) scale(${s.scale})`;
+      }
 
+      function setupPanZoom(paneId, stateKey) {
+          const pane = document.getElementById(paneId);
+          const content = pane.querySelector('.pan-content');
+
+          pane.addEventListener('wheel', (e) => {
+              e.preventDefault();
+              const zoomSpeed = 0.1;
+              const direction = e.deltaY > 0 ? -1 : 1;
+              let newScale = state[stateKey].scale + (direction * zoomSpeed * state[stateKey].scale);
+              newScale = Math.max(0.5, Math.min(newScale, 10)); // Min 0.5x, Max 10x
+              state[stateKey].scale = newScale;
+              updateTransform(content, state[stateKey]);
+          });
+
+          pane.addEventListener('mousedown', (e) => {
+              state[stateKey].isDragging = true;
+              state[stateKey].startX = e.clientX - state[stateKey].x;
+              state[stateKey].startY = e.clientY - state[stateKey].y;
+              pane.style.cursor = 'grabbing';
+          });
+
+          window.addEventListener('mousemove', (e) => {
+              if (!state[stateKey].isDragging) return;
+              e.preventDefault();
+              state[stateKey].x = e.clientX - state[stateKey].startX;
+              state[stateKey].y = e.clientY - state[stateKey].startY;
+              updateTransform(content, state[stateKey]);
+          });
+
+          window.addEventListener('mouseup', () => {
+              state[stateKey].isDragging = false;
+              pane.style.cursor = 'grab';
+          });
+      }
+
+      setupPanZoom('panLeft', 'left');
+      setupPanZoom('panRight', 'right');
+
+
+      function filterByUser(userId){
+        images.forEach(card => {
+          const uid = card.getAttribute('data-user-id') || '0';
+          if(userId === 'all' || String(uid) === String(userId)) {
+            card.style.display = '';
+            const img = card.querySelector('img.thumb');
+            if(img && !img.src) img.src = img.dataset.src || img.getAttribute('data-src') || img.getAttribute('src');
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      if (uploaderSelect) {
+        uploaderSelect.addEventListener('change', function(){
+          filterByUser(this.value);
+        });
+      }
 
       if (myImageSelect){
         myImageSelect.addEventListener('change', function(){
@@ -157,30 +230,36 @@ if (uploaderSelect) {
       }
 
       compareBtn.addEventListener('click', function(){
-        const selected = Array.from(document.querySelectorAll('.select-compare:checked')).map(i=>i.value);
+        const selected = Array.from(document.querySelectorAll('.select-compare:checked'));
         if (selected.length < 2){
           alert('{{ __('messages.alert_select_two') }}');
           return;
         }
-        const leftCard = document.querySelector('.image-card[data-image-id="'+selected[0]+'"]');
-        const rightCard = document.querySelector('.image-card[data-image-id="'+selected[1]+'"]');
-        if(!leftCard || !rightCard){
-          alert('{{ __('messages.alert_images_not_found') }}');
-          return;
-        }
-        const leftImgUrl = leftCard.querySelector('a') ? leftCard.querySelector('a').href : leftCard.querySelector('img').src;
-        const rightImgUrl = rightCard.querySelector('a') ? rightCard.querySelector('a').href : rightCard.querySelector('img').src;
+        
+        const id1 = selected[0].value;
+        const id2 = selected[1].value;
 
-        // show compare area
-        compareArea.style.display = 'block';
+        const card1 = document.querySelector('.image-card[data-image-id="'+id1+'"]');
+        const card2 = document.querySelector('.image-card[data-image-id="'+id2+'"]');
 
-        // populate left/right with clickable full-res (open new tab)
-        compareLeft.innerHTML = '<a href="'+leftImgUrl+'" target="_blank"><img src="'+leftImgUrl+'" style="max-width:100%"></a><div class="muted">{{ __('messages.image') }} '+selected[0]+'</div>';
-        compareRight.innerHTML = '<a href="'+rightImgUrl+'" target="_blank"><img src="'+rightImgUrl+'" style="max-width:100%"></a><div class="muted">{{ __('messages.image') }} '+selected[1]+'</div>';
+        if(!card1 || !card2) return;
 
-        // scroll to compare area
-        compareArea.scrollIntoView({behavior:'smooth'});
+        // Extract full res URL (from Anchor) or fallback to img src
+        const url1 = card1.querySelector('a') ? card1.querySelector('a').href : card1.querySelector('img').src;
+        const url2 = card2.querySelector('a') ? card2.querySelector('a').href : card2.querySelector('img').src;
+
+        // Setup Modal
+        document.getElementById('imgLeft').src = url1;
+        document.getElementById('imgRight').src = url2;
+        
+        document.getElementById('labelLeft').innerText = 'Image ' + id1;
+        document.getElementById('labelRight').innerText = 'Image ' + id2;
+
+        resetState();
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
       });
+
     })();
   </script>
 @endsection

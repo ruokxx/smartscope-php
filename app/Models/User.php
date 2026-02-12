@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\CustomResetPassword;
+
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -58,14 +60,28 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isBanned()
     {
-        if ($this->banned_at) {
-            // Permanent ban if banned_until is null, or temporary ban if banned_until is in future
-            if ($this->banned_until === null) {
-                return true;
-            }
-            return $this->banned_until->isFuture();
-        }
-        return false;
+        return $this->banned_until && $this->banned_until->isFuture();
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomResetPassword($token));
+    }
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\CustomVerifyEmail);
     }
 
     public function getRoleColorAttribute()
@@ -82,16 +98,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(\App\Models\Scope::class , 'scope_user');
     }
 
-    public function sendEmailVerificationNotification()
-    {
-        try {
-            $this->notify(new \App\Notifications\CustomVerifyEmail);
-            \Illuminate\Support\Facades\Log::info('Verification email sent to ' . $this->email);
-        }
-        catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to send verification email: ' . $e->getMessage());
-        }
-    }
+
     public function groups()
     {
         return $this->belongsToMany(\App\Models\Group::class , 'group_user')->withTimestamps();

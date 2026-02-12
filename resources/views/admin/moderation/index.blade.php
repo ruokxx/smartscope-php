@@ -15,8 +15,8 @@
             @foreach($pendingImages as $img)
                 <div class="card" style="padding:16px; background:rgba(255,255,255,0.02);">
                     <div style="height:200px; background:#000; display:flex; align-items:center; justify-content:center; margin-bottom:12px; border-radius:8px; overflow:hidden;">
-                        <a href="{{ Storage::url($img->path) }}" target="_blank">
-                            <img src="{{ Storage::url($img->path) }}" style="max-height:100%; max-width:100%; object-fit:contain;">
+                        <a href="{{ $img->url }}" target="_blank">
+                            <img src="{{ $img->url }}" style="max-height:100%; max-width:100%; object-fit:contain;">
                         </a>
                     </div>
                     <div style="font-weight:bold; margin-bottom:4px;">{{ $img->filename }}</div>

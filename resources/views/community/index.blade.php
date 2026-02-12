@@ -177,7 +177,7 @@
                 @if($onlineUsers->count() > 0)
                     <div style="display:flex; flex-direction:column; gap:10px;">
                         @foreach($onlineUsers as $user)
-                            <a href="{{ route('profile.show', $user->id) }}" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:#e6eef6;">
+                            <a href="{{ route('profile.show', $user->id) }}" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:#e6eef6;" class="{{ $user->is_admin ? 'user-admin' : ($user->is_moderator ? 'user-moderator' : '') }}">
                                 <div style="position:relative;">
                                     <div style="width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent2)); display:flex; align-items:center; justify-content:center; font-weight:bold; color:#fff; font-size:14px;">
                                         {{ strtoupper(substr($user->name, 0, 1)) }}

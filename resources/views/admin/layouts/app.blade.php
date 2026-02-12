@@ -169,6 +169,9 @@
         <a href="{{ route('admin.backups.index') }}" class="{{ request()->routeIs('admin.backups.*') ? 'active' : '' }}">
             <span>Backups</span>
         </a>
+        <a href="{{ route('admin.discord.index') }}" class="{{ request()->routeIs('admin.discord.*') ? 'active' : '' }}" style="color:#5865F2;">
+            <span>Discord</span>
+        </a>
         <a href="{{ route('admin.settings.index') }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
             <span>Settings</span>
         </a>

@@ -6,7 +6,7 @@
         </div>
         <div style="flex:1;">
             <div>
-                <a href="{{ route('profile.show', $post->user->id) }}" style="color:{{ $post->user->role_color }}; font-weight:bold; text-decoration:none;">
+                <a href="{{ route('profile.show', $post->user->id) }}" style="color:{{ $post->user->role_color }}; text-decoration:none;" class="{{ $post->user->is_admin ? 'user-admin' : ($post->user->is_moderator ? 'user-moderator' : '') }}">
                     {{ $post->user->display_name ?: $post->user->name }}
                 </a>
                 @if($post->group)
@@ -50,7 +50,7 @@
                         </div>
                         <div style="flex:1; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px;">
                             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                                <a href="{{ route('profile.show', $comment->user->id) }}" style="font-size:12px; font-weight:bold; color:{{ $comment->user->role_color }}; text-decoration:none;">
+                                <a href="{{ route('profile.show', $comment->user->id) }}" style="font-size:12px; color:{{ $comment->user->role_color }}; text-decoration:none;" class="{{ $comment->user->is_admin ? 'user-admin' : ($comment->user->is_moderator ? 'user-moderator' : '') }}">
                                     {{ $comment->user->display_name ?: $comment->user->name }}
                                 </a>
                                 <div style="display:flex; gap:8px; align-items:center;">

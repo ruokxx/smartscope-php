@@ -148,7 +148,7 @@
                     <div style="aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#000; position:relative;">
                          @if($isOwned && $img)
                              <a href="{{ route('objects.show', $obj->id) }}" style="width:100%; height:100%; display:block;">
-                                <img src="{{ \Illuminate\Support\Facades\Storage::url($img->path) }}" alt="{{ $img->filename }}" style="width:100%; height:100%; object-fit:cover;">
+                                <img src="{{ $img->url }}" alt="{{ $img->filename }}" style="width:100%; height:100%; object-fit:cover;">
                              </a>
                              <!-- Green Check -->
                              <div style="position:absolute; top:4px; right:4px; background:#2ecc71; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:12px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">✓</div>

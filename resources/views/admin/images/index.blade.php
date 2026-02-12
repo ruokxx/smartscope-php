@@ -16,8 +16,8 @@
       <div class="card" style="padding:0; overflow:hidden; display:flex; flex-direction:column; background:rgba(255,255,255,0.03);">
         <div style="aspect-ratio:1/1; background:#000; position:relative;">
             @if($img->path)
-                <a href="{{ Storage::url($img->path) }}" target="_blank">
-                    <img src="{{ Storage::url($img->path) }}" style="width:100%; height:100%; object-fit:cover;">
+                <a href="{{ $img->url }}" target="_blank">
+                    <img src="{{ $img->url }}" style="width:100%; height:100%; object-fit:cover;">
                 </a>
             @else
                 <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted)">No Image</div>

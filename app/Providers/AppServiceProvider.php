@@ -56,6 +56,32 @@ class AppServiceProvider extends ServiceProvider
             // Disable sending if not enabled (use array driver which discards emails, or log)
             config(['mail.default' => 'array']);
         }
+        // Configure External Storage dynamically
+        if (isset($settings['storage_driver']) && in_array($settings['storage_driver'], ['s3', 'ftp', 'sftp'])) {
+            $driver = $settings['storage_driver'];
+
+            if ($driver === 's3') {
+                config([
+                    'filesystems.disks.s3.key' => $settings['s3_key'] ?? '',
+                    'filesystems.disks.s3.secret' => $settings['s3_secret'] ?? '',
+                    'filesystems.disks.s3.region' => $settings['s3_region'] ?? '',
+                    'filesystems.disks.s3.bucket' => $settings['s3_bucket'] ?? '',
+                    'filesystems.disks.s3.url' => $settings['s3_url'] ?? '',
+                    'filesystems.disks.s3.use_path_style_endpoint' => $settings['s3_use_path_style_endpoint'] ?? false,
+                ]);
+            }
+            elseif ($driver === 'ftp') {
+                config([
+                    'filesystems.disks.ftp' => [
+                        'driver' => 'ftp',
+                        'host' => $settings['ftp_host'] ?? '',
+                        'username' => $settings['ftp_username'] ?? '',
+                        'password' => $settings['ftp_password'] ?? '',
+                        'root' => $settings['ftp_root'] ?? '',
+                    ]
+                ]);
+            }
+        }
 
         // jetzt erst sichere Abfragen, z.B. falls vorher Scope::orderBy(...) stand:
         $scopes = Scope::orderBy('name')->get();
