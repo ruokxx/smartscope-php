@@ -16,84 +16,264 @@
     <div style="padding:24px;">
       <p class="muted" style="margin-top:0; line-height:1.6;">{{ $obj->description }}</p>
 
-      <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.05);">
-        <label style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('messages.show_images_by_user') }}</label>
-        <select id="uploaderSelect" style="background:#1a2634; border:1px solid rgba(255,255,255,0.1); color:#e6eef6; padding:6px; border-radius:4px; margin-left:8px;">
-          <option value="all" style="background:#1a2634; color:#e6eef6;">{{ __('messages.all_users') }}</option>
-          @foreach($uploaders as $u)
-            <option value="{{ $u->id }}" style="background:#1a2634; color:#e6eef6;">{{ $u->name ?? $u->email }}</option>
-          @endforeach
-        </select>
+      <!-- Filter Form (From Board/Compare) -->
+      <div class="card" style="padding:16px; margin:24px 0 24px 0; background:rgba(255,255,255,0.02);">
+          <form method="GET" style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-start;">
+              <div style="display:flex; flex-direction:column;">
+                  <label style="display:block; font-size:12px; margin-bottom:4px; color:var(--muted); height:15px; line-height:15px; overflow:hidden; white-space:nowrap;">{{ __('messages.min_exposure') }}</label>
+                  <input type="number" name="min_exposure" value="{{ request('min_exposure') }}" placeholder="{{ __('messages.show_all') }}" style="margin:0; display:block; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 8px; border-radius:4px; width:120px; height:36px; box-sizing:border-box;">
+              </div>
+              
+              <div style="display:flex; flex-direction:column;">
+                  <label style="display:block; font-size:12px; margin-bottom:4px; color:var(--muted); height:15px; line-height:15px; overflow:hidden; white-space:nowrap;">{{ __('messages.filter') }}</label>
+                  <select name="filter" style="margin:0; display:block; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 8px; border-radius:4px; width:120px; height:36px; box-sizing:border-box;">
+                      <option value="" style="color:#000;">{{ __('messages.show_all') }}</option>
+                      @foreach($filters as $f)
+                          <option value="{{ $f }}" {{ request('filter') == $f ? 'selected' : '' }} style="color:#000;">{{ $f }}</option>
+                      @endforeach
+                  </select>
+              </div>
 
-        @auth
-          <label style="margin-left:24px; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.7;">{{ __('messages.your_images') }}</label>
-          <select id="myImageSelect" style="background:#1a2634; border:1px solid rgba(255,255,255,0.1); color:#e6eef6; padding:6px; border-radius:4px; margin-left:8px;">
-            <option value="" style="background:#1a2634; color:#e6eef6;">{{ __('messages.none') }}</option>
-            @foreach($myImages as $mi)
-            <option value="{{ $mi->id }}" style="background:#1a2634; color:#e6eef6;">My: {{ $obj->catalog ?? $obj->name }} ({{ $mi->upload_time->format('Y-m-d H:i') }})</option>
-            @endforeach
-          </select>
-        @endauth
+              <div style="display:flex; flex-direction:column;">
+                  <label style="display:block; font-size:12px; margin-bottom:4px; color:var(--muted); height:15px; line-height:15px; overflow:hidden; white-space:nowrap;">{{ __('messages.gain') }}</label>
+                  <input type="number" name="gain" value="{{ request('gain') }}" placeholder="{{ __('messages.show_all') }}" style="margin:0; display:block; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:0 8px; border-radius:4px; width:120px; height:36px; box-sizing:border-box;">
+              </div>
 
-        <button id="compareBtn" class="btn" style="margin-left:16px">{{ __('messages.compare_selected') }}</button>
+              <div style="display:flex; flex-direction:column;">
+                  <label style="display:block; font-size:12px; margin-bottom:4px; color:transparent; height:15px; line-height:15px; overflow:hidden; white-space:nowrap; user-select:none;">Action</label>
+                  <div style="display:flex; gap:8px;">
+                      <button type="submit" class="btn" style="margin:0; display:block; background:var(--accent); color:#fff; padding:0 16px; height:36px; display:flex; align-items:center; justify-content:center; border:1px solid transparent; box-sizing:border-box;">{{ __('messages.apply_filters') }}</button>
+                      <button type="button" id="compareBtn" class="btn" style="margin:0; display:block; background:#2ecc71; color:#fff; padding:0 16px; height:36px; display:flex; align-items:center; justify-content:center; border:1px solid transparent; box-sizing:border-box;">{{ __('messages.compare_selected') }}</button>
+                      @if(request()->anyFilled(['min_exposure', 'filter', 'gain']))
+                          <a href="{{ route('objects.show', $obj->id) }}" class="btn" style="margin:0; display:block; background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.1); padding:0 16px; height:36px; display:flex; align-items:center; justify-content:center; text-decoration:none; box-sizing:border-box;">{{ __('messages.reset') }}</a>
+                      @endif
+                  </div>
+              </div>
+          </form>
       </div>
 
-    <hr />
+    <!-- Comparison Columns -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;">
+        <!-- Dwarf Column -->
+        <div class="card" style="padding:12px; height:100%; display:flex; flex-direction:column;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; margin-bottom:12px;">
+                <h3 style="margin:0;">Dwarf</h3>
+                <form id="dwarfFilterForm" method="GET" style="margin:0;">
+                     <!-- Preserve main filters -->
+                     @foreach(['min_exposure', 'filter', 'gain', 'seestar_scope_id'] as $key)
+                        @if(request()->filled($key))
+                            <input type="hidden" name="{{ $key }}" value="{{ request($key) }}">
+                        @endif
+                     @endforeach
+                     <select name="dwarf_scope_id" onchange="this.form.submit()" style="background:#222; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:4px 8px; border-radius:4px; font-size:12px;">
+                        <option value="" style="background:#222; color:#fff;">{{ __('messages.all_models') }}</option>
+                        @foreach($dwarfScopes as $scope)
+                            <option value="{{ $scope->id }}" {{ request('dwarf_scope_id') == $scope->id ? 'selected' : '' }} style="background:#222; color:#fff;">{{ $scope->name }}</option>
+                        @endforeach
+                     </select>
+                </form>
+            </div>
 
-    <div id="imagesContainer" class="grid" style="margin-top:12px">
-      @foreach($imagesByUser->flatten(1) as $img)
-        <div class="card thumb-small image-card" data-user-id="{{ $img->user->id ?? 0 }}" data-image-id="{{ $img->id }}">
-          <a href="{{ $img->url }}" target="_blank" title="{{ __('messages.open_full_res') }}" style="display:block; height:180px; overflow:hidden; border-radius:8px; background:#000;">
-            <img class="thumb" src="{{ $img->url }}" alt="{{ $obj->name }}" style="width:100%; height:100%; object-fit:cover; display:block;">
-          </a>
-          <div style="margin-top:6px"><strong>{{ $obj->catalog ?? $obj->name }}</strong></div>
-          <div class="muted">{{ __('messages.by') }}: <span style="color:{{ $img->user->role_color }}" class="{{ $img->user->is_admin ? 'user-admin' : ($img->user->is_moderator ? 'user-moderator' : '') }}">{{ $img->user->name ?? $img->user->email ?? 'guest' }}</span></div>
-          <div class="muted">{{ __('messages.scope') }}: {{ $img->scopeModel->name ?? '-' }}</div>
-          
-          <div style="margin-top:8px; font-size:11px; color:var(--muted); line-height:1.4; border-top:1px solid rgba(255,255,255,0.05); padding-top:4px;">
-            @if($img->sub_exposure_time || $img->number_of_subs)
-              <div>
-                <span style="color:var(--accent)">{{ __('messages.integration') }}:</span> 
-                {{ $img->number_of_subs ?? '?' }} x {{ $img->sub_exposure_time ?? $img->sub_exposure_seconds ?? '?' }}s
-                @if($img->exposure_total_seconds)
-                  @php
-                    $h = floor($img->exposure_total_seconds / 3600);
-                    $m = floor(($img->exposure_total_seconds % 3600) / 60);
-                  @endphp
-                  ({{ $h }}h {{ $m }}m)
+            @if($dwarfImages->count() > 0)
+                <!-- Featured (Top) Image Container -->
+                <!-- We give it an ID to target it easily for updates -->
+                @php $mainDwarf = $dwarfImages->first(); @endphp
+                <div id="dwarf-featured" class="card thumb-small image-card featured-card" 
+                     data-user-id="{{ $mainDwarf->user_id }}" 
+                     data-image-id="{{ $mainDwarf->id }}" 
+                     style="margin:0 auto 16px auto; padding:0; overflow:hidden; border-radius:8px; border:1px solid var(--accent); width:100%;">
+                    
+                    <div style="position:absolute; top:4px; left:4px; font-size:10px; color:#fff; background:var(--accent); padding:2px 4px; border-radius:4px; z-index:10;">{{ __('messages.selected') }}</div>
+                    
+                    <a href="{{ $mainDwarf->url }}" target="_blank" class="featured-link">
+                        <img class="thumb featured-img" src="{{ $mainDwarf->url }}" style="width:100%; display:block;">
+                    </a>
+                    <div style="padding:8px; text-align:left; font-size:12px; background:rgba(0,0,0,0.4);">
+                        <div style="margin-bottom:2px;"><strong class="featured-user" style="color:#fff;">{{ $mainDwarf->user->name ?? __('messages.user_label') }}</strong></div>
+                        <div class="muted featured-meta-top">
+                             {{ $mainDwarf->scopeModel->name ?? '-' }} • {{ $mainDwarf->session_date ? $mainDwarf->session_date->format('d.m.Y') : '' }}
+                        </div>
+                        <!-- Extended Metadata Grid -->
+                        <div class="featured-stats" style="margin-top:4px; font-size:11px; display:grid; grid-template-columns:1fr 1fr; gap:4px; color:var(--text);">
+                             <div>{{ __('messages.exposure_short') }}: <span class="f-exp">{{ $mainDwarf->exposure_total_seconds ? floor($mainDwarf->exposure_total_seconds/60).'m' : '-' }}</span></div>
+                             <div>{{ __('messages.gain_short') }}: <span class="f-gain">{{ $mainDwarf->gain ?? '-' }}</span></div>
+                             <div>{{ __('messages.filter_short') }}: <span class="f-filter">{{ $mainDwarf->filter ?? '-' }}</span></div>
+                             <div>{{ __('messages.bortle_short') }}: <span class="f-bortle">{{ $mainDwarf->bortle ?? '-' }}</span></div>
+                             <div>{{ __('messages.seeing_short') }}: <span class="f-seeing">{{ $mainDwarf->seeing ?? '-' }}</span></div>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <label style="cursor:pointer;">
+                                {{-- We keep this checkbox for the logic, but the user interacts with the list mostly --}}
+                                <input type="checkbox" class="select-compare featured-check" value="{{ $mainDwarf->id }}" {{ $dwarfImages->count() == 1 ? 'checked' : '' }}> 
+                                {{ __('messages.compare') }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Images List -->
+                @if($dwarfImages->count() > 1)
+                    <div style="text-align:left; font-size:12px; margin-bottom:8px; color:var(--muted);">{{ __('messages.more_results') }} ({{ $dwarfImages->count() - 1 }}):</div>
+                    <div style="display:flex; flex-direction:column; gap:8px; max-height:400px; overflow-y:auto; padding-right:4px;">
+                        @foreach($dwarfImages->slice(1) as $img)
+                            <div class="image-card list-item" 
+                                 data-user-id="{{ $img->user_id }}" 
+                                 data-image-id="{{ $img->id }}"
+                                 data-full-url="{{ $img->url }}"
+                                 data-user-name="{{ $img->user->name ?? __('messages.user_label') }}"
+                                 data-scope="{{ $img->scopeModel->name ?? '-' }}"
+                                 data-date="{{ $img->session_date ? $img->session_date->format('d.m.Y') : '' }}"
+                                 data-exp="{{ $img->exposure_total_seconds ? floor($img->exposure_total_seconds/60).'m' : '-' }}"
+                                 data-gain="{{ $img->gain ?? '-' }}"
+                                 data-filter="{{ $img->filter ?? '-' }}"
+                                 data-bortle="{{ $img->bortle ?? '-' }}"
+                                 data-seeing="{{ $img->seeing ?? '-' }}"
+                                 style="display:flex; gap:8px; background:rgba(255,255,255,0.05); padding:6px; border-radius:4px;">
+                                
+                                <div style="width:70px; height:70px; flex-shrink:0; border-radius:4px; overflow:hidden;">
+                                    <img src="{{ $img->url }}" style="width:100%; height:100%; object-fit:cover;">
+                                </div>
+                                <div style="flex:1; overflow:hidden; display:flex; flex-direction:column; justify-content:center;">
+                                    <div style="display:flex; justify-content:space-between;">
+                                        <span style="font-weight:600; font-size:12px;">{{ $img->user->name ?? __('messages.user_label') }}</span>
+                                        <span style="font-size:10px; color:var(--muted);">{{ $img->session_date ? $img->session_date->format('d.m.y') : '' }}</span>
+                                    </div>
+                                    <div style="font-size:11px; color:var(--muted); margin-bottom:2px;">{{ $img->scopeModel->name ?? '-' }}</div>
+                                    
+                                    <div style="font-size:10px; color:var(--text); line-height:1.4;">
+                                        {{ $img->exposure_total_seconds ? floor($img->exposure_total_seconds/60).'m' : '-' }} • G:{{ $img->gain ?? '-' }} • {{ $img->filter ?? '-' }}
+                                        <br>
+                                        B:{{ $img->bortle ?? '-' }} • S:{{ $img->seeing ?? '-' }}
+                                    </div>
+                                    
+                                    <label style="font-size:11px; margin-top:4px; display:block; cursor:pointer;">
+                                        <input type="checkbox" class="select-compare list-check" value="{{ $img->id }}"> {{ __('messages.select') }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 @endif
-              </div>
+            @else
+                <div class="muted" style="padding:20px; text-align:center;">{{ __('messages.no_results') }}</div>
             @endif
-            <div><span style="color:var(--accent)">{{ __('messages.gain') }}:</span> {{ $img->gain ?? $img->iso_or_gain ?? '-' }}</div>
-            <div><span style="color:var(--accent)">{{ __('messages.filter') }}:</span> {{ $img->filter ?? '-' }}</div>
-            @if($img->bortle)
-              <div><span style="color:var(--accent)">{{ __('messages.bortle') }}:</span> {{ $img->bortle }}</div>
-            @endif
-             @if($img->seeing)
-              <div><span style="color:var(--accent)">{{ __('messages.seeing') }}:</span> {{ $img->seeing }}</div>
-            @endif
-             @if($img->session_date)
-              <div><span style="color:var(--accent)">{{ __('messages.session_date') }}:</span> {{ $img->session_date->format('Y-m-d') }}</div>
-            @endif
-          </div>
-
-          <div style="margin-top:6px">
-            <label><input type="checkbox" class="select-compare" value="{{ $img->id }}"> {{ __('messages.select') }}</label>
-            @auth
-              @if($img->user && $img->user->id == auth()->id())
-                <span class="muted" style="margin-left:6px">({{ __('messages.yours') }})</span>
-              @endif
-            @endauth
-          </div>
         </div>
-      @endforeach
+
+        <!-- Seestar Column -->
+        <div class="card" style="padding:12px; height:100%; display:flex; flex-direction:column;">
+             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; margin-bottom:12px;">
+                <h3 style="margin:0;">Seestar</h3>
+                <form id="seestarFilterForm" method="GET" style="margin:0;">
+                     <!-- Preserve main filters -->
+                     @foreach(['min_exposure', 'filter', 'gain', 'dwarf_scope_id'] as $key)
+                        @if(request()->filled($key))
+                            <input type="hidden" name="{{ $key }}" value="{{ request($key) }}">
+                        @endif
+                     @endforeach
+                     <select name="seestar_scope_id" onchange="this.form.submit()" style="background:#222; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:4px 8px; border-radius:4px; font-size:12px;">
+                        <option value="" style="background:#222; color:#fff;">{{ __('messages.all_models') }}</option>
+                        @foreach($seestarScopes as $scope)
+                            <option value="{{ $scope->id }}" {{ request('seestar_scope_id') == $scope->id ? 'selected' : '' }} style="background:#222; color:#fff;">{{ $scope->name }}</option>
+                        @endforeach
+                     </select>
+                </form>
+            </div>
+
+            @if($seestarImages->count() > 0)
+                <!-- Featured (Top) Image Container -->
+                @php $mainSeestar = $seestarImages->first(); @endphp
+                <div id="seestar-featured" class="card thumb-small image-card featured-card"
+                     data-user-id="{{ $mainSeestar->user_id }}" 
+                     data-image-id="{{ $mainSeestar->id }}" 
+                     style="margin:0 auto 16px auto; padding:0; overflow:hidden; border-radius:8px; border:1px solid var(--accent); width:100%;">
+                    
+                    <div style="position:absolute; top:4px; left:4px; font-size:10px; color:#fff; background:var(--accent); padding:2px 4px; border-radius:4px; z-index:10;">{{ __('messages.selected') }}</div>
+
+                    <a href="{{ $mainSeestar->url }}" target="_blank" class="featured-link">
+                        <img class="thumb featured-img" src="{{ $mainSeestar->url }}" style="width:100%; display:block;">
+                    </a>
+                    <div style="padding:8px; text-align:left; font-size:12px; background:rgba(0,0,0,0.4);">
+                        <div style="margin-bottom:2px;"><strong class="featured-user" style="color:#fff;">{{ $mainSeestar->user->name ?? __('messages.user_label') }}</strong></div>
+                        <div class="muted featured-meta-top">
+                             {{ $mainSeestar->scopeModel->name ?? '-' }} • {{ $mainSeestar->session_date ? $mainSeestar->session_date->format('d.m.Y') : '' }}
+                        </div>
+                        <div class="featured-stats" style="margin-top:4px; font-size:11px; display:grid; grid-template-columns:1fr 1fr; gap:4px; color:var(--text);">
+                             <div>{{ __('messages.exposure_short') }}: <span class="f-exp">{{ $mainSeestar->exposure_total_seconds ? floor($mainSeestar->exposure_total_seconds/60).'m' : '-' }}</span></div>
+                             <div>{{ __('messages.gain_short') }}: <span class="f-gain">{{ $mainSeestar->gain ?? '-' }}</span></div>
+                             <div>{{ __('messages.filter_short') }}: <span class="f-filter">{{ $mainSeestar->filter ?? '-' }}</span></div>
+                             <div>{{ __('messages.bortle_short') }}: <span class="f-bortle">{{ $mainSeestar->bortle ?? '-' }}</span></div>
+                             <div>{{ __('messages.seeing_short') }}: <span class="f-seeing">{{ $mainSeestar->seeing ?? '-' }}</span></div>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <label style="cursor:pointer;">
+                                <input type="checkbox" class="select-compare featured-check" value="{{ $mainSeestar->id }}" {{ $seestarImages->count() == 1 ? 'checked' : '' }}> 
+                                {{ __('messages.compare') }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Images List -->
+                 @if($seestarImages->count() > 1)
+                    <div style="text-align:left; font-size:12px; margin-bottom:8px; color:var(--muted);">{{ __('messages.more_results') }} ({{ $seestarImages->count() - 1 }}):</div>
+                    <div style="display:flex; flex-direction:column; gap:8px; max-height:400px; overflow-y:auto; padding-right:4px;">
+                        @foreach($seestarImages->slice(1) as $img)
+                            <div class="image-card list-item" 
+                                 data-user-id="{{ $img->user_id }}" 
+                                 data-image-id="{{ $img->id }}"
+                                 data-full-url="{{ $img->url }}"
+                                 data-user-name="{{ $img->user->name ?? __('messages.user_label') }}"
+                                 data-scope="{{ $img->scopeModel->name ?? '-' }}"
+                                 data-date="{{ $img->session_date ? $img->session_date->format('d.m.Y') : '' }}"
+                                 data-exp="{{ $img->exposure_total_seconds ? floor($img->exposure_total_seconds/60).'m' : '-' }}"
+                                 data-gain="{{ $img->gain ?? '-' }}"
+                                 data-filter="{{ $img->filter ?? '-' }}"
+                                 data-bortle="{{ $img->bortle ?? '-' }}"
+                                 data-seeing="{{ $img->seeing ?? '-' }}"
+                                 style="display:flex; gap:8px; background:rgba(255,255,255,0.05); padding:6px; border-radius:4px;">
+                                
+                                <div style="width:70px; height:70px; flex-shrink:0; border-radius:4px; overflow:hidden;">
+                                    <img src="{{ $img->url }}" style="width:100%; height:100%; object-fit:cover;">
+                                </div>
+                                <div style="flex:1; overflow:hidden; display:flex; flex-direction:column; justify-content:center;">
+                                    <div style="display:flex; justify-content:space-between;">
+                                        <span style="font-weight:600; font-size:12px;">{{ $img->user->name ?? __('messages.user_label') }}</span>
+                                        <span style="font-size:10px; color:var(--muted);">{{ $img->session_date ? $img->session_date->format('d.m.y') : '' }}</span>
+                                    </div>
+                                    <div style="font-size:11px; color:var(--muted); margin-bottom:2px;">{{ $img->scopeModel->name ?? '-' }}</div>
+                                    
+                                    <div style="font-size:10px; color:var(--text); line-height:1.4;">
+                                        {{ $img->exposure_total_seconds ? floor($img->exposure_total_seconds/60).'m' : '-' }} • G:{{ $img->gain ?? '-' }} • {{ $img->filter ?? '-' }}
+                                        <br>
+                                        B:{{ $img->bortle ?? '-' }} • S:{{ $img->seeing ?? '-' }}
+                                    </div>
+                                    
+                                    <label style="font-size:11px; margin-top:4px; display:block; cursor:pointer;">
+                                        <input type="checkbox" class="select-compare list-check" value="{{ $img->id }}"> {{ __('messages.select') }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            @else
+                <div class="muted" style="padding:20px; text-align:center;">{{ __('messages.no_results') }}</div>
+            @endif
+        </div>
     </div>
+    
+    <!-- Upload Button Area (Optional - keeping the 'Action' feel) -->
+    @auth
+        <div style="margin-top:24px; text-align:center;">
+            <a href="{{ route('images.create') }}?object_id={{ $obj->id }}" class="btn" style="background:#3498db; color:#fff; display:inline-block; padding:8px 24px; text-decoration:none;">{{ __('messages.upload_image') }}</a>
+        </div>
+    @endauth
 
     <!-- Compare Modal -->
     <div id="compareModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:10000; flex-direction:column;">
         <div style="padding:16px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05);">
             <h3 style="margin:0; color:#fff;">{{ __('messages.compare') }}</h3>
-            <button onclick="closeCompareModal()" style="background:#e74c3c; color:#fff; padding:6px 12px; border-radius:4px; font-weight:600; font-size:14px; border:none; cursor:pointer;">Schließen</button>
+            <button onclick="closeCompareModal()" style="background:#e74c3c; color:#fff; padding:6px 12px; border-radius:4px; font-weight:600; font-size:14px; border:none; cursor:pointer;">{{ __('messages.close') }}</button>
         </div>
         <div style="flex:1; display:flex; gap:2px; overflow:hidden;">
             <!-- Left Image Container -->
@@ -112,7 +292,7 @@
             </div>
         </div>
         <div style="padding:8px; text-align:center; color:var(--muted); font-size:12px;">
-            Scroll to Zoom • Drag to Pan
+            {{ __('messages.zoom_pan_hint') }}
         </div>
     </div>
 
@@ -120,13 +300,13 @@
 
   <script>
     (function(){
-      const images = Array.from(document.querySelectorAll('.image-card[data-image-id]'));
-      const uploaderSelect = document.getElementById('uploaderSelect');
-      const myImageSelect = document.getElementById('myImageSelect');
+      const txtCompareSelected = "{{ __('messages.compare_selected') }}";
+      const txtSelectTwo = "{{ __('messages.select_two_images') }}";
+
       const compareBtn = document.getElementById('compareBtn');
       const modal = document.getElementById('compareModal');
       
-      // Move modal to body to ensure it sits on top of header (z-index context fix)
+      // Move modal to body
       if(modal && document.body) {
           document.body.appendChild(modal);
       }
@@ -193,73 +373,165 @@
       setupPanZoom('panLeft', 'left');
       setupPanZoom('panRight', 'right');
 
+       // Checkbox Logic: Radio-like behavior per column + Update Featured Card
+       const checkboxes = document.querySelectorAll('.select-compare');
+       checkboxes.forEach(cb => {
+           cb.addEventListener('change', function() {
+                // Determine column container
+                const colCard = this.closest('.card');
+                if(!colCard) return;
 
-      function filterByUser(userId){
-        images.forEach(card => {
-          const uid = card.getAttribute('data-user-id') || '0';
-          if(userId === 'all' || String(uid) === String(userId)) {
-            card.style.display = '';
-            const img = card.querySelector('img.thumb');
-            if(img && !img.src) img.src = img.dataset.src || img.getAttribute('data-src') || img.getAttribute('src');
+                // 1. Radio-like behavior: Uncheck others in same column
+                if(this.checked) {
+                    const colCheckboxes = colCard.querySelectorAll('.select-compare');
+                    colCheckboxes.forEach(other => {
+                        if(other !== this) other.checked = false;
+                    });
+                    
+                    // 2. Update Featured Card if this is a list item
+                    // Find the featured card in this column
+                    // We assume the structure: Column -> Featured Card (first .image-card)
+                    // But we added IDs: dwarf-featured and seestar-featured
+                    // Let's find the specific featured card for this column
+                    let featured = colCard.querySelector('.featured-card');
+                    
+                    // If the clicked item IS the featured card's checkbox, we don't need to update content
+                    // If it is a list-item, we update the featured card
+                    const listItem = this.closest('.list-item');
+                    if(featured && listItem) {
+                        // Extract data from list item
+                        const data = {
+                            id: listItem.getAttribute('data-image-id'),
+                            url: listItem.getAttribute('data-full-url'),
+                            user: listItem.getAttribute('data-user-name'),
+                            scope: listItem.getAttribute('data-scope'),
+                            date: listItem.getAttribute('data-date'),
+                            exp: listItem.getAttribute('data-exp'),
+                            gain: listItem.getAttribute('data-gain'),
+                            filter: listItem.getAttribute('data-filter'),
+                            bortle: listItem.getAttribute('data-bortle'),
+                            seeing: listItem.getAttribute('data-seeing'),
+                        };
+
+                        // Update Featured Card DOM
+                        const img = featured.querySelector('.featured-img');
+                        const link = featured.querySelector('.featured-link');
+                        const user = featured.querySelector('.featured-user');
+                        const meta = featured.querySelector('.featured-meta-top');
+                        const check = featured.querySelector('.featured-check');
+                        
+                        if(img) img.src = data.url;
+                        if(link) link.href = data.url; // Update link to full image
+                        if(user) user.innerText = data.user;
+                        if(meta) meta.innerText = data.scope + ' • ' + data.date;
+                        
+                        // Update Stats
+                        featured.querySelector('.f-exp').innerText = data.exp;
+                        featured.querySelector('.f-gain').innerText = data.gain;
+                        featured.querySelector('.f-filter').innerText = data.filter;
+                        featured.querySelector('.f-bortle').innerText = data.bortle;
+                        featured.querySelector('.f-seeing').innerText = data.seeing;
+                        
+                        // Update Featured Checkbox (to allow comparison of THIS image)
+                        // Actually, if we just checked the list item, that is the selected one.
+                        // But the "Compare" button looks for .select-compare:checked
+                        // If we check the list item, it IS checked.
+                        // Any visual update to the top card is just for PREVIEW.
+                        // However, if the user then clicks "Compare", it uses the checked boxes.
+                        // So we don't need to change the top card's checkbox value, 
+                        // UNLESS we want the top card to "become" the selected item logic-wise.
+                        // But for now, we just update the visual preview.
+                        // PRO STYLE: If the top card visually represents the selection, 
+                        // maybe we should ensure the top card's checkbox is the one checked?
+                        // No, simpler: Just keep the list item checked. 
+                        // The top card is just a "Detail View" container now.
+                        
+                        // Wait, if I check a list item, I want to see it big.
+                        // If I then uncheck it, should it revert?
+                        // Yes, ideally. But for now "Last Selected" wins.
+                    }
+                }
+                
+                // If I uncheck a list item, do I revert to the default featured?
+                // That would require storing the default state. 
+                // Let's keep it simple: Checking an item updates the view. Unchecking leaves it (or we could revert).
+                // Given the request "lass es nach oben rutschen", it implies "Select -> Promote".
+                
+               updateCompareButton();
+           });
+       });
+
+      function updateCompareButton() {
+          const selected = document.querySelectorAll('.select-compare:checked');
+          const btn = document.getElementById('compareBtn');
+          if(selected.length === 2) {
+              btn.style.opacity = '1';
+              btn.style.pointerEvents = 'auto';
+              btn.innerText = txtCompareSelected + ' (' + selected.length + ')';
           } else {
-            card.style.display = 'none';
+              btn.style.opacity = '0.5';
+              btn.style.pointerEvents = 'none';
+              btn.innerText = txtSelectTwo;
           }
-        });
       }
+      
+      // Initialize button state
+      updateCompareButton();
 
-      if (uploaderSelect) {
-        uploaderSelect.addEventListener('change', function(){
-          filterByUser(this.value);
-        });
-      }
+      // Open Modal
+      document.getElementById('compareBtn').addEventListener('click', () => {
+          // Logic remains same: find the checked inputs
+          const selected = document.querySelectorAll('.select-compare:checked');
+          if(selected.length !== 2) return;
+          
+          const items = [];
+          selected.forEach(cb => {
+              // It could be a featured card OR a list item
+              const card = cb.closest('.image-card');
+              items.push(card);
+          });
+          
+          const img1 = items[0];
+          const img2 = items[1];
+          
+          // Helper to get SRC. If it's featured, it has .featured-img, else just img
+          const getSrc = (el) => {
+              const img = el.querySelector('img');
+              // If list item, use full url from data if available, else src
+              // We added data-full-url to list items!
+              if(el.dataset.fullUrl) return el.dataset.fullUrl;
+              // Featured might have been updated visually but its data attributes might be stale?
+              // Actually, we only updated the DOM visual elements, not the data-attributes of the referenced featured card container.
+              // BUT, if the user selected a LIST item, that LIST item is the one in `selected` array.
+              // So we are grabbing data from the LIST item directly.
+              // Logic: `selected` contains the checkbox elements.
+              // `img1` contains the closest .image-card (which is the list item).
+              // So `img1.dataset.fullUrl` should work!
+              return img.src; 
+          };
+          
+          const src1 = getSrc(img1);
+          const src2 = getSrc(img2);
+          
+          // Helper to get name
+          const getName = (el) => {
+             // If list item, use data attribute
+             if(el.dataset.userName) return el.dataset.userName;
+             return el.querySelector('strong') ? el.querySelector('strong').innerText : 'User';
+          };
 
-      if (myImageSelect){
-        myImageSelect.addEventListener('change', function(){
-          if (this.value){
-            filterByUser('{{ auth()->id() ?? "" }}');
-            images.forEach(card => {
-              const iid = card.getAttribute('data-image-id');
-              const cb = card.querySelector('.select-compare');
-              if (cb) cb.checked = (iid === this.value);
-            });
-          } else {
-            filterByUser(uploaderSelect.value);
-            images.forEach(card => { const cb = card.querySelector('.select-compare'); if(cb) cb.checked = false; });
-          }
-        });
-      }
-
-      compareBtn.addEventListener('click', function(){
-        const selected = Array.from(document.querySelectorAll('.select-compare:checked'));
-        if (selected.length < 2){
-          alert('{{ __('messages.alert_select_two') }}');
-          return;
-        }
-        
-        const id1 = selected[0].value;
-        const id2 = selected[1].value;
-
-        const card1 = document.querySelector('.image-card[data-image-id="'+id1+'"]');
-        const card2 = document.querySelector('.image-card[data-image-id="'+id2+'"]');
-
-        if(!card1 || !card2) return;
-
-        // Extract full res URL (from Anchor) or fallback to img src
-        const url1 = card1.querySelector('a') ? card1.querySelector('a').href : card1.querySelector('img').src;
-        const url2 = card2.querySelector('a') ? card2.querySelector('a').href : card2.querySelector('img').src;
-
-        // Setup Modal
-        document.getElementById('imgLeft').src = url1;
-        document.getElementById('imgRight').src = url2;
-        
-        document.getElementById('labelLeft').innerText = 'Image ' + id1;
-        document.getElementById('labelRight').innerText = 'Image ' + id2;
-
-        resetState();
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+          document.getElementById('imgLeft').src = src1;
+          document.getElementById('labelLeft').innerText = getName(img1);
+          
+          document.getElementById('imgRight').src = src2;
+          document.getElementById('labelRight').innerText = getName(img2);
+          
+          modal.style.display = 'flex';
+          resetState();
+          document.body.style.overflow = 'hidden';
       });
 
     })();
   </script>
 @endsection
+```

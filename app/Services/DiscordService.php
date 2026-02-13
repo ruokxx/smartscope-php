@@ -23,8 +23,24 @@ class DiscordService
             return;
         }
 
-        $msg = "🎉 **New Member Joined!**\n\nPassionate Astrophotographer **{$user->name}** has just joined SmartScope! 🔭";
-        $this->send($msg);
+        // Use Register Hook or Fallback
+        $webhookUrl = $settings['discord_webhook_register'] ?? ($settings['discord_webhook_url'] ?? null);
+        if (!$webhookUrl)
+            return;
+
+        $lang = $settings['discord_active_language'] ?? 'en';
+        $templateKey = 'discord_template_register_' . $lang;
+
+        $msg = $settings[$templateKey] ?? '';
+
+        if (empty($msg)) {
+            // Fallback to default
+            $msg = "🎉 **New Member Joined!**\n\nPassionate Astrophotographer **{USER_NAME}** has just joined SmartScope! 🔭";
+        }
+
+        $msg = str_replace('{USER_NAME}', $user->name, $msg);
+
+        $this->send($msg, null, $webhookUrl);
     }
 
     /**
@@ -41,13 +57,30 @@ class DiscordService
             return;
         }
 
-        $user = $image->user;
+        // Use Upload Hook or Fallback
+        $webhookUrl = $settings['discord_webhook_upload'] ?? ($settings['discord_webhook_url'] ?? null);
+        if (!$webhookUrl)
+            return;
 
-        // Use object_id for the URL if available, as that's where the gallery is.
+        $user = $image->user;
         $targetId = $image->object_id ?: $image->id;
         $url = route('objects.show', $targetId);
 
-        $msg = "📸 **New Image Uploaded!**\n\n**{$image->title}** by **{$user->name}**\n\n" . $url;
+        $lang = $settings['discord_active_language'] ?? 'en';
+        $templateKey = 'discord_template_upload_' . $lang;
+
+        $msg = $settings[$templateKey] ?? '';
+
+        if (empty($msg)) {
+            // Fallback
+            $msg = "📸 **New Image Uploaded!**\n\n**{IMAGE_TITLE}** by **{USER_NAME}**\n\n{IMAGE_URL}";
+        }
+
+        $msg = str_replace(
+        ['{USER_NAME}', '{IMAGE_TITLE}', '{IMAGE_URL}'],
+        [$user->name, $image->title, $url],
+            $msg
+        );
 
         // Add embed with thumbnail if possible
         $embeds = [
@@ -68,7 +101,7 @@ class DiscordService
             ]
         ];
 
-        $this->send($msg, $embeds);
+        $this->send($msg, $embeds, $webhookUrl);
     }
 
     /**
@@ -76,19 +109,25 @@ class DiscordService
      *
      * @param string $content The text content of the message.
      * @param array|null $embeds Optional array of embeds.
+     * @param string|null $webhookUrl Specific webhook URL.
      * @return void
      */
-    public function send(string $content, array $embeds = null)
+    public function send(string $content, array $embeds = null, string $webhookUrl = null)
     {
-        // 1. Fetch settings
         $settings = Setting::all()->pluck('value', 'key');
 
-        // 2. Check if enabled and URL exists
-        if (empty($settings['discord_enabled']) || empty($settings['discord_webhook_url'])) {
+        if (empty($settings['discord_enabled'])) {
             return;
         }
 
-        $webhookUrl = $settings['discord_webhook_url'];
+        // If no specific URL provided, try legacy/default
+        if (!$webhookUrl) {
+            $webhookUrl = $settings['discord_webhook_url'] ?? null;
+        }
+
+        if (!$webhookUrl) {
+            return;
+        }
 
         // 3. Build payload
         $payload = [

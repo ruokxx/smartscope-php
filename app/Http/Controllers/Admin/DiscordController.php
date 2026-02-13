@@ -43,12 +43,61 @@ class DiscordController extends Controller
         return redirect()->route('admin.discord.index')->with('success', 'Discord settings updated successfully.');
     }
 
-    public function test()
+    public function test(Request $request)
     {
         try {
             $discord = new DiscordService();
-            $discord->send("🔔 **Discord Integration Test**\n\nIf you can read this, the SmartScope Webhook integration is working successfully! 🚀");
-            return redirect()->back()->with('success', 'Test message sent to Discord!');
+            $type = $request->input('type', 'register');
+
+            // Get settings to test with current template
+            $settings = Setting::all()->pluck('value', 'key');
+            $lang = $settings['discord_active_language'] ?? 'en';
+
+            $webhookUrl = null;
+            $msg = '';
+
+            if ($type === 'upload') {
+                $webhookUrl = $settings['discord_webhook_upload'] ?? ($settings['discord_webhook_url'] ?? null);
+
+                if (!$webhookUrl) {
+                    return redirect()->back()->with('error', 'No Upload Webhook Configured.');
+                }
+
+                $templateKey = 'discord_template_upload_' . $lang;
+                $msgTemplate = $settings[$templateKey] ?? '';
+
+                if (empty($msgTemplate)) {
+                    $msg = "📸 **Discord Upload Test**\n\n**TestImage** by **TestUser**\n\n(No template configured)";
+                }
+                else {
+                    $msg = "📸 **Discord Upload Test** (using '{$lang}' template):\n\n" . str_replace(
+                    ['{USER_NAME}', '{IMAGE_TITLE}', '{IMAGE_URL}'],
+                    ['TestUser', 'TestImage', 'http://example.com'],
+                        $msgTemplate
+                    );
+                }
+            }
+            else {
+                // Register
+                $webhookUrl = $settings['discord_webhook_register'] ?? ($settings['discord_webhook_url'] ?? null);
+
+                if (!$webhookUrl) {
+                    return redirect()->back()->with('error', 'No Registration Webhook Configured.');
+                }
+
+                $templateKey = 'discord_template_register_' . $lang;
+                $msgTemplate = $settings[$templateKey] ?? '';
+
+                if (empty($msgTemplate)) {
+                    $msg = "🔔 **Discord Register Test**\n\n**TestUser** joined.\n(No template configured)";
+                }
+                else {
+                    $msg = "🔔 **Discord Register Test** (using '{$lang}' template):\n\n" . str_replace('{USER_NAME}', 'TestUser', $msgTemplate);
+                }
+            }
+
+            $discord->send($msg, null, $webhookUrl);
+            return redirect()->back()->with('success', 'Test message sent to ' . ucfirst($type) . ' Discord channel!');
         }
         catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to send Discord test: ' . $e->getMessage());

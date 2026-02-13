@@ -75,8 +75,8 @@ class ObjectController extends Controller
         $user = Auth::user();
         $q = trim($req->get('q', ''));
 
-        // distinct options for dropdowns
-        $filters = ['Kein', 'Dualband', 'Astro'];
+        // distinct options for dropdowns - Must match database values!
+        $filters = ['Kein', 'Dual Band', 'Astro'];
         // $gains removed (manual input)
 
         // base query for objects with optional search
@@ -91,14 +91,14 @@ class ObjectController extends Controller
         }
 
         // Apply Image Filters to Object Query (Show only objects that have matching images)
+        // Apply Image Filters to Object Query (Show only objects that have matching images)
         if ($req->anyFilled(['min_exposure', 'filter', 'gain'])) {
             $query->whereHas('images', function ($q) use ($req, $user) {
-                if ($user) {
-                    $q->where('user_id', $user->id);
-                }
-                else {
-                    $q->where('approved', true);
-                }
+                // FIXED: Do NOT restrict to user_id if logged in. Board should search GLOBAL images.
+                // But we still want to show approved images only (unless it's the user's own, not relevant for "searching objects").
+                // For simplicity: The board searches "Publicly available images" or "My images". 
+                // Usually a board search is global.
+                $q->where('approved', true);
 
                 if ($req->filled('min_exposure')) {
                     $q->where('exposure_total_seconds', '>=', $req->min_exposure * 60);
@@ -180,16 +180,68 @@ class ObjectController extends Controller
         return response()->json($res);
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $obj = Obj::findOrFail($id);
 
-        // all images for this object, eager loaded
-        $allImages = Image::with('user', 'scopeModel')
+        // Filter Options - Must match database values exactly!
+        $filters = ['Kein', 'Dual Band', 'Astro'];
+
+        // Base Query for APPROVED images for this object
+        $query = Image::with('user', 'scopeModel')
             ->where('object_id', $obj->id)
-            ->where('approved', true) // MODERATION
+            ->where('approved', true);
+
+        // Apply Filters (Same logic as CompareController)
+        if ($request->filled('min_exposure')) {
+            $minSeconds = $request->min_exposure * 60;
+            $query->where('exposure_total_seconds', '>=', $minSeconds);
+        }
+        if ($request->filled('filter')) {
+            $query->where('filter', $request->filter);
+        }
+        if ($request->filled('gain')) {
+            $query->where('gain', $request->gain);
+        }
+
+        // Get available sub-models for dropdowns
+        $dwarfScopes = \App\Models\Scope::where('name', 'LIKE', '%Dwarf%')->orderBy('name')->get();
+        $seestarScopes = \App\Models\Scope::where('name', 'LIKE', '%Seestar%')->orderBy('name')->get();
+
+        // Get collections for Dwarf and Seestar (Broad matching OR specific sub-model)
+
+        // Dwarf Query
+        $dwarfQuery = (clone $query);
+        if ($request->filled('dwarf_scope_id')) {
+            $dwarfQuery->where('scope_id', $request->dwarf_scope_id);
+        }
+        else {
+            $dwarfQuery->whereHas('scopeModel', fn($q) => $q->where('name', 'LIKE', '%Dwarf%'));
+        }
+        $dwarfImages = $dwarfQuery->orderBy('exposure_total_seconds', 'desc')
             ->orderBy('upload_time', 'desc')
             ->get();
+
+        // Seestar Query
+        $seestarQuery = (clone $query);
+        if ($request->filled('seestar_scope_id')) {
+            $seestarQuery->where('scope_id', $request->seestar_scope_id);
+        }
+        else {
+            $seestarQuery->whereHas('scopeModel', fn($q) => $q->where('name', 'LIKE', '%Seestar%'));
+        }
+        $seestarImages = $seestarQuery->orderBy('exposure_total_seconds', 'desc')
+            ->orderBy('upload_time', 'desc')
+            ->get();
+
+
+        // -- Existing logic for "uploaders" dropdown (maybe we keep it or remove it? User basically wants the Compare view) --
+        // Let's keep the existing variables $allImages, $uploaders, $imagesByUser, $myImages 
+        // BUT they should probably respect the filter too? 
+        // Actually, the user wants the "Compare View" logic. But let's keep the old variables if the view still needs them for other parts (like the "My Images" dropdown).
+        // For now, let's re-fetch 'allImages' with filters applied so the bottom grid (if we keep it) is also filtered.
+
+        $allImages = (clone $query)->orderBy('upload_time', 'desc')->get();
 
         // list distinct uploaders (users)
         $uploaders = $allImages->pluck('user')->unique('id')->values();
@@ -210,6 +262,12 @@ class ObjectController extends Controller
             'uploaders' => $uploaders,
             'imagesByUser' => $imagesByUser,
             'myImages' => $myImages,
+            // New variables for comparison view
+            'dwarfImages' => $dwarfImages,
+            'seestarImages' => $seestarImages,
+            'filters' => $filters,
+            'dwarfScopes' => $dwarfScopes,
+            'seestarScopes' => $seestarScopes,
         ]);
     }
 
